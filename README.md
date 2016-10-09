@@ -15,7 +15,7 @@ A note-taking web application
 #### 0.2
 * web front-end
 * hosting
-* limits
+* rate limits
 
 #### 0.2
 * facebook authentication
