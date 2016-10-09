@@ -9,24 +9,28 @@ A note-taking web application
 #### 0.1
 * database model
 * ReST API
-* username (email) / password authentication
+* administration
 * Docker image
 
 #### 0.2
-* web front-end
-* hosting
+* email authentication
+* user registration
 * api rate/size/count limits
 
-#### 0.2
+#### 0.3
+* web front end
+* hosting
+
+#### 0.4
 * facebook authentication
 * google authentication
 
-#### 0.3
-* search
+#### 0.5
+* note/task search
 
-#### 0.4
+#### 0.6
 * android app
 
-#### 0.5
-* offline mode
-* sync
+#### 0.7
+* app offline mode
+* app data synchronization
