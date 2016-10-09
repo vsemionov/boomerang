@@ -36,7 +36,7 @@ class NotebookViewSet(mixins.CreateModelMixin,
                       viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user.is_staff or request.user == obj.user
+            return request.user == obj.user or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Notebook.objects.all()
     serializer_class = NotebookSerializer
@@ -53,7 +53,7 @@ class NoteViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user.is_staff or request.user == obj.notebook.user
+            return request.user == obj.notebook.user or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
@@ -79,7 +79,7 @@ class TaskViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user.is_staff or request.user == obj.user
+            return request.user == obj.user or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
