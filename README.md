@@ -9,8 +9,6 @@ A note-taking web application
 #### 0.1
 * database model
 * ReST API
-* administration
-* Docker image
 
 #### 0.2
 * email authentication
