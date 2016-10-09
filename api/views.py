@@ -11,15 +11,12 @@ from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, Tas
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     class Permissions(permissions.BasePermission):
-        def has_permission(self, request, view):
-            return request.user.is_authenticated
-
         def has_object_permission(self, request, view, obj):
             return request.user == obj or request.user.is_staff
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (Permissions,)
+    permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def get_queryset(self):
         if self.action == 'retrieve':
@@ -43,7 +40,7 @@ class NotebookViewSet(mixins.CreateModelMixin,
 
     queryset = Notebook.objects.all()
     serializer_class = NotebookSerializer
-    permission_classes = (Permissions,)
+    permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -60,7 +57,7 @@ class NoteViewSet(mixins.CreateModelMixin,
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
-    permission_classes = (Permissions,)
+    permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def _validate_notebook(self, serializer):
         if serializer.validated_data['notebook'].user != self.request.user:
@@ -86,7 +83,7 @@ class TaskViewSet(mixins.CreateModelMixin,
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = (Permissions,)
+    permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
