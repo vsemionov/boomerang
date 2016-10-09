@@ -28,7 +28,7 @@ class Task(models.Model):
     user = models.ForeignKey("auth.User")
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)
-    description = models.TextField()
+    description = models.TextField(null=True)
 
     def __unicode__(self):
         return self.title
