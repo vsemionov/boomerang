@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'notes',
         'USER': 'notes',
         'PASSWORD': 'honda1',
-        'CONN_MAX_AGE': 1800,
+        # 'CONN_MAX_AGE': 1800,
     }
 }
 
