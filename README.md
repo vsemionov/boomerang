@@ -9,6 +9,7 @@ A note-taking web application
 #### 0.1
 * database model
 * ReST API
+* hosting
 
 #### 0.2
 * email authentication
@@ -17,7 +18,6 @@ A note-taking web application
 
 #### 0.3
 * web front end
-* hosting
 
 #### 0.4
 * facebook authentication
