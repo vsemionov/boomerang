@@ -5,7 +5,8 @@ from .models import Notebook, Note, Task
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    notebooks = serializers.HyperlinkedRelatedField(many=True, source='notebook_set', view_name='notebook-detail', read_only=True)
+    notebooks = serializers.HyperlinkedRelatedField(many=True, source='notebook_set', view_name='notebook-detail',
+                                                    read_only=True)
     tasks = serializers.HyperlinkedRelatedField(many=True, source='task_set', view_name='task-detail', read_only=True)
 
     class Meta:

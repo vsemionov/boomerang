@@ -53,7 +53,8 @@ class NoteViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user == obj.notebook.user or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+            return request.user == obj.notebook.user or \
+                   (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
