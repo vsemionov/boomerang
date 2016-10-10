@@ -3,8 +3,9 @@
 # Create your views here.
 
 from django.contrib.auth.models import User
-from rest_framework import viewsets, mixins, permissions, exceptions
+from rest_framework import viewsets, mixins, permissions, exceptions, decorators, response
 
+import apps
 from .models import Notebook, Note, Task
 from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, TaskSerializer
 
@@ -90,3 +91,9 @@ class TaskViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+@decorators.api_view(['GET', 'HEAD'])
+def info(request):
+    app_info = dict(name=apps.APP_NAME, version=apps.APP_VERSION)
+    return response.Response(app_info)

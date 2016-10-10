@@ -11,5 +11,6 @@ router.register(r'tasks', views.TaskViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
+    url(r'^info', views.info),
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
