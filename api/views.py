@@ -12,7 +12,7 @@ from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, Tas
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user == obj or request.user.is_staff
+            return request.user.id == obj.id or request.user.is_staff
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -36,7 +36,8 @@ class NotebookViewSet(mixins.CreateModelMixin,
                       viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user == obj.user or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+            return request.user.id == obj.user_id or \
+                   (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Notebook.objects.all()
     serializer_class = NotebookSerializer
@@ -53,7 +54,7 @@ class NoteViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user == obj.notebook.user or \
+            return request.user.id == obj.notebook.user_id or \
                    (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Note.objects.all()
@@ -61,8 +62,8 @@ class NoteViewSet(mixins.CreateModelMixin,
     permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def _validate_notebook(self, serializer):
-        if serializer.validated_data['notebook'].user != self.request.user:
-            raise exceptions.PermissionDenied()
+        if serializer.validated_data['notebook'].user_id != self.request.user.id:
+            raise exceptions.PermissionDenied("can not add note to another user's notebook")
 
     def perform_create(self, serializer):
         self._validate_notebook(serializer)
@@ -80,7 +81,7 @@ class TaskViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
-            return request.user == obj.user or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+            return request.user.id == obj.user_id or (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
