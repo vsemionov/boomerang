@@ -140,3 +140,20 @@ REST_FRAMEWORK = {
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+# Email
+
+SERVER_EMAIL = 'vsemionov.notes@gmail.com'
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
+
+EMAIL_HOST_USER = 'vsemionov.notes@gmail.com'
+EMAIL_HOST_PASSWORD = 'noteslow'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+ADMINS = (
+    ('Notes Admin', SERVER_EMAIL),
+)
+MANAGERS = ADMINS
