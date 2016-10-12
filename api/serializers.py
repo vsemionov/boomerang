@@ -1,13 +1,17 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework_nested import relations
 
 from .models import Notebook, Note, Task
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    notebooks = serializers.HyperlinkedRelatedField(many=True, source='notebook_set', view_name='notebook-detail',
-                                                    read_only=True)
-    tasks = serializers.HyperlinkedRelatedField(many=True, source='task_set', view_name='task-detail', read_only=True)
+    notebooks = relations.NestedHyperlinkedRelatedField(many=True, read_only=True, source='notebook_set',
+                                                        view_name='notebook-detail', parent_lookup_field='user',
+                                                        parent_lookup_url_kwarg='user_pk')
+    tasks = relations.NestedHyperlinkedRelatedField(many=True, read_only=True, source='task_set',
+                                                    view_name='task-detail', parent_lookup_field='user',
+                                                    parent_lookup_url_kwarg='user_pk')
 
     class Meta:
         model = User
@@ -15,8 +19,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NotebookSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)
-    notes = serializers.HyperlinkedRelatedField(many=True, source='note_set', view_name='note-detail', read_only=True)
+    user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
+    notes = relations.NestedHyperlinkedRelatedField(many=True, read_only=True, source='note_set',
+                                                    view_name='note-detail', parent_lookup_field='notebook',
+                                                    parent_lookup_url_kwarg='notebook_pk')
 
     class Meta:
         model = Notebook
@@ -30,7 +36,7 @@ class NoteSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TaskSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)
+    user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
 
     class Meta:
         model = Task

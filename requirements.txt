@@ -1,4 +1,5 @@
 Django==1.10.2
 djangorestframework==3.4.7
+git+https://github.com/alanjds/drf-nested-routers.git@c465fd090402500ed6702398634034e27e29dd4c
 psycopg2==2.6.2
 django-debug-toolbar==1.6

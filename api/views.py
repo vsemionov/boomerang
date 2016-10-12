@@ -17,24 +17,20 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    # permission_classes = (permissions.IsAuthenticated, Permissions)
 
-    def get_queryset(self):
-        if self.action == 'retrieve':
-            return self.queryset
-        else:
-            # list
-            if self.request.user.is_staff:
-                return self.queryset
-            else:
-                return self.queryset.filter(id=self.request.user.id)
+    # def get_queryset(self):
+    #     if self.action == 'retrieve':
+    #         return self.queryset
+    #     else:
+    #         # list
+    #         if self.request.user.is_staff:
+    #             return self.queryset
+    #         else:
+    #             return self.queryset.filter(id=self.request.user.id)
 
 
-class NotebookViewSet(mixins.CreateModelMixin,
-                      mixins.RetrieveModelMixin,
-                      mixins.UpdateModelMixin,
-                      mixins.DestroyModelMixin,
-                      viewsets.GenericViewSet):
+class NotebookViewSet(viewsets.ModelViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
             return request.user.id == obj.user_id or \
@@ -42,17 +38,13 @@ class NotebookViewSet(mixins.CreateModelMixin,
 
     queryset = Notebook.objects.all()
     serializer_class = NotebookSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    # permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
-class NoteViewSet(mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  viewsets.GenericViewSet):
+class NoteViewSet(viewsets.ModelViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
             return request.user.id == obj.notebook.user_id or \
@@ -60,7 +52,7 @@ class NoteViewSet(mixins.CreateModelMixin,
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    # permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def _validate_notebook(self, serializer):
         if serializer.validated_data['notebook'].user_id != self.request.user.id:
@@ -75,11 +67,7 @@ class NoteViewSet(mixins.CreateModelMixin,
         serializer.save()
 
 
-class TaskViewSet(mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  viewsets.GenericViewSet):
+class TaskViewSet(viewsets.ModelViewSet):
     class Permissions(permissions.BasePermission):
         def has_object_permission(self, request, view, obj):
             return request.user.id == obj.user_id or \
@@ -87,7 +75,7 @@ class TaskViewSet(mixins.CreateModelMixin,
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    # permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
