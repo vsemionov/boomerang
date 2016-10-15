@@ -14,14 +14,12 @@ A note-taking web application
 #### 0.2
 * email authentication
 * user registration
-* api rate/size/count limits
 
 #### 0.3
-* web front end
+* api rate/size/count limits
 
 #### 0.4
-* facebook authentication
-* google authentication
+* web front end
 
 #### 0.5
 * note/task search
