@@ -160,8 +160,9 @@ REST_FRAMEWORK = {
 
 # Email
 
+ADMIN_NAME = 'Notes Admin'
 SERVER_EMAIL = 'vsemionov.notes@gmail.com'
-DEFAULT_FROM_EMAIL = SERVER_EMAIL
+DEFAULT_FROM_EMAIL = '%s <%s>' % (ADMIN_NAME, SERVER_EMAIL)
 
 EMAIL_HOST_USER = 'vsemionov.notes@gmail.com'
 EMAIL_HOST_PASSWORD = 'noteslow'
@@ -171,6 +172,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 ADMINS = (
-    ('Notes Admin', SERVER_EMAIL),
+    (ADMIN_NAME, SERVER_EMAIL),
 )
 MANAGERS = ADMINS
