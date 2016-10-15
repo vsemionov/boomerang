@@ -1,7 +1,28 @@
 from django.contrib.auth.models import User
+from allauth.account.adapter import DefaultAccountAdapter, app_settings
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 
+# email username generating adapter
+class AccountAdapter(DefaultAccountAdapter):
+    def populate_username(self, request, user):
+        from allauth.account.utils import user_username, user_email, user_field
+        first_name = user_field(user, 'first_name')
+        last_name = user_field(user, 'last_name')
+        email = user_email(user)
+        username = user_username(user)
+        if app_settings.USER_MODEL_USERNAME_FIELD:
+            user_username(
+                user,
+                username or self.generate_unique_username([
+                    email,
+                    first_name,
+                    last_name,
+                    username,
+                    'user']))
+
+
+# social account connecting adapter
 # adapted from:
 # http://stackoverflow.com/questions/19354009/django-allauth-social-login-automatically-linking-social-site-profiles-using-th
 # note: this is unsecure, allows connecting a social account with an unverified email!
