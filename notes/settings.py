@@ -152,7 +152,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = 'api-root'
+LOGIN_REDIRECT_URL = 'index'
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10
