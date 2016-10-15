@@ -25,8 +25,9 @@ class AccountAdapter(DefaultAccountAdapter):
 # social account connecting adapter
 # adapted from:
 # http://stackoverflow.com/questions/19354009/django-allauth-social-login-automatically-linking-social-site-profiles-using-th
-# note: this is unsecure, allows connecting a social account with an unverified email!
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
+    _verified_field = dict(google='verified_email', facebook='verified')
+
     def pre_social_login(self, request, sociallogin):
         """
         Invoked just after a user successfully authenticates via a
@@ -47,6 +48,9 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         # with mobile numbers only, but allauth takes care of this case so just
         # ignore it
         if 'email' not in sociallogin.account.extra_data:
+            return
+
+        if not sociallogin.account.extra_data.get(self._verified_field.get(sociallogin.account.provider)):
             return
 
         # check if given email address already exists.
