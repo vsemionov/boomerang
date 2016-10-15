@@ -1,0 +1,119 @@
+[
+{
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+        "domain": "vsemionov.pythonanywhere.com",
+        "name": "vsemionov.pythonanywhere.com"
+    }
+},
+{
+    "model": "socialaccount.socialapp",
+    "pk": 1,
+    "fields": {
+        "provider": "google",
+        "name": "Google",
+        "client_id": "8550850585-7cuu3p6nomcss3ebsuhljfr33aqtie98.apps.googleusercontent.com",
+        "secret": "6GPq_W7iSXSgCrBs8slIR4HD",
+        "key": "",
+        "sites": [
+            1
+        ]
+    }
+},
+{
+    "model": "socialaccount.socialapp",
+    "pk": 2,
+    "fields": {
+        "provider": "facebook",
+        "name": "Facebook",
+        "client_id": "1809488429309055",
+        "secret": "851967934e6bfa8056e8d8ee3ad4705f",
+        "key": "",
+        "sites": [
+            1
+        ]
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$30000$cOBbPwiGKIxv$5reqz8piyVVe+9UVw9sXq0oymUhBjqhTle2bbUKz1Pg=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "Admin",
+        "last_name": "Notes",
+        "email": "vsemionov.notes@gmail.com",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2016-10-09T00:00:00.000Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$30000$Ru7UNI4OH9VS$EYrcRMcc6MH4MOGiUPjmAmbY9QFxFLaB49iN/b0Fvtw=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "staff",
+        "first_name": "Staff",
+        "last_name": "Notes",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2016-10-09T00:00:01.000Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$30000$fK2RMYMPymMY$2sovwZTkUl+JQoZ3zbnuwY9RnMDxMkcN0XbUBUNfxdg=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "vsemionov",
+        "first_name": "Victor",
+        "last_name": "Semionov",
+        "email": "vsemionov@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2016-10-09T00:00:02.000Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "api.notebook",
+    "pk": 1,
+    "fields": {
+        "user": 3,
+        "name": "test"
+    }
+},
+{
+    "model": "api.task",
+    "pk": 1,
+    "fields": {
+        "user": 3,
+        "done": false,
+        "title": "test",
+        "description": "test"
+    }
+},
+{
+    "model": "api.note",
+    "pk": 1,
+    "fields": {
+        "notebook": 1,
+        "title": "test",
+        "text": "test"
+    }
+}
+]
