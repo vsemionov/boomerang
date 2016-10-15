@@ -19,7 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^notes/api/', include('api.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
 from django.conf import settings
