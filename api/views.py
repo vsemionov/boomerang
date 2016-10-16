@@ -3,7 +3,7 @@
 # Create your views here.
 
 from django.contrib.auth.models import User
-from rest_framework import viewsets, mixins, permissions, exceptions, decorators, response
+from rest_framework import serializers, viewsets, mixins, permissions, exceptions, decorators, response
 
 import apps
 from .models import Notebook, Note, Task
@@ -62,17 +62,12 @@ class NoteViewSet(mixins.CreateModelMixin,
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticated, Permissions)
 
-    def _validate_notebook(self, serializer):
-        if serializer.validated_data['notebook'].user_id != self.request.user.id:
-            raise exceptions.PermissionDenied("can not add note to another user's notebook")
-
-    def perform_create(self, serializer):
-        self._validate_notebook(serializer)
-        serializer.save()
-
-    def perform_update(self, serializer):
-        self._validate_notebook(serializer)
-        serializer.save()
+    def get_serializer_class(self):
+        user_id = self.request.user.id
+        notebook_queryset = Notebook.objects.filter(user_id=user_id)
+        class DynamicNoteSerializer(NoteSerializer):
+            notebook = serializers.HyperlinkedRelatedField(view_name='notebook-detail', queryset=notebook_queryset)
+        return DynamicNoteSerializer
 
 
 class TaskViewSet(mixins.CreateModelMixin,
