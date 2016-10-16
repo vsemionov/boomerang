@@ -25,7 +25,7 @@ SECRET_KEY = '26w+70vb7!sz!xm_j5tp-9dp5es^u^9dy0ykc0-lcu3v*b3@ke'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vsemionov.pythonanywhere.com']
 
 
 # Application definition
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_extensions',
     'rest_framework',
-    'debug_toolbar',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -50,7 +49,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,6 +138,10 @@ STATIC_URL = '/static/'
 
 # custom settings
 
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
+
 SITE_ID = 1
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -161,7 +163,7 @@ REST_FRAMEWORK = {
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
-ACCOUNT_ADAPTER = 'notes.auth.AccountAdapter'
+ACCOUNT_ADAPTER  = 'notes.auth.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'notes.auth.SocialAccountAdapter'
 
 # Email
