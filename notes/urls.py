@@ -17,14 +17,15 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from django.views.generic.base import RedirectView
+from allauth.account.views import login, logout
 
 
 def redirect_view(view_name, query=False):
     return RedirectView.as_view(pattern_name=view_name, query_string=query)
 
 auth_urls = [
-    url(r'^login/$', redirect_view('account_login', query=True), name='login'),
-    url(r'^logout/$', redirect_view('account_logout', query=True), name='logout'),
+    url(r'^login/$', login, name='login'),
+    url(r'^logout/$', logout, name='logout'),
 ]
 
 urlpatterns = [
