@@ -18,6 +18,7 @@ from django.contrib import admin
 
 from django.views.generic.base import RedirectView
 from allauth.account.views import login, logout
+from django.conf import settings
 
 
 def redirect_view(view_name, query=False):
@@ -36,8 +37,6 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
 ]
 
-
-from django.conf import settings
 
 if settings.DEBUG:
     import debug_toolbar
