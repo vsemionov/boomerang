@@ -43,7 +43,7 @@ class AccountAdapter(DefaultAccountAdapter):
 # adapted from:
 # http://stackoverflow.com/questions/19354009/django-allauth-social-login-automatically-linking-social-site-profiles-using-th
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
-    _verified_field = dict(google='verified_email', facebook='verified')
+    _VERIFIED_FIELD_NAMES = dict(google='verified_email', facebook='verified')
 
     def pre_social_login(self, request, sociallogin):
         """
@@ -67,7 +67,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         if 'email' not in sociallogin.account.extra_data:
             return
 
-        if not sociallogin.account.extra_data.get(self._verified_field.get(sociallogin.account.provider)):
+        if not sociallogin.account.extra_data.get(self._VERIFIED_FIELD_NAMES.get(sociallogin.account.provider)):
             return
 
         # check if given email address already exists.
