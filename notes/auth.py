@@ -1,10 +1,27 @@
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User
+from django.utils.http import is_safe_url
 from allauth.account.adapter import DefaultAccountAdapter, app_settings
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 
 # email username generating adapter
+# login/logout follows next
 class AccountAdapter(DefaultAccountAdapter):
+    def get_login_redirect_url(self, request):
+        url = request.POST.get(REDIRECT_FIELD_NAME, request.GET.get(REDIRECT_FIELD_NAME))
+        if is_safe_url(url, request.get_host()):
+            return url
+        else:
+            return super(AccountAdapter, self).get_login_redirect_url(request)
+
+    def get_logout_redirect_url(self, request):
+        url = request.POST.get(REDIRECT_FIELD_NAME, request.GET.get(REDIRECT_FIELD_NAME))
+        if is_safe_url(url, request.get_host()):
+            return url
+        else:
+            return super(AccountAdapter, self).get_logout_redirect_url(request)
+
     def populate_username(self, request, user):
         from allauth.account.utils import user_username, user_email, user_field
         first_name = user_field(user, 'first_name')
