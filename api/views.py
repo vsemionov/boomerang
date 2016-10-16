@@ -3,7 +3,7 @@
 # Create your views here.
 
 from django.contrib.auth.models import User
-from rest_framework import serializers, viewsets, mixins, permissions, response
+from rest_framework import serializers, viewsets, mixins, permissions, response, reverse
 
 import apps
 from .models import Notebook, Note, Task
@@ -91,6 +91,12 @@ class TaskViewSet(mixins.CreateModelMixin,
 
 class InfoViewSet(mixins.ListModelMixin,
                   viewsets.GenericViewSet):
+    @staticmethod
+    def _get_user_url(request):
+        return request.user.id and reverse.reverse('user-detail', request=request, args=[request.user.id])
+
     def list(self, request, *args, **kwargs):
-        app_info = dict(name=apps.APP_NAME, version=apps.APP_VERSION)
-        return response.Response(app_info)
+        app = dict(name=apps.APP_NAME, version=apps.APP_VERSION)
+        user = dict(id=request.user.id, url=self._get_user_url(request))
+        info = dict(app=app, user=user)
+        return response.Response(info)
