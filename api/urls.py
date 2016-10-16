@@ -8,8 +8,8 @@ router.register(r'users', views.UserViewSet)
 router.register(r'notebooks', views.NotebookViewSet)
 router.register(r'notes', views.NoteViewSet)
 router.register(r'tasks', views.TaskViewSet)
+router.register(r'info', views.InfoViewSet, base_name='info')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^info', views.info),
 ]

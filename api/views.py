@@ -3,7 +3,7 @@
 # Create your views here.
 
 from django.contrib.auth.models import User
-from rest_framework import serializers, viewsets, mixins, permissions, exceptions, decorators, response
+from rest_framework import serializers, viewsets, mixins, permissions, response
 
 import apps
 from .models import Notebook, Note, Task
@@ -65,6 +65,7 @@ class NoteViewSet(mixins.CreateModelMixin,
     def get_serializer_class(self):
         user_id = self.request.user.id
         notebook_queryset = Notebook.objects.filter(user_id=user_id)
+
         class DynamicNoteSerializer(NoteSerializer):
             notebook = serializers.HyperlinkedRelatedField(view_name='notebook-detail', queryset=notebook_queryset)
         return DynamicNoteSerializer
@@ -88,7 +89,8 @@ class TaskViewSet(mixins.CreateModelMixin,
         serializer.save(user=self.request.user)
 
 
-@decorators.api_view(['GET', 'HEAD'])
-def info(request):
-    app_info = dict(name=apps.APP_NAME, version=apps.APP_VERSION)
-    return response.Response(app_info)
+class InfoViewSet(mixins.ListModelMixin,
+                  viewsets.GenericViewSet):
+    def list(self, request, *args, **kwargs):
+        app_info = dict(name=apps.APP_NAME, version=apps.APP_VERSION)
+        return response.Response(app_info)
