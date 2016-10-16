@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
 ]
 
+
 from django.conf import settings
 
 if settings.DEBUG:
