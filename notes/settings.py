@@ -25,7 +25,7 @@ SECRET_KEY = '26w+70vb7!sz!xm_j5tp-9dp5es^u^9dy0ykc0-lcu3v*b3@ke'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['vsemionov.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -141,6 +141,13 @@ STATIC_URL = '/static/'
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
+else:
+    ALLOWED_HOSTS = ['vsemionov.pythonanywhere.com']
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 SITE_ID = 1
 
