@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 
 APP_NAME = 'vsemionov.notes.api'
-APP_VERSION = '0.2.2'
+APP_VERSION = '0.2.3'
 
 
 class ApiConfig(AppConfig):
