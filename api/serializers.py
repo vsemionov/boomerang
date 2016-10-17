@@ -4,34 +4,77 @@ from rest_framework import serializers
 from .models import Notebook, Note, Task
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    notebooks = serializers.HyperlinkedRelatedField(many=True, source='notebook_set', view_name='notebook-detail',
-                                                    read_only=True)
-    tasks = serializers.HyperlinkedRelatedField(many=True, source='task_set', view_name='task-detail', read_only=True)
+class UserLinksSerializer(serializers.ModelSerializer):
+    self = serializers.HyperlinkedIdentityField(view_name='user-detail')
+    notebooks = serializers.HyperlinkedRelatedField(read_only=True, many=True, source='notebook_set',
+                                                    view_name='notebook-detail')
+    tasks = serializers.HyperlinkedRelatedField(read_only=True, many=True, source='task_set', view_name='task-detail')
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'notebooks', 'tasks')
+        fields = ('self', 'notebooks', 'tasks')
 
 
-class NotebookSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)
-    notes = serializers.HyperlinkedRelatedField(many=True, source='note_set', view_name='note-detail', read_only=True)
+class UserSerializer(serializers.ModelSerializer):
+    notebooks = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='notebook_set')
+    tasks = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='task_set')
+    links = UserLinksSerializer(read_only=True, source='*')
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'notebooks', 'tasks', 'links')
+
+
+class NotebookLinksSerializer(serializers.ModelSerializer):
+    self = serializers.HyperlinkedIdentityField(view_name='notebook-detail')
+    user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
+    notes = serializers.HyperlinkedRelatedField(read_only=True, many=True, source='note_set', view_name='note-detail')
 
     class Meta:
         model = Notebook
-        fields = ('url', 'user', 'name', 'notes')
+        fields = ('self', 'user', 'notes')
 
 
-class NoteSerializer(serializers.HyperlinkedModelSerializer):
+class NotebookSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    notes = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='note_set')
+    links = NotebookLinksSerializer(read_only=True, source='*')
+
+    class Meta:
+        model = Notebook
+        fields = ('id', 'user', 'name', 'notes', 'links')
+
+
+class NoteLinksSerializer(serializers.ModelSerializer):
+    self = serializers.HyperlinkedIdentityField(view_name='note-detail')
+    notebook = serializers.HyperlinkedRelatedField(read_only=True, view_name='notebook-detail')
+
     class Meta:
         model = Note
-        fields = ('url', 'notebook', 'title', 'text')
+        fields = ('self', 'notebook')
 
 
-class TaskSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(view_name='user-detail', read_only=True)
+class NoteSerializer(serializers.ModelSerializer):
+    links = NoteLinksSerializer(read_only=True, source='*')
+
+    class Meta:
+        model = Note
+        fields = ('id', 'notebook', 'title', 'text', 'links')
+
+
+class TaskLinksSerializer(serializers.ModelSerializer):
+    self = serializers.HyperlinkedIdentityField(view_name='task-detail')
+    user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
 
     class Meta:
         model = Task
-        fields = ('url', 'user', 'done', 'title', 'description')
+        fields = ('self', 'user')
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    links = TaskLinksSerializer(read_only=True, source='*')
+
+    class Meta:
+        model = Task
+        fields = ('id', 'user', 'done', 'title', 'description', 'links')

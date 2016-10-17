@@ -67,7 +67,7 @@ class NoteViewSet(mixins.CreateModelMixin,
         notebook_queryset = Notebook.objects.filter(user_id=user_id)
 
         class DynamicNoteSerializer(NoteSerializer):
-            notebook = serializers.HyperlinkedRelatedField(view_name='notebook-detail', queryset=notebook_queryset)
+            notebook = serializers.PrimaryKeyRelatedField(queryset=notebook_queryset)
         return DynamicNoteSerializer
 
 
