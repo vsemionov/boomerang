@@ -1,8 +1,10 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.models import User
 from django.utils.http import is_safe_url
+from allauth.account.models import EmailAddress
 from allauth.account.adapter import DefaultAccountAdapter, app_settings
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.socialaccount import providers
+from allauth.socialaccount.providers.facebook.provider import FacebookProvider
 
 
 # email username generating adapter
@@ -43,7 +45,14 @@ class AccountAdapter(DefaultAccountAdapter):
 # adapted from:
 # http://stackoverflow.com/questions/19354009/django-allauth-social-login-automatically-linking-social-site-profiles-using-th
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
-    _VERIFIED_FIELD_NAMES = dict(google='verified_email', facebook='verified')
+    @staticmethod
+    def _is_email_verified(provider, data):
+        if provider == 'google':
+            return data.get('verified_email')
+        elif provider == 'facebook':
+            # the email address is verified
+            # http://stackoverflow.com/questions/14280535/is-it-possible-to-check-if-an-email-is-confirmed-on-facebook
+            return True
 
     def pre_social_login(self, request, sociallogin):
         """
@@ -67,18 +76,40 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         if 'email' not in sociallogin.account.extra_data:
             return
 
-        if not sociallogin.account.extra_data.get(self._VERIFIED_FIELD_NAMES.get(sociallogin.account.provider)):
+        # prevent connecting unverified social accounts
+        if not self._is_email_verified(sociallogin.account.provider, sociallogin.account.extra_data):
             return
 
         # check if given email address already exists.
         # Note: __iexact is used to ignore cases
         try:
             email = sociallogin.account.extra_data['email'].lower()
-            user = User.objects.get(email__iexact=email)
+            email_address = EmailAddress.objects.get(email__iexact=email)
+            # prevent connecting to unverified accounts
+            if not email_address.verified:
+                return
+            user = email_address.user
 
         # if it does not, let allauth take care of this new social account
-        except User.DoesNotExist:
+        except EmailAddress.DoesNotExist:
             return
 
         # if it does, connect this new social login to the existing user
         sociallogin.connect(request, user)
+
+
+class CustomFacebookProvider(FacebookProvider):
+    def extract_email_addresses(self, data):
+        ret = []
+        email = data.get('email')
+        if email:
+            # the email address is verified
+            # http://stackoverflow.com/questions/14280535/is-it-possible-to-check-if-an-email-is-confirmed-on-facebook
+            ret.append(EmailAddress(email=email,
+                                    verified=True,
+                                    primary=True))
+        return ret
+
+
+del providers.registry.provider_map[FacebookProvider.id]
+providers.registry.register(CustomFacebookProvider)

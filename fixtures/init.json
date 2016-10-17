@@ -90,6 +90,16 @@
     }
 },
 {
+    "model": "account.emailaddress",
+    "pk": 1,
+    "fields": {
+        "user": 3,
+        "email": "vsemionov@gmail.com",
+        "verified": true,
+        "primary": true
+    }
+},
+{
     "model": "api.notebook",
     "pk": 1,
     "fields": {
