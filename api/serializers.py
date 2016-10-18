@@ -18,11 +18,12 @@ class UserLinksSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     notebooks = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='notebook_set')
     tasks = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='task_set')
-    links = UserLinksSerializer(read_only=True, source='*')
+    # links = UserLinksSerializer(read_only=True, source='*')
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'notebooks', 'tasks', 'links')
+        # fields = ('id', 'username', 'email', 'notebooks', 'tasks', 'links')
+        fields = ('id', 'username', 'email', 'notebooks', 'tasks')
 
 
 class NotebookLinksSerializer(serializers.ModelSerializer):
@@ -38,11 +39,12 @@ class NotebookLinksSerializer(serializers.ModelSerializer):
 class NotebookSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     notes = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='note_set')
-    links = NotebookLinksSerializer(read_only=True, source='*')
+    # links = NotebookLinksSerializer(read_only=True, source='*')
 
     class Meta:
         model = Notebook
-        fields = ('id', 'user', 'name', 'notes', 'links')
+        # fields = ('id', 'user', 'name', 'notes', 'links')
+        fields = ('id', 'user', 'name', 'notes')
 
 
 class NoteLinksSerializer(serializers.ModelSerializer):
@@ -55,11 +57,12 @@ class NoteLinksSerializer(serializers.ModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
-    links = NoteLinksSerializer(read_only=True, source='*')
+    # links = NoteLinksSerializer(read_only=True, source='*')
 
     class Meta:
         model = Note
-        fields = ('id', 'notebook', 'title', 'text', 'links')
+        # fields = ('id', 'notebook', 'title', 'text', 'links')
+        fields = ('id', 'notebook', 'title', 'text')
 
 
 class TaskLinksSerializer(serializers.ModelSerializer):
@@ -73,8 +76,9 @@ class TaskLinksSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    links = TaskLinksSerializer(read_only=True, source='*')
+    # links = TaskLinksSerializer(read_only=True, source='*')
 
     class Meta:
         model = Task
-        fields = ('id', 'user', 'done', 'title', 'description', 'links')
+        # fields = ('id', 'user', 'done', 'title', 'description', 'links')
+        fields = ('id', 'user', 'done', 'title', 'description')

@@ -10,57 +10,52 @@ from .models import Notebook, Note, Task
 from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, TaskSerializer
 
 
+class NestedObjectPermissions(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return str(request.user.id) == view.kwargs['user_pk'] or \
+               (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     class Permissions(permissions.BasePermission):
-        def has_object_permission(self, request, view, obj):
-            return request.user.id == obj.id or request.user.is_staff
+        def has_permission(self, request, view):
+            if view.action == 'retrieve':
+                return str(request.user.id) == view.kwargs['pk'] or \
+                       (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+            else:
+                # list
+                return True
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def get_queryset(self):
-        if self.action == 'retrieve':
+        if self.request.user.is_staff:
             return self.queryset
         else:
-            # list
-            if self.request.user.is_staff:
-                return self.queryset
-            else:
-                return self.queryset.filter(id=self.request.user.id)
+            return User.objects.filter(id=self.request.user.id)
 
 
-class NotebookViewSet(mixins.CreateModelMixin,
-                      mixins.RetrieveModelMixin,
-                      mixins.UpdateModelMixin,
-                      mixins.DestroyModelMixin,
-                      viewsets.GenericViewSet):
-    class Permissions(permissions.BasePermission):
-        def has_object_permission(self, request, view, obj):
-            return request.user.id == obj.user_id or \
-                   (request.user.is_staff and request.method in permissions.SAFE_METHODS)
-
+class NotebookViewSet(viewsets.ModelViewSet):
     queryset = Notebook.objects.all()
     serializer_class = NotebookSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
+
+    def get_queryset(self):
+        return Notebook.objects.filter(notebook__user_id=self.kwargs['user_pk'])
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
-class NoteViewSet(mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  viewsets.GenericViewSet):
-    class Permissions(permissions.BasePermission):
-        def has_object_permission(self, request, view, obj):
-            return request.user.id == obj.notebook.user_id or \
-                   (request.user.is_staff and request.method in permissions.SAFE_METHODS)
-
+class NoteViewSet(viewsets.ModelViewSet):
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
+
+    def get_queryset(self):
+        return Note.objects.filter(notebook__user_id=self.kwargs['user_pk'], notebook_id=self.kwargs['notebook_pk'])
 
     def get_serializer_class(self):
         user_id = self.request.user.id
@@ -71,19 +66,13 @@ class NoteViewSet(mixins.CreateModelMixin,
         return DynamicNoteSerializer
 
 
-class TaskViewSet(mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  viewsets.GenericViewSet):
-    class Permissions(permissions.BasePermission):
-        def has_object_permission(self, request, view, obj):
-            return request.user.id == obj.user_id or \
-                   (request.user.is_staff and request.method in permissions.SAFE_METHODS)
-
+class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
+
+    def get_queryset(self):
+        return Task.objects.filter(notebook__user_id=self.kwargs['user_pk'])
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
