@@ -52,6 +52,9 @@ class FullyNestedHyperlinkedRelatedField(relations.NestedHyperlinkedRelatedField
 
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
+    def use_pk_only_optimization(self):
+        return False
+
 
 class FullyNestedHyperlinkedIdentityField(FullyNestedHyperlinkedRelatedField):
     def __init__(self, view_name=None, *args, **kwargs):
@@ -107,11 +110,11 @@ class NotebookSerializer(serializers.ModelSerializer):
 
 
 class NoteLinksSerializer(serializers.ModelSerializer):
-    self = FullyNestedHyperlinkedRelatedField(read_only=True, source='*', view_name='note-detail',
-                                              parent_lookup_fields=('notebook', 'user'),
-                                              parent_lookup_url_kwargs=('notebook_pk', 'user_pk'))
-    notebook = relations.NestedHyperlinkedRelatedField(read_only=True, view_name='notebook-detail',
-                                                       parent_lookup_field='user', parent_lookup_url_kwarg='user_pk')
+    self = FullyNestedHyperlinkedIdentityField(view_name='note-detail',
+                                               parent_lookup_fields=('notebook', 'user'),
+                                               parent_lookup_url_kwargs=('notebook_pk', 'user_pk'))
+    notebook = FullyNestedHyperlinkedRelatedField(read_only=True, view_name='notebook-detail',
+                                                  parent_lookup_fields=('user',), parent_lookup_url_kwargs=('user_pk',))
 
     class Meta:
         model = Note
@@ -127,8 +130,8 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class TaskLinksSerializer(serializers.ModelSerializer):
-    self = relations.NestedHyperlinkedRelatedField(read_only=True, source='*', view_name='task-detail',
-                                                   parent_lookup_field='user', parent_lookup_url_kwarg='user_pk')
+    self = NestedHyperlinkedIdentityField(view_name='task-detail',
+                                          parent_lookup_field='user', parent_lookup_url_kwarg='user_pk')
     user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
 
     class Meta:
