@@ -43,7 +43,7 @@ class NotebookViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
-        return Notebook.objects.filter(notebook__user_id=self.kwargs['user_pk'])
+        return Notebook.objects.filter(user_id=self.kwargs['user_pk'])
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -72,7 +72,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
-        return Task.objects.filter(notebook__user_id=self.kwargs['user_pk'])
+        return Task.objects.filter(user_id=self.kwargs['user_pk'])
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
