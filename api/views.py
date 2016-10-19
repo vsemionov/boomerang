@@ -2,6 +2,7 @@
 
 # Create your views here.
 
+from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, permissions, response, reverse
@@ -103,7 +104,7 @@ class InfoViewSet(mixins.ListModelMixin,
         return request.user.id and reverse.reverse('user-detail', request=request, args=[request.user.id])
 
     def list(self, request, *args, **kwargs):
-        app = dict(name=apps.APP_NAME, version=apps.APP_VERSION)
-        user = dict(id=request.user.id, url=self._get_user_url(request))
-        info = dict(app=app, user=user)
+        app = OrderedDict((('name', apps.APP_NAME), ('version', apps.APP_VERSION)))
+        user = OrderedDict((('id', request.user.id), ('url', self._get_user_url(request))))
+        info = OrderedDict((('app', app), ('user', user)))
         return response.Response(info)
