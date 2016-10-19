@@ -74,9 +74,9 @@ class Populator(threading.Thread):
             with self.added_users_lock:
                 self.__class__.added_users += 1
                 added_users = self.__class__.added_users
-            print "Added %d users, %d notebooks, %d notes" % \
-                  (added_users, added_users * self.notebooks_per_user,
-                   added_users * self.notebooks_per_user * self.notes_per_notebook)
+                print "Added %d users, %d notebooks, %d notes" % \
+                      (added_users, added_users * self.notebooks_per_user,
+                       added_users * self.notebooks_per_user * self.notes_per_notebook)
 
 
 def main():
