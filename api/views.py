@@ -3,6 +3,7 @@
 # Create your views here.
 
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
@@ -57,8 +58,18 @@ class NoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_pk'], notebook_id=self.kwargs['notebook_pk'])
 
+    def get_notebook(self):
+        notebook = get_object_or_404(Notebook.objects.all(),
+                                     id=self.kwargs['notebook_pk'], user_id=self.kwargs['user_pk'])
+        return notebook
+
+    def list(self, request, *args, **kwargs):
+        self.get_notebook()
+        return super(NoteViewSet, self).list(request, *args, **kwargs)
+
     def perform_create(self, serializer):
-        serializer.save(notebook_id=self.kwargs['notebook_pk'])
+        notebook = self.get_notebook()
+        serializer.save(notebook=notebook)
 
 
 class TaskViewSet(viewsets.ModelViewSet):
