@@ -122,6 +122,7 @@ class NoteLinksSerializer(serializers.ModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
+    notebook = serializers.PrimaryKeyRelatedField(read_only=True)
     links = NoteLinksSerializer(read_only=True, source='*')
 
     class Meta:

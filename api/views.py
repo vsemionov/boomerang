@@ -3,7 +3,7 @@
 # Create your views here.
 
 from django.contrib.auth.models import User
-from rest_framework import serializers, viewsets, mixins, permissions, response, reverse
+from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
 from .models import Notebook, Note, Task
@@ -57,13 +57,8 @@ class NoteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_pk'], notebook_id=self.kwargs['notebook_pk'])
 
-    def get_serializer_class(self):
-        user_id = self.request.user.id
-        notebook_queryset = Notebook.objects.filter(user_id=user_id)
-
-        class DynamicNoteSerializer(NoteSerializer):
-            notebook = serializers.PrimaryKeyRelatedField(queryset=notebook_queryset)
-        return DynamicNoteSerializer
+    def perform_create(self, serializer):
+        serializer.save(notebook_id=self.kwargs['notebook_pk'])
 
 
 class TaskViewSet(viewsets.ModelViewSet):
