@@ -46,7 +46,7 @@ def create_notebook(api_url, username, password, user_id):
 
 def create_note(api_url, username, password, user_id, notebook_id):
     notes_url = api_url + NOTE_SUBPATH.format(user_id, notebook_id)
-    note = dict(notebook=notebook_id, title=str(uuid.uuid4()), text=str(uuid.uuid4()))
+    note = dict(notebook=notebook_id, title=str(uuid.uuid4()), text="%s %s" % (uuid.uuid4(), uuid.uuid4()))
     note_id = requests.post(notes_url, auth=(username, password), json=note).json()["id"]
     return notebook_id
 
