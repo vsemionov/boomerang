@@ -10,6 +10,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "notes.settings")
 import django
 django.setup()
 
+from django.db import transaction
 from django.contrib.auth.models import User
 from api.models import Notebook, Note, Task
 
@@ -58,21 +59,22 @@ class Populator(threading.Thread):
         super(Populator, self).__init__(*args, **kwargs)
 
     def run(self):
-        for _ in range(self.users):
-            user = create_user()
-            for _ in range(self.notebooks_per_user):
-                notebook = create_notebook(user)
-                for _ in range(self.notes_per_notebook):
-                    create_note(notebook)
-            for _ in range(self.tasks_per_user):
-                create_task(user)
-            with self.added_users_lock:
-                self.__class__.added_users += 1
-                added_users = self.__class__.added_users
-                print "Added %d users, %d notebooks, %d notes, %d tasks" % \
-                      (added_users, added_users * self.notebooks_per_user,
-                       added_users * self.notebooks_per_user * self.notes_per_notebook,
-                       added_users * self.tasks_per_user)
+        with transaction.atomic():
+            for _ in range(self.users):
+                user = create_user()
+                for _ in range(self.notebooks_per_user):
+                    notebook = create_notebook(user)
+                    for _ in range(self.notes_per_notebook):
+                        create_note(notebook)
+                for _ in range(self.tasks_per_user):
+                    create_task(user)
+                with self.added_users_lock:
+                    self.__class__.added_users += 1
+                    added_users = self.__class__.added_users
+                    print "Added %d users, %d notebooks, %d notes, %d tasks" % \
+                          (added_users, added_users * self.notebooks_per_user,
+                           added_users * self.notebooks_per_user * self.notes_per_notebook,
+                           added_users * self.tasks_per_user)
 
 
 def main():
@@ -81,6 +83,7 @@ def main():
     notebooks_per_user = int(sys.argv[3]) if len(sys.argv) > 3 else DEFAULT_NOTEBOOKS_PER_USER
     notes_per_notebook = int(sys.argv[4]) if len(sys.argv) > 4 else DEFAULT_NOTES_PER_NOTEBOOK
     tasks_per_user = int(sys.argv[5]) if len(sys.argv) > 5 else DEFAULT_TASKS_PER_USER
+
     threads = [Populator(users_per_thread, notebooks_per_user, notes_per_notebook, tasks_per_user) for _ in range(nthreads)]
     for thread in threads:
         thread.start()
