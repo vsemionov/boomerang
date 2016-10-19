@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from rest_framework_nested import relations
 
 from .models import Notebook, Note, Task
 
