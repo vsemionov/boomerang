@@ -8,7 +8,7 @@ from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
 from .models import Notebook, Note, Task
-from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, TaskSerializer
+import serializers
 
 
 class NestedObjectPermissions(permissions.BasePermission):
@@ -28,7 +28,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
                 return True
 
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = serializers.UserSerializer
     permission_classes = (permissions.IsAuthenticated, Permissions)
 
     def get_queryset(self):
@@ -37,10 +37,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             return User.objects.filter(id=self.request.user.id)
 
+    def get_serializer_class(self):
+        return serializers.get_dynamic_user_serializer()
+
 
 class NotebookViewSet(viewsets.ModelViewSet):
     queryset = Notebook.objects.all()
-    serializer_class = NotebookSerializer
+    serializer_class = serializers.NotebookSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
@@ -49,10 +52,13 @@ class NotebookViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def get_serializer_class(self):
+        return serializers.get_dynamic_notebook_serializer(self.kwargs)
+
 
 class NoteViewSet(viewsets.ModelViewSet):
     queryset = Note.objects.all()
-    serializer_class = NoteSerializer
+    serializer_class = serializers.NoteSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
@@ -71,10 +77,13 @@ class NoteViewSet(viewsets.ModelViewSet):
         notebook = self.get_notebook()
         serializer.save(notebook=notebook)
 
+    def get_serializer_class(self):
+        return serializers.get_dynamic_note_serializer(self.kwargs)
+
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
-    serializer_class = TaskSerializer
+    serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
@@ -82,6 +91,9 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_serializer_class(self):
+        return serializers.get_dynamic_task_serializer(self.kwargs)
 
 
 class InfoViewSet(mixins.ListModelMixin,
