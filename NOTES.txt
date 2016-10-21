@@ -1,0 +1,2 @@
+bug: GET <note-detail> returns 500 when <notebook_pk> is not an int
+identify users in urls and serializers username and other objects by uuid (without dashes)
