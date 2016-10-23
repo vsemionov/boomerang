@@ -110,6 +110,6 @@ class InfoViewSet(mixins.ListModelMixin,
 
     def list(self, request, *args, **kwargs):
         app = OrderedDict((('name', apps.APP_NAME), ('version', apps.APP_VERSION)))
-        user = OrderedDict((('id', request.user.id), ('url', self._get_user_url(request))))
+        user = OrderedDict((('username', request.user.username), ('url', self._get_user_url(request))))
         info = OrderedDict((('app', app), ('user', user)))
         return response.Response(info)
