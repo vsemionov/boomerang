@@ -44,7 +44,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NotebookViewSet(viewsets.ModelViewSet):
-    lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
@@ -60,18 +59,17 @@ class NotebookViewSet(viewsets.ModelViewSet):
 
 
 class NoteViewSet(viewsets.ModelViewSet):
-    lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
-                                   notebook_id=self.kwargs['notebook_ext_id'])
+                                   notebook_id=self.kwargs['notebook_pk'])
 
     def get_notebook(self):
         notebook = get_object_or_404(Notebook.objects.all(),
-                                     ext_id=self.kwargs['notebook_ext_id'], user_id=self.kwargs['user_username'])
+                                     id=self.kwargs['notebook_pk'], user_id=self.kwargs['user_username'])
         return notebook
 
     def list(self, request, *args, **kwargs):
@@ -87,7 +85,6 @@ class NoteViewSet(viewsets.ModelViewSet):
 
 
 class TaskViewSet(viewsets.ModelViewSet):
-    lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
