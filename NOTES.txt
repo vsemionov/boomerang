@@ -1,1 +1,1 @@
-bug: GET <note-detail> returns 500 when <notebook_pk> is not an int
+uuids without dashes
