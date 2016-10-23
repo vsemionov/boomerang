@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import uuid
 from django.db import models
 
 # Create your models here.
@@ -8,7 +9,8 @@ MAX_NAME_SIZE = 128
 
 
 class Notebook(models.Model):
-    user = models.ForeignKey("auth.User")
+    ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
+    user = models.ForeignKey('auth.User', to_field='username')
     name = models.CharField(max_length=MAX_NAME_SIZE)
 
     def __unicode__(self):
@@ -16,7 +18,8 @@ class Notebook(models.Model):
 
 
 class Note(models.Model):
-    notebook = models.ForeignKey(Notebook)
+    ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
+    notebook = models.ForeignKey(Notebook, to_field='ext_id')
     title = models.CharField(max_length=MAX_NAME_SIZE)
     text = models.TextField()
 
@@ -25,7 +28,8 @@ class Note(models.Model):
 
 
 class Task(models.Model):
-    user = models.ForeignKey("auth.User")
+    ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
+    user = models.ForeignKey('auth.User', to_field='username')
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)
     description = models.TextField(null=True)

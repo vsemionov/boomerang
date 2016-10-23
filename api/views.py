@@ -14,7 +14,7 @@ import serializers
 
 class NestedObjectPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
-        return str(request.user.id) == view.kwargs['user_pk'] or \
+        return str(request.user.username) == view.kwargs['user_username'] or \
                (request.user.is_staff and request.method in permissions.SAFE_METHODS)
 
 
@@ -22,12 +22,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     class Permissions(permissions.BasePermission):
         def has_permission(self, request, view):
             if view.action == 'retrieve':
-                return str(request.user.id) == view.kwargs['pk'] or \
+                return str(request.user.username) == view.kwargs['username'] or \
                        (request.user.is_staff and request.method in permissions.SAFE_METHODS)
             else:
                 # list
                 return True
 
+    lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = (permissions.IsAuthenticated, Permissions)
@@ -43,12 +44,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class NotebookViewSet(viewsets.ModelViewSet):
+    lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
-        return Notebook.objects.filter(user_id=self.kwargs['user_pk'])
+        return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -58,16 +60,18 @@ class NotebookViewSet(viewsets.ModelViewSet):
 
 
 class NoteViewSet(viewsets.ModelViewSet):
+    lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
-        return Note.objects.filter(notebook__user_id=self.kwargs['user_pk'], notebook_id=self.kwargs['notebook_pk'])
+        return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
+                                   notebook_id=self.kwargs['notebook_ext_id'])
 
     def get_notebook(self):
         notebook = get_object_or_404(Notebook.objects.all(),
-                                     id=self.kwargs['notebook_pk'], user_id=self.kwargs['user_pk'])
+                                     ext_id=self.kwargs['notebook_ext_id'], user_id=self.kwargs['user_username'])
         return notebook
 
     def list(self, request, *args, **kwargs):
@@ -83,12 +87,13 @@ class NoteViewSet(viewsets.ModelViewSet):
 
 
 class TaskViewSet(viewsets.ModelViewSet):
+    lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
     def get_queryset(self):
-        return Task.objects.filter(user_id=self.kwargs['user_pk'])
+        return Task.objects.filter(user_id=self.kwargs['user_username'])
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -101,7 +106,7 @@ class InfoViewSet(mixins.ListModelMixin,
                   viewsets.GenericViewSet):
     @staticmethod
     def _get_user_url(request):
-        return request.user.id and reverse.reverse('user-detail', request=request, args=[request.user.id])
+        return request.user.id and reverse.reverse('user-detail', request=request, args=[request.user.username])
 
     def list(self, request, *args, **kwargs):
         app = OrderedDict((('name', apps.APP_NAME), ('version', apps.APP_VERSION)))
