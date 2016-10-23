@@ -105,6 +105,8 @@
     "fields": {
         "ext_id": "831e0cb8-86d3-4a7a-a165-02c0e804ae96",
         "user": "vsemionov",
+        "created": "2016-10-24T00:00:00.000Z",
+        "updated": "2016-10-24T00:00:00.000Z",
         "name": "test"
     }
 },
@@ -114,6 +116,8 @@
     "fields": {
         "ext_id": "c1a865ed-b74f-49c0-9576-e453a1eda8d7",
         "user": "vsemionov",
+        "created": "2016-10-24T00:01:00.000Z",
+        "updated": "2016-10-24T00:01:00.000Z",
         "done": false,
         "title": "test",
         "description": "test"
@@ -125,6 +129,8 @@
     "fields": {
         "ext_id": "89462947-b92a-439a-ac0f-307aeac76d5c",
         "notebook": "831e0cb8-86d3-4a7a-a165-02c0e804ae96",
+        "created": "2016-10-24T00:02:00.000Z",
+        "updated": "2016-10-24T00:02:00.000Z",
         "title": "test",
         "text": "test"
     }
