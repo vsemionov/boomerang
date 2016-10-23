@@ -4,6 +4,17 @@ from rest_framework import serializers
 from .models import Notebook, Note, Task
 
 
+class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def __init__(self, *args, **kwargs):
+        kwargs['pk_field'] = serializers.UUIDField(format='hex')
+        super(SecondaryKeyRelatedField, self).__init__(*args, **kwargs)
+
+    def to_representation(self, value):
+        if self.pk_field is not None:
+            return self.pk_field.to_representation(value.ext_id)
+        return value.ext_id
+
+
 class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, parent_lookup=None, *args, **kwargs):
         self.parent_lookup = parent_lookup or {}
@@ -20,8 +31,8 @@ class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    notebooks = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='notebook_set')
-    tasks = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='task_set')
+    notebooks = SecondaryKeyRelatedField(read_only=True, many=True, source='notebook_set')
+    tasks = SecondaryKeyRelatedField(read_only=True, many=True, source='task_set')
 
     class Meta:
         model = User
@@ -29,9 +40,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class NotebookSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(read_only=True, source='ext_id')
+    id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    notes = serializers.PrimaryKeyRelatedField(read_only=True, many=True, source='note_set')
+    notes = SecondaryKeyRelatedField(read_only=True, many=True, source='note_set')
 
     class Meta:
         model = Notebook
@@ -39,7 +50,7 @@ class NotebookSerializer(serializers.ModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(read_only=True, source='ext_id')
+    id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
     notebook = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -48,7 +59,7 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(read_only=True, source='ext_id')
+    id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:

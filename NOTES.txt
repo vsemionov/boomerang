@@ -1,2 +1,2 @@
-child relations return ext_id
+creation and modification timestamps
 uuids without dashes in urls
