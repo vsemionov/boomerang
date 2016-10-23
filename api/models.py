@@ -9,7 +9,7 @@ MAX_NAME_SIZE = 128
 
 
 class Notebook(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     user = models.ForeignKey('auth.User', to_field='username')
     name = models.CharField(max_length=MAX_NAME_SIZE)
 
@@ -18,8 +18,8 @@ class Notebook(models.Model):
 
 
 class Note(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    notebook = models.ForeignKey(Notebook)
+    ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
+    notebook = models.ForeignKey(Notebook, to_field='ext_id')
     title = models.CharField(max_length=MAX_NAME_SIZE)
     text = models.TextField()
 
@@ -28,7 +28,7 @@ class Note(models.Model):
 
 
 class Task(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     user = models.ForeignKey('auth.User', to_field='username')
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)

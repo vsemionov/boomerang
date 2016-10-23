@@ -101,16 +101,18 @@
 },
 {
     "model": "api.notebook",
-    "pk": "831e0cb8-86d3-4a7a-a165-02c0e804ae96",
+    "pk": 1,
     "fields": {
+        "ext_id": "831e0cb8-86d3-4a7a-a165-02c0e804ae96",
         "user": "vsemionov",
         "name": "test"
     }
 },
 {
     "model": "api.task",
-    "pk": "c1a865ed-b74f-49c0-9576-e453a1eda8d7",
+    "pk": 1,
     "fields": {
+        "ext_id": "c1a865ed-b74f-49c0-9576-e453a1eda8d7",
         "user": "vsemionov",
         "done": false,
         "title": "test",
@@ -119,8 +121,9 @@
 },
 {
     "model": "api.note",
-    "pk": "89462947-b92a-439a-ac0f-307aeac76d5c",
+    "pk": 1,
     "fields": {
+        "ext_id": "89462947-b92a-439a-ac0f-307aeac76d5c",
         "notebook": "831e0cb8-86d3-4a7a-a165-02c0e804ae96",
         "title": "test",
         "text": "test"

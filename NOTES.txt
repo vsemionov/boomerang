@@ -1,3 +1,2 @@
-uuid secondary key (ext_id)
 child relations return ext_id
 uuids without dashes in urls
