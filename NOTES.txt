@@ -1,2 +1,0 @@
-plural view names where appropriate (see rest_framework.views.get_view_description)
-set HTML_SELECT_CUTOFF to 100 (see django rest framework settings)?
