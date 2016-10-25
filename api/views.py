@@ -6,10 +6,31 @@ from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, permissions, response, reverse
+from rest_framework.utils import formatting
 
 import apps
 from .models import Notebook, Note, Task
 import serializers
+
+
+class ViewNameMixin(object):
+    view_name = None
+    view_name_suffix = True
+
+    def get_view_name(self):
+        name = self.view_name
+        if not name:
+            name = self.__class__.__name__
+            name = formatting.remove_trailing_string(name, 'View')
+            name = formatting.remove_trailing_string(name, 'ViewSet')
+            name = formatting.camelcase_to_spaces(name)
+
+        suffix = getattr(self, 'suffix', None)
+        if suffix:
+            if self.view_name_suffix:
+                name += ' ' + suffix
+
+        return name
 
 
 class NestedObjectPermissions(permissions.BasePermission):
@@ -102,8 +123,11 @@ class TaskViewSet(viewsets.ModelViewSet):
         return serializers.get_dynamic_task_serializer(self.kwargs)
 
 
-class InfoViewSet(mixins.ListModelMixin,
+class InfoViewSet(ViewNameMixin,
+                  mixins.ListModelMixin,
                   viewsets.GenericViewSet):
+    view_name_suffix = False
+
     @staticmethod
     def _get_user_url(request):
         return request.user.id and reverse.reverse('user-detail', request=request, args=[request.user.username])
