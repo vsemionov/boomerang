@@ -153,6 +153,10 @@ SITE_ID = 1
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'staticfiles'),
+]
+
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
@@ -174,6 +178,7 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 ACCOUNT_ADAPTER  = 'notes.auth.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'notes.auth.SocialAccountAdapter'
+ACCOUNT_LOGOUT_ON_GET = True
 
 # Email
 

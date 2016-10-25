@@ -1,0 +1,15 @@
+{% extends "rest_framework/base.html" %}
+
+{% block bootstrap_theme %}
+    <link rel="stylesheet" href="/static/default/bootstrap.min.css" type="text/css">
+{% endblock %}
+
+{% comment %}
+{% block bootstrap_navbar_variant %}{% endblock %}
+{% endcomment %}
+
+{% block branding %}
+    <a class='navbar-brand' rel="nofollow" href='{% url 'index' %}'>
+        Notes
+    </a>
+{% endblock %}
