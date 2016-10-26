@@ -1,4 +1,14 @@
-sync: design endpoints
+accept GET /api/users/<id>/notebooks/*/notes/
+
+advanced two-endpoint sync:
+ * accept GET /api/users/<id>/sync
+ * accept POST /api/users/<id>/sync; param since
+ * handle deletion without compromizing limits
+ * paginated pull response
+ * generate server uuids when new objects are pushed and return the uuids to the clients
+ * sync as many objects as possible without failing the whole batch on error
+ * during push, if the since parameter or the client's updated time is before the server's updated time, signal conflict
+ * set updated times to the client's value during push
 
 ui:
  * django messages framework, add messages to api template

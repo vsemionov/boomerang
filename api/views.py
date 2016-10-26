@@ -10,13 +10,7 @@ from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
 from .models import Notebook, Note, Task
-import serializers, limits
-
-
-class NestedObjectPermissions(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return str(request.user.username) == view.kwargs['user_username'] or \
-               (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+import serializers, permissions, limits
 
 
 class SyncedModelMixin(object):
@@ -47,19 +41,10 @@ class SyncedModelMixin(object):
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    class Permissions(permissions.BasePermission):
-        def has_permission(self, request, view):
-            if view.action == 'retrieve':
-                return str(request.user.username) == view.kwargs['username'] or \
-                       (request.user.is_staff and request.method in permissions.SAFE_METHODS)
-            else:
-                # list
-                return True
-
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
-    permission_classes = (permissions.IsAuthenticated, Permissions)
+    permission_classes = permissions.user_permissions
 
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -76,7 +61,7 @@ class NotebookViewSet(SyncedModelMixin,
     lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
-    permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
+    permission_classes = permissions.nested_permissions
 
     def _get_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
@@ -95,7 +80,7 @@ class NoteViewSet(SyncedModelMixin,
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
-    permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
+    permission_classes = permissions.nested_permissions
 
     def _get_queryset(self):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
@@ -124,7 +109,7 @@ class TaskViewSet(SyncedModelMixin,
     lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
-    permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
+    permission_classes = permissions.nested_permissions
 
     def _get_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
