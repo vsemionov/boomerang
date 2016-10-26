@@ -136,6 +136,24 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+# Email
+
+ADMIN_NAME = 'Notes Admin'
+SERVER_EMAIL = 'vsemionov.notes@gmail.com'
+DEFAULT_FROM_EMAIL = '%s <%s>' % (ADMIN_NAME, SERVER_EMAIL)
+
+EMAIL_HOST_USER = 'vsemionov.notes@gmail.com'
+EMAIL_HOST_PASSWORD = 'noteslow'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+ADMINS = (
+    (ADMIN_NAME, SERVER_EMAIL),
+)
+MANAGERS = ADMINS
+
 # custom settings
 
 if DEBUG:
@@ -202,21 +220,3 @@ SOCIALACCOUNT_ADAPTER = 'notes.auth.SocialAccountAdapter'
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 30
-
-# Email
-
-ADMIN_NAME = 'Notes Admin'
-SERVER_EMAIL = 'vsemionov.notes@gmail.com'
-DEFAULT_FROM_EMAIL = '%s <%s>' % (ADMIN_NAME, SERVER_EMAIL)
-
-EMAIL_HOST_USER = 'vsemionov.notes@gmail.com'
-EMAIL_HOST_PASSWORD = 'noteslow'
-
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-ADMINS = (
-    (ADMIN_NAME, SERVER_EMAIL),
-)
-MANAGERS = ADMINS
