@@ -207,7 +207,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_THROTTLE_RATES': {
         'user': '120/min',
-        'host': '120/min',
+        # 'host': '120/min',
     },
 }
 if not DEBUG:
