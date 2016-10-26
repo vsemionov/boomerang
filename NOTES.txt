@@ -1,5 +1,4 @@
 throttling:
- * throttle by user and origin?
  * use non-default cache
 
 sync: design endpoints
