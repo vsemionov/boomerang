@@ -6,6 +6,7 @@ from django.db import models
 # Create your models here.
 
 MAX_NAME_SIZE = 128
+MAX_TEXT_SIZE = 32*1024
 
 
 class Notebook(models.Model):
@@ -29,7 +30,7 @@ class Note(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     title = models.CharField(max_length=MAX_NAME_SIZE)
-    text = models.TextField()
+    text = models.TextField(max_length=MAX_TEXT_SIZE)
 
     def __unicode__(self):
         return self.title
@@ -44,7 +45,7 @@ class Task(models.Model):
 
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)
-    description = models.TextField(null=True)
+    description = models.TextField(null=True, max_length=MAX_TEXT_SIZE)
 
     def __unicode__(self):
         return self.title
