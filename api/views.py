@@ -6,31 +6,10 @@ from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins, permissions, response, reverse
-from rest_framework.utils import formatting
 
 import apps
 from .models import Notebook, Note, Task
-import serializers
-
-
-class ViewNameMixin(object):
-    view_name = None
-    view_name_suffix = True
-
-    def get_view_name(self):
-        name = self.view_name
-        if not name:
-            name = self.__class__.__name__
-            name = formatting.remove_trailing_string(name, 'View')
-            name = formatting.remove_trailing_string(name, 'ViewSet')
-            name = formatting.camelcase_to_spaces(name)
-
-        suffix = getattr(self, 'suffix', None)
-        if suffix:
-            if self.view_name_suffix:
-                name += ' ' + suffix
-
-        return name
+import serializers, limits
 
 
 class NestedObjectPermissions(permissions.BasePermission):
@@ -73,11 +52,13 @@ class NotebookViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def get_serializer_class(self):
         return serializers.get_dynamic_notebook_serializer(self.kwargs)
+
+    def perform_create(self, serializer):
+        user = user=self.request.user
+        limits.check_limits(user, Notebook)
+        serializer.save(user=user)
 
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -95,16 +76,17 @@ class NoteViewSet(viewsets.ModelViewSet):
                                      ext_id=self.kwargs['notebook_ext_id'], user_id=self.kwargs['user_username'])
         return notebook
 
+    def get_serializer_class(self):
+        return serializers.get_dynamic_note_serializer(self.kwargs)
+
     def list(self, request, *args, **kwargs):
         self.get_notebook()
         return super(NoteViewSet, self).list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         notebook = self.get_notebook()
+        limits.check_limits(notebook, Note)
         serializer.save(notebook=notebook)
-
-    def get_serializer_class(self):
-        return serializers.get_dynamic_note_serializer(self.kwargs)
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -116,21 +98,25 @@ class TaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def get_serializer_class(self):
         return serializers.get_dynamic_task_serializer(self.kwargs)
 
+    def perform_create(self, serializer):
+        user = user=self.request.user
+        limits.check_limits(user, Task)
+        serializer.save(user=user)
 
-class InfoViewSet(ViewNameMixin,
-                  mixins.ListModelMixin,
+
+class InfoViewSet(mixins.ListModelMixin,
                   viewsets.GenericViewSet):
-    view_name_suffix = False
+    view_name = 'Info'
 
     @staticmethod
     def _get_user_url(request):
         return request.user.id and reverse.reverse('user-detail', request=request, args=[request.user.username])
+
+    def get_view_name(self):
+        return self.view_name
 
     def list(self, request, *args, **kwargs):
         app = OrderedDict((('name', apps.APP_NAME), ('version', apps.APP_VERSION)))
