@@ -167,16 +167,37 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_REDIRECT_URL = 'index'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'notes_cache',
+        'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 50*1000,
+        },
+    }
+}
+
 REST_FRAMEWORK = {
     'PAGE_SIZE': 25,
     'HTML_SELECT_CUTOFF': 50,
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.UserRateThrottle',
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '120/min',
+    },
 }
+if not DEBUG:
+    REST_FRAMEWORK.update({
+        'NUM_PROXIES': 1,
+    })
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
-ACCOUNT_ADAPTER  = 'notes.auth.AccountAdapter'
+ACCOUNT_ADAPTER = 'notes.auth.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'notes.auth.SocialAccountAdapter'
 ACCOUNT_LOGOUT_ON_GET = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True

@@ -1,0 +1,7 @@
+checklist:
+ * pull
+ * remove .pyc
+ * migrate
+ * populate?
+ * collectstatic
+ * createcachetable
