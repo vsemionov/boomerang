@@ -5,6 +5,7 @@
 from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
 from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
@@ -16,6 +17,33 @@ class NestedObjectPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         return str(request.user.username) == view.kwargs['user_username'] or \
                (request.user.is_staff and request.method in permissions.SAFE_METHODS)
+
+
+class SyncedModelMixin(object):
+    SINCE_PARAM = 'since'
+    UNTIL_PARAM = 'until'
+
+    def get_queryset(self):
+        queryset = self._get_queryset()
+
+        self.since = self.request.query_params.get(self.SINCE_PARAM)
+        if self.since:
+            queryset = queryset.filter(updated__gte=self.since)
+
+        self.until = self.request.query_params.get(self.UNTIL_PARAM, now())
+        if self.until:
+            queryset = queryset.filter(updated__lt=self.until)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        orig_response = super(SyncedModelMixin, self).list(request, *args, **kwargs)
+        orig_data = orig_response.data
+        assert isinstance(orig_data, OrderedDict)
+        data = OrderedDict(((self.SINCE_PARAM, self.since),
+                            (self.UNTIL_PARAM, self.until)))
+        data.update(orig_data)
+        return response.Response(data)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -43,13 +71,14 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return serializers.get_dynamic_user_serializer()
 
 
-class NotebookViewSet(viewsets.ModelViewSet):
+class NotebookViewSet(SyncedModelMixin,
+                      viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
-    def get_queryset(self):
+    def _get_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
     def get_serializer_class(self):
@@ -61,13 +90,14 @@ class NotebookViewSet(viewsets.ModelViewSet):
         serializer.save(user=user)
 
 
-class NoteViewSet(viewsets.ModelViewSet):
+class NoteViewSet(SyncedModelMixin,
+                  viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
-    def get_queryset(self):
+    def _get_queryset(self):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
                                    notebook_id=self.kwargs['notebook_ext_id'])
 
@@ -89,13 +119,14 @@ class NoteViewSet(viewsets.ModelViewSet):
         serializer.save(notebook=notebook)
 
 
-class TaskViewSet(viewsets.ModelViewSet):
+class TaskViewSet(SyncedModelMixin,
+                  viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = (permissions.IsAuthenticated, NestedObjectPermissions)
 
-    def get_queryset(self):
+    def _get_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
 
     def get_serializer_class(self):
