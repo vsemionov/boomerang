@@ -6,10 +6,10 @@ from .models import Notebook, Note, Task
 LIMITS = {
     User: {
         Notebook: 8,
-        Task: 128,
+        Task: 125,
     },
     Notebook: {
-        Note: 128,
+        Note: 250,
     },
 }
 
