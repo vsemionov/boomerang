@@ -1,6 +1,3 @@
-throttling:
- * use non-default cache
-
 sync: design endpoints
 
 ui:

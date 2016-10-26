@@ -187,8 +187,10 @@ LOGIN_REDIRECT_URL = 'index'
 
 CACHES = {
     'default': {
+    },
+    'api_throttle': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'notes_cache',
+        'LOCATION': 'cache_api_throttle',
         'TIMEOUT': 300,
         'OPTIONS': {
             'MAX_ENTRIES': 50*1000,
@@ -200,7 +202,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 25,
     'HTML_SELECT_CUTOFF': 50,
     'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.UserRateThrottle',
+        'notes.throttle.UserRateThrottle',
         'notes.throttle.HostRateThrottle',
     ),
     'DEFAULT_THROTTLE_RATES': {

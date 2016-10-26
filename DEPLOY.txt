@@ -1,7 +1,7 @@
 checklist:
- * pull
- * remove .pyc
- * migrate
- * populate?
- * collectstatic
- * createcachetable
+ * pull: git pull
+ * remove .pyc: find . -name \*.pyc -exec rm \{\} \;
+ * migrate: ./manage.py migrate
+ * populate: ./manage.py loaddata fixtures/init.json
+ * collectstatic: ./manage.py collectstatic
+ * createcachetable cache_api_throttle: ./manage.py createcachetable cache_api_throttle
