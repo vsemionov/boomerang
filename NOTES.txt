@@ -1,5 +1,6 @@
 throttling:
  * use non-default cache
+ * disable by default
 
 sync: design endpoints
 
