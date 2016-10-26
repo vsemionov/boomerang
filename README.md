@@ -19,14 +19,23 @@ A note-taking web application
 * api rate/size/count limits
 
 #### 0.4
-* web front end
+* synchronization API support
 
 #### 0.5
-* note/task search
+* search API support
 
 #### 0.6
-* android app
+* web front end
 
 #### 0.7
-* app offline mode
-* app data synchronization
+* note/task search in web app
+
+#### 0.8
+* android app
+
+#### 0.9
+* note/task search in mobile app
+
+#### 1.0
+* android app offline mode
+* android app data synchronization
