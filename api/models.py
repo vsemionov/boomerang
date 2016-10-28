@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 import uuid
 from django.db import models
-from django.utils import timezone
-
 
 # Create your models here.
 
@@ -15,10 +13,8 @@ class Notebook(models.Model):
     ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     user = models.ForeignKey('auth.User', to_field='username')
 
-    screated = models.DateTimeField(auto_now_add=True)
-    supdated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(default=timezone.now)
-    updated = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=MAX_NAME_SIZE)
 
@@ -30,10 +26,8 @@ class Note(models.Model):
     ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     notebook = models.ForeignKey(Notebook, to_field='ext_id')
 
-    screated = models.DateTimeField(auto_now_add=True)
-    supdated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(default=timezone.now)
-    updated = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     title = models.CharField(max_length=MAX_NAME_SIZE)
     text = models.TextField(max_length=MAX_TEXT_SIZE)
@@ -46,10 +40,8 @@ class Task(models.Model):
     ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     user = models.ForeignKey('auth.User', to_field='username')
 
-    screated = models.DateTimeField(auto_now_add=True)
-    supdated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(default=timezone.now)
-    updated = models.DateTimeField(default=timezone.now)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)

@@ -5,8 +5,8 @@
 from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.utils import timezone, dateparse
-from rest_framework import viewsets, mixins, permissions, exceptions, response, reverse
+from django.utils.timezone import now
+from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
 from .models import Notebook, Note, Task
@@ -22,11 +22,11 @@ class SyncedModelMixin(object):
 
         self.since = self.request.query_params.get(self.SINCE_PARAM)
         if self.since:
-            queryset = queryset.filter(supdated__gte=self.since)
+            queryset = queryset.filter(updated__gte=self.since)
 
-        self.until = self.request.query_params.get(self.UNTIL_PARAM, timezone.now())
+        self.until = self.request.query_params.get(self.UNTIL_PARAM, now())
         if self.until:
-            queryset = queryset.filter(supdated__lt=self.until)
+            queryset = queryset.filter(updated__lt=self.until)
 
         return queryset
 
@@ -38,15 +38,6 @@ class SyncedModelMixin(object):
                             (self.UNTIL_PARAM, self.until)))
         data.update(orig_data)
         return response.Response(data)
-
-    def perform_update(self, serializer):
-        if self.request.data.get('created'):
-            raise exceptions.ValidationError('can not modify the created timestamp')
-        req_updated_str = self.request.data.get('updated')
-        req_updated = dateparse.parse_datetime(req_updated_str) if req_updated_str else None
-        if req_updated and req_updated < serializer.instance.updated:
-            raise exceptions.ValidationError('can not rewind the updated timestamp')
-        serializer.save()
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
