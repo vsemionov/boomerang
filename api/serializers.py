@@ -54,7 +54,7 @@ class NotebookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notebook
-        fields = ('id', 'user', 'created', 'updated', 'name', 'notes')
+        fields = ('id', 'user', 'screated', 'supdated', 'created', 'updated', 'name', 'notes')
 
 
 class NoteSerializer(serializers.ModelSerializer):
@@ -63,7 +63,7 @@ class NoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Note
-        fields = ('id', 'notebook', 'created', 'updated', 'title', 'text')
+        fields = ('id', 'notebook', 'screated', 'supdated', 'created', 'updated', 'title', 'text')
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -72,7 +72,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ('id', 'user', 'created', 'updated', 'done', 'title', 'description')
+        fields = ('id', 'user', 'screated', 'supdated', 'created', 'updated', 'done', 'title', 'description')
 
 
 def get_dynamic_user_serializer():
