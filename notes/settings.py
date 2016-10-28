@@ -187,6 +187,7 @@ LOGIN_REDIRECT_URL = 'index'
 
 CACHES = {
     'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
     'api_throttle': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
