@@ -158,7 +158,10 @@ MANAGERS = ADMINS
 
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
-    MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
+    MIDDLEWARE = [
+                     'notes.profile.ProfileMiddleware',
+                     'debug_toolbar.middleware.DebugToolbarMiddleware',
+                 ] + MIDDLEWARE
 else:
     ALLOWED_HOSTS = ['vsemionov.pythonanywhere.com']
     SECURE_SSL_REDIRECT = True
