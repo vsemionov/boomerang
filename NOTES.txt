@@ -1,6 +1,9 @@
 accept GET /api/users/<id>/notebooks/*/notes/ (no)
+accept created and updated timestamps in write requests
 
 advanced two-request sync:
+see http://www.slideshare.net/MicheleOrselli/server-side-data-sync
+see https://www.youtube.com/watch?v=6h5vA9azdcE
  * accept GET /api/users/<id>/sync
  * accept POST /api/users/<id>/sync; param since
  * pass since in push (last pull)?
@@ -12,6 +15,9 @@ advanced two-request sync:
  * during push, if the last pull or the client's updated time is before the server's updated time, signal conflict
  * honor permissions and limits during push, and throttle more strictly
  * set updated times to the client's value during push
+
+advanced one-request sync:
+ * only POST /api/users/<id>/sync with client updates in request body and server updates in response body
 
 ui:
  * django messages framework, add messages to api template
