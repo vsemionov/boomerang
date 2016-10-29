@@ -230,4 +230,14 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 30
 
 
+API_LIMITS = {
+    'auth.User': {
+        'api.Notebook': 8,
+        'api.Task': 125,
+    },
+    'api.Notebook': {
+        'api.Note': 250,
+    },
+}
+
 API_DELETED_EXPIRY_DAYS = 30

@@ -1,17 +1,8 @@
-from django.contrib.auth.models import User
+from django.conf import settings
 from rest_framework import exceptions, status
-from .models import Notebook, Note, Task
 
 
-LIMITS = {
-    User: {
-        Notebook: 8,
-        Task: 125,
-    },
-    Notebook: {
-        Note: 250,
-    },
-}
+LIMITS = getattr(settings, 'API_LIMITS', {})
 
 
 class LimitExceededError(exceptions.APIException):
@@ -20,11 +11,11 @@ class LimitExceededError(exceptions.APIException):
 
 
 def check_limits(parent, child_type):
-    parent_limits = LIMITS.get(parent.__class__)
+    parent_limits = LIMITS.get(parent._meta.label)
     if not parent_limits:
         return
 
-    limit = parent_limits.get(child_type)
+    limit = parent_limits.get(child_type._meta.label)
     if limit is None:
         return
 
