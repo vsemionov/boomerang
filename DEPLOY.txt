@@ -1,5 +1,6 @@
 checklist:
  * pull: git pull
+ * requirements: pip install -r requirements.txt
  * remove .pyc: find . -name \*.pyc -exec rm \{\} \;
  * migrate: ./manage.py migrate
  * populate: ./manage.py loaddata fixtures/init.json
