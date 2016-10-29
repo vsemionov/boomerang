@@ -72,8 +72,10 @@ class SyncedModelMixin(object):
         self.at = self.get_timestamp(self.AT_PARAM)
         self.until = self.get_timestamp(self.UNTIL_PARAM)
 
-        if self.at and self.until:
-            raise exceptions.ValidationError("can not combine '%s' and '%s'" % self.exclusive_write_conditions)
+        multiple_write_conditions = [param for param in self.request.query_params
+                                     if param in self.exclusive_write_conditions]
+        if multiple_write_conditions:
+            raise exceptions.ValidationError("unsupported combination: " + ', '.join(multiple_write_conditions))
 
         unsupported_conditions = [param for param in self.request.query_params
                                   if param not in self.supported_write_conditions]
