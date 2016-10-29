@@ -2,7 +2,8 @@ checklist:
  * pull: git pull
  * requirements: pip install -r requirements.txt
  * remove .pyc: find . -name \*.pyc -exec rm \{\} \;
+ * collectstatic: ./manage.py collectstatic
  * migrate: ./manage.py migrate
  * populate: ./manage.py loaddata fixtures/init.json
- * collectstatic: ./manage.py collectstatic
  * createcachetable cache_api_throttle: ./manage.py createcachetable cache_api_throttle
+ * schedule maintenance: scripts/maintenance.sh
