@@ -5,8 +5,8 @@ from rest_framework import exceptions, status, response
 
 
 class ModifiedError(exceptions.APIException):
-    status_code = status.HTTP_412_PRECONDITION_FAILED
-    default_detail = 'write condition failed'
+    status_code = status.HTTP_409_CONFLICT
+    default_detail = 'conflict'
 
 
 class SyncedModelMixin(object):
