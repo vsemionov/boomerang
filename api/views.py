@@ -5,39 +5,85 @@
 from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
-from rest_framework import viewsets, mixins, permissions, response, reverse
+from django.utils import timezone, dateparse
+from rest_framework import viewsets, mixins, permissions, exceptions, status, response, reverse
 
 import apps
 from .models import Notebook, Note, Task
 import serializers, permissions, limits
 
 
+class ModifiedError(exceptions.APIException):
+    status_code = status.HTTP_412_PRECONDITION_FAILED
+    default_detail = 'precondition failed'
+
+
 class SyncedModelMixin(object):
+    AT_PARAM = 'at'
     SINCE_PARAM = 'since'
     UNTIL_PARAM = 'until'
 
+    def __init__(self, *args, **kwargs):
+        self.at = None
+        self.since = None
+        self.until = None
+        super(SyncedModelMixin, self).__init__(*args, **kwargs)
+
+    def get_timestamp(self, name, default=None):
+        timestamp_repr = self.request.query_params.get(name)
+
+        if timestamp_repr:
+            timestamp = dateparse.parse_datetime(timestamp_repr)
+            if timestamp is None:
+                raise exceptions.ValidationError({name: 'invalid timestamp format'})
+            if timestamp.tzinfo is None:
+                raise exceptions.ValidationError({name: 'timestamp without timezone'})
+        else:
+            timestamp = default
+
+        return timestamp
+
     def get_queryset(self):
-        queryset = self._get_queryset()
+        queryset = self.get_base_queryset()
 
-        self.since = self.request.query_params.get(self.SINCE_PARAM)
-        if self.since:
-            queryset = queryset.filter(updated__gte=self.since)
-
-        self.until = self.request.query_params.get(self.UNTIL_PARAM, timezone.now())
-        if self.until:
-            queryset = queryset.filter(updated__lt=self.until)
+        if self.action == 'list':
+            if self.since:
+                queryset = queryset.filter(updated__gte=self.since)
+            if self.until:
+                queryset = queryset.filter(updated__lt=self.until)
 
         return queryset
 
     def list(self, request, *args, **kwargs):
-        orig_response = super(SyncedModelMixin, self).list(request, *args, **kwargs)
-        orig_data = orig_response.data
-        assert isinstance(orig_data, OrderedDict)
+        self.since = self.get_timestamp(self.SINCE_PARAM)
+        self.until = self.get_timestamp(self.UNTIL_PARAM, timezone.now())
+
+        base_response = super(SyncedModelMixin, self).list(request, *args, **kwargs)
+        base_data = base_response.data
+        assert isinstance(base_data, OrderedDict)
+
         data = OrderedDict(((self.SINCE_PARAM, self.since),
                             (self.UNTIL_PARAM, self.until)))
-        data.update(orig_data)
+        data.update(base_data)
+
         return response.Response(data)
+
+    def perform_update(self, serializer):
+        if self.at and serializer.instance.updated != self.at:
+                raise ModifiedError('modified')
+        if self.until and serializer.instance.updated >= self.until:
+                raise ModifiedError('modified')
+
+        serializer.save()
+
+    def update(self, request, *args, **kwargs):
+        self.at = self.get_timestamp(self.AT_PARAM)
+        self.until = self.get_timestamp(self.UNTIL_PARAM)
+
+        if self.at and self.until:
+            raise exceptions.ValidationError("can not combine 'at and 'until'")
+
+        return super(SyncedModelMixin, self).update(request, *args, **kwargs)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -63,7 +109,7 @@ class NotebookViewSet(SyncedModelMixin,
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
 
-    def _get_queryset(self):
+    def get_base_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
     def get_serializer_class(self):
@@ -82,7 +128,7 @@ class NoteViewSet(SyncedModelMixin,
     serializer_class = serializers.NoteSerializer
     permission_classes = permissions.nested_permissions
 
-    def _get_queryset(self):
+    def get_base_queryset(self):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
                                    notebook_id=self.kwargs['notebook_ext_id'])
 
@@ -111,7 +157,7 @@ class TaskViewSet(SyncedModelMixin,
     serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
 
-    def _get_queryset(self):
+    def get_base_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
 
     def get_serializer_class(self):

@@ -1,6 +1,6 @@
 accept GET /api/users/<id>/notebooks/*/notes/ (no)
 
-conditional update (based on timestamp)
+TRANSACTIONAL conditional update, based on timestamp
 
 advanced two-request sync:
 see http://www.slideshare.net/MicheleOrselli/server-side-data-sync
