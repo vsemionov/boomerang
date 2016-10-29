@@ -1,5 +1,6 @@
 0.5:
  * postgresql trigram search (gist/gin index)
+ * tests
 
 ui:
  * django messages framework, add messages to api template
