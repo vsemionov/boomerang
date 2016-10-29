@@ -75,7 +75,8 @@ class SyncedModelMixin(object):
         if self.at and self.until:
             raise exceptions.ValidationError("can not combine '%s' and '%s'" % self.exclusive_write_conditions)
 
-        unsupported_conditions = [param for param in self.request.query_params if param not in self.supported_write_conditions]
+        unsupported_conditions = [param for param in self.request.query_params
+                                  if param not in self.supported_write_conditions]
         if unsupported_conditions:
             unsupported_condition = unsupported_conditions[0]
             raise exceptions.ValidationError({unsupported_condition: 'unsupported condition'})
