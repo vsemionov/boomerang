@@ -1,4 +1,5 @@
-soft deletion
+0.4:
+ * soft deletion
 
 ui:
  * django messages framework, add messages to api template
