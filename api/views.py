@@ -6,6 +6,7 @@ from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone, dateparse
+from django.db import transaction
 from rest_framework import viewsets, mixins, permissions, exceptions, status, response, reverse
 
 import apps
@@ -52,6 +53,9 @@ class SyncedModelMixin(object):
             if self.until:
                 queryset = queryset.filter(updated__lt=self.until)
 
+        if self.action in ('update', 'partial_update', 'destroy'):
+            queryset = queryset.select_for_update()
+
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -68,22 +72,36 @@ class SyncedModelMixin(object):
 
         return response.Response(data)
 
-    def perform_update(self, serializer):
-        if self.at and serializer.instance.updated != self.at:
-                raise ModifiedError('modified')
-        if self.until and serializer.instance.updated >= self.until:
-                raise ModifiedError('modified')
-
-        serializer.save()
-
-    def update(self, request, *args, **kwargs):
+    def init_write_conditions(self):
         self.at = self.get_timestamp(self.AT_PARAM)
         self.until = self.get_timestamp(self.UNTIL_PARAM)
 
         if self.at and self.until:
-            raise exceptions.ValidationError("can not combine 'at and 'until'")
+            raise exceptions.ValidationError("can not combine 'at' and 'until'")
 
+    def check_write_conditions(self, instance):
+        if self.at and instance.updated != self.at:
+                raise ModifiedError('modified')
+        if self.until and instance.updated >= self.until:
+                raise ModifiedError('modified')
+
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        self.init_write_conditions()
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
+
+    @transaction.atomic
+    def destroy(self, request, *args, **kwargs):
+        self.init_write_conditions()
+        return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        self.check_write_conditions(serializer.instance)
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        self.check_write_conditions(instance)
+        instance.delete()
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
