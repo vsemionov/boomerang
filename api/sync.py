@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from django.db import transaction
 from django.utils import timezone, dateparse
-from rest_framework import exceptions, status, response
+from rest_framework import decorators, exceptions, status, response
 
 
 class ConflictError(exceptions.APIException):
@@ -21,6 +21,7 @@ class SyncedModelMixin(object):
         self.at = None
         self.since = None
         self.until = None
+        self.deleted_parent = False
         super(SyncedModelMixin, self).__init__(*args, **kwargs)
 
     def get_timestamp(self, name, default=None):
@@ -43,7 +44,7 @@ class SyncedModelMixin(object):
     def get_queryset(self):
         queryset = self.get_base_queryset()
 
-        if self.action == 'list':
+        if self.action in ('list', 'deleted'):
             if self.since:
                 queryset = queryset.filter(updated__gte=self.since)
             if self.until:
@@ -51,6 +52,11 @@ class SyncedModelMixin(object):
 
         if self.action in ('update', 'partial_update', 'destroy'):
             queryset = queryset.select_for_update()
+
+        if self.action == 'deleted':
+            queryset = queryset.filter(deleted=True)
+        else:
+            queryset = queryset.filter(deleted=False)
 
         return queryset
 
@@ -89,13 +95,19 @@ class SyncedModelMixin(object):
         if self.until and instance.updated >= self.until:
                 raise ConflictError()
 
+    def create(self, request, *args, **kwargs):
+        self.deleted_parent = None
+        return super(SyncedModelMixin, self).create(request, *args, **kwargs)
+
     @transaction.atomic
     def update(self, request, *args, **kwargs):
+        self.deleted_parent = None
         self.init_write_conditions()
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
+        self.deleted_parent = None
         self.init_write_conditions()
         return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
 
@@ -105,4 +117,10 @@ class SyncedModelMixin(object):
 
     def perform_destroy(self, instance):
         self.check_write_conditions(instance)
-        instance.delete()
+        instance.deleted = True
+        instance.save()
+
+    @decorators.list_route()
+    def deleted(self, request, *args, **kwargs):
+        self.deleted_parent = None
+        return self.list(request, *args, **kwargs)

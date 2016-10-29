@@ -57,8 +57,14 @@ class NoteViewSet(sync.SyncedModelMixin,
                                    notebook_id=self.kwargs['notebook_ext_id'])
 
     def get_notebook(self):
+        filter_kwargs = {}
+        if self.deleted_parent is not None:
+            filter_kwargs['deleted'] = self.deleted_parent
+
         notebook = get_object_or_404(Notebook.objects.all(),
-                                     ext_id=self.kwargs['notebook_ext_id'], user_id=self.kwargs['user_username'])
+                                     user_id=self.kwargs['user_username'],
+                                     ext_id=self.kwargs['notebook_ext_id'],
+                                     **filter_kwargs)
         return notebook
 
     def get_serializer_class(self):
@@ -67,6 +73,10 @@ class NoteViewSet(sync.SyncedModelMixin,
     def list(self, request, *args, **kwargs):
         self.get_notebook()
         return super(NoteViewSet, self).list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        self.get_notebook()
+        return super(NoteViewSet, self).retrieve(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         notebook = self.get_notebook()

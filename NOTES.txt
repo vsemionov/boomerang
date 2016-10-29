@@ -1,7 +1,3 @@
-0.4:
- * soft deletion
- * 410 for deleted?
-
 ui:
  * django messages framework, add messages to api template
  * allauth templates

@@ -15,6 +15,7 @@ class Notebook(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
 
     name = models.CharField(max_length=MAX_NAME_SIZE)
 
@@ -28,6 +29,7 @@ class Note(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
 
     title = models.CharField(max_length=MAX_NAME_SIZE)
     text = models.TextField(max_length=MAX_TEXT_SIZE)
@@ -42,6 +44,7 @@ class Task(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    deleted = models.BooleanField(default=False)
 
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)
