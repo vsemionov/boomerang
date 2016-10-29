@@ -52,15 +52,20 @@ class NoteViewSet(sync.SyncedModelMixin,
     serializer_class = serializers.NoteSerializer
     permission_classes = permissions.nested_permissions
 
-    def get_base_queryset(self):
-        return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
-                                   notebook_id=self.kwargs['notebook_ext_id'])
-
-    def get_notebook(self):
+    def get_deleted_parent_filter_kwargs(self, name):
         filter_kwargs = {}
         if self.deleted_parent is not None:
-            filter_kwargs['deleted'] = self.deleted_parent
+            filter_kwargs[name] = self.deleted_parent
+        return filter_kwargs
 
+    def get_base_queryset(self):
+        filter_kwargs = self.get_deleted_parent_filter_kwargs('notebook__deleted')
+        return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
+                                   notebook_id=self.kwargs['notebook_ext_id'],
+                                   **filter_kwargs)
+
+    def get_notebook(self):
+        filter_kwargs = self.get_deleted_parent_filter_kwargs('deleted')
         notebook = get_object_or_404(Notebook.objects.all(),
                                      user_id=self.kwargs['user_username'],
                                      ext_id=self.kwargs['notebook_ext_id'],
@@ -73,10 +78,6 @@ class NoteViewSet(sync.SyncedModelMixin,
     def list(self, request, *args, **kwargs):
         self.get_notebook()
         return super(NoteViewSet, self).list(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        self.get_notebook()
-        return super(NoteViewSet, self).retrieve(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         notebook = self.get_notebook()
