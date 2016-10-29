@@ -4,7 +4,7 @@ from django.utils import timezone, dateparse
 from rest_framework import exceptions, status, response
 
 
-class ModifiedError(exceptions.APIException):
+class ConflictError(exceptions.APIException):
     status_code = status.HTTP_409_CONFLICT
     default_detail = 'conflict'
 
@@ -72,10 +72,10 @@ class SyncedModelMixin(object):
         self.at = self.get_timestamp(self.AT_PARAM)
         self.until = self.get_timestamp(self.UNTIL_PARAM)
 
-        multiple_write_conditions = [param for param in self.request.query_params
-                                     if param in self.exclusive_write_conditions]
-        if multiple_write_conditions:
-            raise exceptions.ValidationError("unsupported combination: " + ', '.join(multiple_write_conditions))
+        exclusive_conditions = [param for param in self.request.query_params
+                                if param in self.exclusive_write_conditions]
+        if len(exclusive_conditions) > 1:
+            raise exceptions.ValidationError("unsupported combination: " + ', '.join(exclusive_conditions))
 
         unsupported_conditions = [param for param in self.request.query_params
                                   if param not in self.supported_write_conditions]
@@ -85,9 +85,9 @@ class SyncedModelMixin(object):
 
     def check_write_conditions(self, instance):
         if self.at and instance.updated != self.at:
-                raise ModifiedError('modified')
+                raise ConflictError()
         if self.until and instance.updated >= self.until:
-                raise ModifiedError('modified')
+                raise ConflictError()
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
