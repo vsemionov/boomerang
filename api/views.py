@@ -5,7 +5,7 @@
 from collections import OrderedDict
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from django.utils.timezone import now
+from django.utils import timezone
 from rest_framework import viewsets, mixins, permissions, response, reverse
 
 import apps
@@ -24,7 +24,7 @@ class SyncedModelMixin(object):
         if self.since:
             queryset = queryset.filter(updated__gte=self.since)
 
-        self.until = self.request.query_params.get(self.UNTIL_PARAM, now())
+        self.until = self.request.query_params.get(self.UNTIL_PARAM, timezone.now())
         if self.until:
             queryset = queryset.filter(updated__lt=self.until)
 
