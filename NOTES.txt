@@ -1,5 +1,3 @@
-sql query duplication in notebook detail
-
 0.4:
  * tests
 
