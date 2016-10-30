@@ -23,7 +23,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return User.objects.filter(id=self.request.user.id)
 
     def get_serializer_class(self):
-        return serializers.get_dynamic_user_serializer()
+        if self.action == 'deleted':
+            return self.serializer_class
+        else:
+            return serializers.get_dynamic_user_serializer()
 
 
 class NotebookViewSet(sync.SyncedModelViewSet):
@@ -35,8 +38,8 @@ class NotebookViewSet(sync.SyncedModelViewSet):
     def get_base_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
-    def get_serializer_class(self):
-        return serializers.get_dynamic_notebook_serializer(self.kwargs['user_username'])
+    def get_hyperlinked_serializer_class(self):
+        return serializers.get_hyperlinked_notebook_serializer_class(self.kwargs['user_username'])
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -70,9 +73,9 @@ class NoteViewSet(sync.SyncedModelViewSet):
                                      **filter_kwargs)
         return notebook
 
-    def get_serializer_class(self):
-        return serializers.get_dynamic_note_serializer(self.kwargs['user_username'],
-                                                       self.kwargs['notebook_ext_id'])
+    def get_hyperlinked_serializer_class(self):
+        return serializers.get_hyperlinked_note_serializer_class(self.kwargs['user_username'],
+                                                                 self.kwargs['notebook_ext_id'])
 
     def list(self, request, *args, **kwargs):
         self.get_notebook()
@@ -93,8 +96,8 @@ class TaskViewSet(sync.SyncedModelViewSet):
     def get_base_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
 
-    def get_serializer_class(self):
-        return serializers.get_dynamic_task_serializer(self.kwargs['user_username'])
+    def get_hyperlinked_serializer_class(self):
+        return serializers.get_hyperlinked_task_serializer_class(self.kwargs['user_username'])
 
     def perform_create(self, serializer):
         user = self.request.user

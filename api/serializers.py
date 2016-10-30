@@ -93,7 +93,7 @@ def get_dynamic_user_serializer():
     return DynamicUserSerializer
 
 
-def get_dynamic_notebook_serializer(user_username):
+def get_hyperlinked_notebook_serializer_class(user_username):
     class NotebookLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='notebook-detail',
                                                lookup_field='ext_id',
@@ -113,7 +113,7 @@ def get_dynamic_notebook_serializer(user_username):
     return DynamicNotebookSerializer
 
 
-def get_dynamic_note_serializer(user_username, notebook_ext_id):
+def get_hyperlinked_note_serializer_class(user_username, notebook_ext_id):
     class NoteLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='note-detail',
                                                lookup_field='ext_id',
@@ -132,7 +132,7 @@ def get_dynamic_note_serializer(user_username, notebook_ext_id):
     return DynamicNoteSerializer
 
 
-def get_dynamic_task_serializer(user_username):
+def get_hyperlinked_task_serializer_class(user_username):
     class TaskLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='task-detail',
                                                lookup_field='ext_id',

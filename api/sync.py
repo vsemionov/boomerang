@@ -24,25 +24,17 @@ class SyncedModelViewSet(viewsets.ModelViewSet):
         self.deleted_parent = False
         super(SyncedModelViewSet, self).__init__(*args, **kwargs)
 
+    def get_hyperlinked_serializer_class(self):
+        raise NotImplementedError()
+
+    def get_serializer_class(self):
+        if self.action == 'deleted':
+            return self.serializer_class
+        else:
+            return self.get_hyperlinked_serializer_class()
+
     def get_base_queryset(self):
         return self.queryset
-
-    def get_timestamp(self, name, default=None):
-        timestamp_reprs = self.request.query_params.getlist(name)
-        if len(timestamp_reprs) > 1:
-            raise exceptions.ValidationError({name: 'multiple timestamp values'})
-
-        if timestamp_reprs:
-            timestamp_repr = timestamp_reprs[0]
-            timestamp = dateparse.parse_datetime(timestamp_repr)
-            if timestamp is None:
-                raise exceptions.ValidationError({name: 'invalid timestamp format'})
-            if timestamp.tzinfo is None:
-                raise exceptions.ValidationError({name: 'timestamp without timezone'})
-        else:
-            timestamp = default
-
-        return timestamp
 
     def get_queryset(self):
         queryset = self.get_base_queryset()
@@ -62,6 +54,23 @@ class SyncedModelViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(deleted=False)
 
         return queryset
+
+    def get_timestamp(self, name, default=None):
+        timestamp_reprs = self.request.query_params.getlist(name)
+        if len(timestamp_reprs) > 1:
+            raise exceptions.ValidationError({name: 'multiple timestamp values'})
+
+        if timestamp_reprs:
+            timestamp_repr = timestamp_reprs[0]
+            timestamp = dateparse.parse_datetime(timestamp_repr)
+            if timestamp is None:
+                raise exceptions.ValidationError({name: 'invalid timestamp format'})
+            if timestamp.tzinfo is None:
+                raise exceptions.ValidationError({name: 'timestamp without timezone'})
+        else:
+            timestamp = default
+
+        return timestamp
 
     def list(self, request, *args, **kwargs):
         self.since = self.get_timestamp(self.SINCE_PARAM)
