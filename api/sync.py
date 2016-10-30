@@ -14,6 +14,8 @@ class SyncedModelViewSet(viewsets.ModelViewSet):
     SINCE_PARAM = 'since'
     UNTIL_PARAM = 'until'
 
+    timeframed_actions = ()
+
     supported_write_conditions = (AT_PARAM, UNTIL_PARAM)
     exclusive_write_conditions = (AT_PARAM, UNTIL_PARAM)
 
@@ -39,7 +41,7 @@ class SyncedModelViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.get_base_queryset()
 
-        if self.action in ('list', 'deleted'):
+        if self.action in ('list', 'deleted') + self.timeframed_actions:
             if self.since:
                 queryset = queryset.filter(updated__gte=self.since)
             if self.until:
@@ -77,6 +79,10 @@ class SyncedModelViewSet(viewsets.ModelViewSet):
         self.until = self.get_timestamp(self.UNTIL_PARAM, timezone.now())
 
         base_response = super(SyncedModelViewSet, self).list(request, *args, **kwargs)
+
+        if self.action not in ('list', 'deleted') + self.timeframed_actions:
+            return base_response
+
         base_data = base_response.data
         assert isinstance(base_data, OrderedDict)
 

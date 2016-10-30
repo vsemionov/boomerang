@@ -4,10 +4,11 @@
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.db.models import Value
 from rest_framework import viewsets
 
 from .models import Notebook, Note, Task
-import serializers, permissions, limits, sync
+import serializers, permissions, limits, sync, search
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -87,11 +88,13 @@ class NoteViewSet(sync.SyncedModelViewSet):
         serializer.save(notebook=notebook)
 
 
-class TaskViewSet(sync.SyncedModelViewSet):
+class TaskViewSet(search.SearchableModelMixin,
+                  sync.SyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
+    full_text_vector = ('title', Value(' '), 'description')
 
     def get_base_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])

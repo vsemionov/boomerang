@@ -245,5 +245,5 @@ API_LIMITS = {
         'api.Note': 250,
     },
 }
-
 API_DELETED_EXPIRY_DAYS = 30
+API_SEARCH_USE_TRIGRAM = True
