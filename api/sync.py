@@ -78,7 +78,7 @@ class SyncedModelViewSet(viewsets.ModelViewSet):
 
         base_response = super(SyncedModelViewSet, self).list(request, *args, **kwargs)
         base_data = base_response.data
-        assert isinstance(base_data, OrderedDict)
+        assert isinstance(base_data, OrderedDict), 'unexpected response data type'
 
         data = OrderedDict(((self.SINCE_PARAM, self.since),
                             (self.UNTIL_PARAM, self.until)))

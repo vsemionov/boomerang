@@ -57,7 +57,7 @@ class SearchableModelMixin(object):
 
         base_response = super(SearchableModelMixin, self).list(request, *args, **kwargs)
         base_data = base_response.data
-        assert isinstance(base_data, OrderedDict)
+        assert isinstance(base_data, OrderedDict), 'unexpected response data type'
 
         data = OrderedDict(terms=self.terms)
         data.update(base_data)

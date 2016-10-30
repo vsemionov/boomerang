@@ -30,11 +30,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return serializers.get_dynamic_user_serializer()
 
 
-class NotebookViewSet(sync.SyncedModelViewSet):
+class NotebookViewSet(search.SearchableModelMixin,
+                      sync.SyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
+    full_text_vector = ('name', Value(' '))
 
     def get_base_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
@@ -48,11 +50,13 @@ class NotebookViewSet(sync.SyncedModelViewSet):
         serializer.save(user=user)
 
 
-class NoteViewSet(sync.SyncedModelViewSet):
+class NoteViewSet(search.SearchableModelMixin,
+                  sync.SyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
     permission_classes = permissions.nested_permissions
+    full_text_vector = ('title', Value(' '), 'text')
 
     def get_deleted_parent_filter_kwargs(self, name):
         filter_kwargs = {}

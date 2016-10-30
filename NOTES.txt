@@ -1,8 +1,10 @@
+sql query duplication in notebook detail
+
 0.4:
  * tests
 
 0.5:
- * postgresql trigram search (gist/gin index)
+ * search notes in all notebooks
 
 ui:
  * django messages framework, add messages to api template
