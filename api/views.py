@@ -11,6 +11,12 @@ from .models import Notebook, Note, Task
 import serializers, permissions, limits, sync, search
 
 
+class SearchableSyncedModelViewSet(search.SearchableModelMixin,
+                                   sync.SyncedModelMixin,
+                                   viewsets.ModelViewSet):
+    pass
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'username'
     queryset = User.objects.all()
@@ -30,8 +36,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return serializers.get_dynamic_user_serializer()
 
 
-class NotebookViewSet(search.SearchableModelMixin,
-                      sync.SyncedModelViewSet):
+class NotebookViewSet(SearchableSyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
@@ -50,8 +55,7 @@ class NotebookViewSet(search.SearchableModelMixin,
         serializer.save(user=user)
 
 
-class NoteViewSet(search.SearchableModelMixin,
-                  sync.SyncedModelViewSet):
+class NoteViewSet(SearchableSyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
@@ -92,8 +96,7 @@ class NoteViewSet(search.SearchableModelMixin,
         serializer.save(notebook=notebook)
 
 
-class TaskViewSet(search.SearchableModelMixin,
-                  sync.SyncedModelViewSet):
+class TaskViewSet(SearchableSyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
