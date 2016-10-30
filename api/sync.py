@@ -34,7 +34,12 @@ class SyncedModelMixin(object):
             return self.get_hyperlinked_serializer_class()
 
     def get_queryset(self):
-        queryset = self.get_base_queryset()
+        super_proxy = super(SyncedModelMixin, self)
+        if hasattr(super_proxy, 'get_base_queryset'):
+            proxy = super_proxy
+        else:
+            proxy = self
+        queryset = proxy.get_base_queryset()
 
         if self.action in ('list', 'deleted'):
             if self.since:
@@ -51,6 +56,8 @@ class SyncedModelMixin(object):
             queryset = queryset.filter(deleted=False)
 
         return queryset
+
+    get_base_queryset = get_queryset
 
     def get_timestamp(self, name, default=None):
         timestamp_reprs = self.request.query_params.getlist(name)

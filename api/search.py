@@ -40,7 +40,12 @@ class SearchableModelMixin(object):
         return queryset
 
     def get_queryset(self):
-        queryset = super(SearchableModelMixin, self).get_queryset()
+        super_proxy = super(SearchableModelMixin, self)
+        if hasattr(super_proxy, 'get_base_queryset'):
+            proxy = super_proxy
+        else:
+            proxy = self
+        queryset = proxy.get_base_queryset()
 
         if self.action != 'list' or not self.terms:
             return queryset
@@ -50,6 +55,8 @@ class SearchableModelMixin(object):
         queryset = self.search_queryset(queryset, terms)
 
         return queryset
+
+    get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
         qterms = self.request.query_params.getlist(self.SEARCH_PARAM)
