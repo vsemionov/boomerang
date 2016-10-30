@@ -36,7 +36,7 @@ class NotebookViewSet(sync.SyncedModelViewSet):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
     def get_serializer_class(self):
-        return serializers.get_dynamic_notebook_serializer(self.kwargs)
+        return serializers.get_dynamic_notebook_serializer(self.kwargs['user_username'])
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -71,7 +71,8 @@ class NoteViewSet(sync.SyncedModelViewSet):
         return notebook
 
     def get_serializer_class(self):
-        return serializers.get_dynamic_note_serializer(self.kwargs)
+        return serializers.get_dynamic_note_serializer(self.kwargs['user_username'],
+                                                       self.kwargs['notebook_ext_id'])
 
     def list(self, request, *args, **kwargs):
         self.get_notebook()
@@ -93,7 +94,7 @@ class TaskViewSet(sync.SyncedModelViewSet):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
 
     def get_serializer_class(self):
-        return serializers.get_dynamic_task_serializer(self.kwargs)
+        return serializers.get_dynamic_task_serializer(self.kwargs['user_username'])
 
     def perform_create(self, serializer):
         user = self.request.user

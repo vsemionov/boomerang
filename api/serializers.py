@@ -93,16 +93,16 @@ def get_dynamic_user_serializer():
     return DynamicUserSerializer
 
 
-def get_dynamic_notebook_serializer(view_kwargs):
+def get_dynamic_notebook_serializer(user_username):
     class NotebookLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='notebook-detail',
                                                lookup_field='ext_id',
-                                               parent_lookup=dict(user_username=view_kwargs['user_username']))
+                                               parent_lookup=dict(user_username=user_username))
         user = DynamicHyperlinkedIdentityField(view_name='user-detail',
                                                lookup_url_kwarg='username', lookup_field='user_id')
         notes = DynamicHyperlinkedIdentityField(view_name='note-list',
                                                 lookup_url_kwarg='notebook_ext_id', lookup_field='ext_id',
-                                                parent_lookup=dict(user_username=view_kwargs['user_username']))
+                                                parent_lookup=dict(user_username=user_username))
 
     class DynamicNotebookSerializer(NotebookSerializer):
         links = NotebookLinksSerializer(read_only=True, source='*')
@@ -113,15 +113,15 @@ def get_dynamic_notebook_serializer(view_kwargs):
     return DynamicNotebookSerializer
 
 
-def get_dynamic_note_serializer(view_kwargs):
+def get_dynamic_note_serializer(user_username, notebook_ext_id):
     class NoteLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='note-detail',
                                                lookup_field='ext_id',
-                                               parent_lookup=dict(user_username=view_kwargs['user_username'],
-                                                                  notebook_ext_id=view_kwargs['notebook_ext_id']))
+                                               parent_lookup=dict(user_username=user_username,
+                                                                  notebook_ext_id=notebook_ext_id))
         notebook = DynamicHyperlinkedIdentityField(view_name='notebook-detail',
                                                    lookup_url_kwarg='ext_id', lookup_field='notebook_id',
-                                                   parent_lookup=dict(user_username=view_kwargs['user_username']))
+                                                   parent_lookup=dict(user_username=user_username))
 
     class DynamicNoteSerializer(NoteSerializer):
         links = NoteLinksSerializer(read_only=True, source='*')
@@ -132,11 +132,11 @@ def get_dynamic_note_serializer(view_kwargs):
     return DynamicNoteSerializer
 
 
-def get_dynamic_task_serializer(view_kwargs):
+def get_dynamic_task_serializer(user_username):
     class TaskLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='task-detail',
                                                lookup_field='ext_id',
-                                               parent_lookup=dict(user_username=view_kwargs['user_username']))
+                                               parent_lookup=dict(user_username=user_username))
         user = DynamicHyperlinkedIdentityField(view_name='user-detail',
                                                lookup_url_kwarg='username', lookup_field='user_id')
 
