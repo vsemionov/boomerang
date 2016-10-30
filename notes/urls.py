@@ -18,6 +18,7 @@ from django.contrib import admin
 
 from django.views.generic.base import RedirectView
 from allauth.account.views import login, logout
+from rest_framework.authtoken import views as authtoken_views
 from django.conf import settings
 
 
@@ -35,6 +36,7 @@ urlpatterns = [
     url(r'^auth/', include(auth_urls, namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^api-token-auth/', authtoken_views.obtain_auth_token),
 ]
 
 
