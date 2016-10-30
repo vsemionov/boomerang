@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from django.db import transaction
 from django.utils import timezone, dateparse
-from rest_framework import decorators, exceptions, status, response
+from rest_framework import viewsets, decorators, exceptions, status, response
 
 
 class ConflictError(exceptions.APIException):
@@ -9,7 +9,7 @@ class ConflictError(exceptions.APIException):
     default_detail = 'conflict'
 
 
-class SyncedModelMixin(object):
+class SyncedModelViewSet(viewsets.ModelViewSet):
     AT_PARAM = 'at'
     SINCE_PARAM = 'since'
     UNTIL_PARAM = 'until'
@@ -22,7 +22,10 @@ class SyncedModelMixin(object):
         self.since = None
         self.until = None
         self.deleted_parent = False
-        super(SyncedModelMixin, self).__init__(*args, **kwargs)
+        super(SyncedModelViewSet, self).__init__(*args, **kwargs)
+
+    def get_base_queryset(self):
+        return self.queryset
 
     def get_timestamp(self, name, default=None):
         timestamp_reprs = self.request.query_params.getlist(name)
@@ -64,7 +67,7 @@ class SyncedModelMixin(object):
         self.since = self.get_timestamp(self.SINCE_PARAM)
         self.until = self.get_timestamp(self.UNTIL_PARAM, timezone.now())
 
-        base_response = super(SyncedModelMixin, self).list(request, *args, **kwargs)
+        base_response = super(SyncedModelViewSet, self).list(request, *args, **kwargs)
         base_data = base_response.data
         assert isinstance(base_data, OrderedDict)
 
@@ -97,19 +100,19 @@ class SyncedModelMixin(object):
 
     def create(self, request, *args, **kwargs):
         self.deleted_parent = None
-        return super(SyncedModelMixin, self).create(request, *args, **kwargs)
+        return super(SyncedModelViewSet, self).create(request, *args, **kwargs)
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         self.deleted_parent = None
         self.init_write_conditions()
-        return super(SyncedModelMixin, self).update(request, *args, **kwargs)
+        return super(SyncedModelViewSet, self).update(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         self.deleted_parent = None
         self.init_write_conditions()
-        return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
+        return super(SyncedModelViewSet, self).destroy(request, *args, **kwargs)
 
     def perform_update(self, serializer):
         self.check_write_conditions(serializer.instance)

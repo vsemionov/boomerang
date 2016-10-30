@@ -22,5 +22,5 @@ def check_limits(parent, child_type):
     child_set_name = child_type._meta.verbose_name + '_set'
     child_set = getattr(parent, child_set_name)
     if child_set.count() >= limit:
-        raise LimitExceededError('exceeded limit of %d %s per %s' % \
+        raise LimitExceededError('exceeded limit of %d %s per %s' %
                                  (limit, child_type._meta.verbose_name_plural, parent._meta.verbose_name))

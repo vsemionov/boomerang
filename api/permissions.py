@@ -10,6 +10,7 @@ class UserPermissions(permissions.BasePermission):
             # list
             return True
 
+
 class NestedPermissions(permissions.BasePermission):
     def has_permission(self, request, view):
         return str(request.user.username) == view.kwargs['user_username'] or \

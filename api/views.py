@@ -26,8 +26,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return serializers.get_dynamic_user_serializer()
 
 
-class NotebookViewSet(sync.SyncedModelMixin,
-                      viewsets.ModelViewSet):
+class NotebookViewSet(sync.SyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
@@ -40,13 +39,12 @@ class NotebookViewSet(sync.SyncedModelMixin,
         return serializers.get_dynamic_notebook_serializer(self.kwargs)
 
     def perform_create(self, serializer):
-        user = user = self.request.user
+        user = self.request.user
         limits.check_limits(user, Notebook)
         serializer.save(user=user)
 
 
-class NoteViewSet(sync.SyncedModelMixin,
-                  viewsets.ModelViewSet):
+class NoteViewSet(sync.SyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
@@ -85,8 +83,7 @@ class NoteViewSet(sync.SyncedModelMixin,
         serializer.save(notebook=notebook)
 
 
-class TaskViewSet(sync.SyncedModelMixin,
-                  viewsets.ModelViewSet):
+class TaskViewSet(sync.SyncedModelViewSet):
     lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
@@ -99,6 +96,6 @@ class TaskViewSet(sync.SyncedModelMixin,
         return serializers.get_dynamic_task_serializer(self.kwargs)
 
     def perform_create(self, serializer):
-        user = user = self.request.user
+        user = self.request.user
         limits.check_limits(user, Task)
         serializer.save(user=user)
