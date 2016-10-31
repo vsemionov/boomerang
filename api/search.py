@@ -28,7 +28,7 @@ class SearchableModelMixin(ViewSetMixin):
     def search_trigram_similarity(self, queryset, terms):
         full_text_expr = self.get_full_text_expr()
         similarity = TrigramSimilarity(full_text_expr, terms)
-        return queryset.annotate(rank=similarity).order_by('-rank')
+        return queryset.annotate(rank=similarity).filter(rank__gt=0).order_by('-rank')
 
     def search_queryset(self, queryset, terms):
         if util.is_pgsql() and settings.API_SEARCH_USE_TRIGRAM:
