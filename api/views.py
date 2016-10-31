@@ -14,7 +14,15 @@ import serializers, permissions, limits, sync, search
 class SearchableSyncedModelViewSet(search.SearchableModelMixin,
                                    sync.SyncedModelMixin,
                                    viewsets.ModelViewSet):
-    pass
+
+    def get_hyperlinked_serializer_class(self):
+        raise NotImplementedError()
+
+    def get_serializer_class(self):
+        if self.action == 'deleted':
+            return self.serializer_class
+        else:
+            return self.get_hyperlinked_serializer_class()
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):

@@ -26,15 +26,6 @@ class SyncedModelMixin(ViewSetMixin):
         self.deleted_parent = False
         super(SyncedModelMixin, self).__init__(*args, **kwargs)
 
-    def get_hyperlinked_serializer_class(self):
-        raise NotImplementedError()
-
-    def get_serializer_class(self):
-        if self.action == 'deleted':
-            return self.serializer_class
-        else:
-            return self.get_hyperlinked_serializer_class()
-
     def get_queryset(self):
         queryset = self.get_chain_queryset(SyncedModelMixin)
 
