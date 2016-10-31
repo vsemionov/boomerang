@@ -3,13 +3,15 @@ from django.db import transaction
 from django.utils import timezone, dateparse
 from rest_framework import decorators, exceptions, status, response
 
+from mixins import ViewSetMixin
+
 
 class ConflictError(exceptions.APIException):
     status_code = status.HTTP_409_CONFLICT
     default_detail = 'conflict'
 
 
-class SyncedModelMixin(object):
+class SyncedModelMixin(ViewSetMixin):
     AT_PARAM = 'at'
     SINCE_PARAM = 'since'
     UNTIL_PARAM = 'until'
@@ -34,12 +36,7 @@ class SyncedModelMixin(object):
             return self.get_hyperlinked_serializer_class()
 
     def get_queryset(self):
-        super_proxy = super(SyncedModelMixin, self)
-        if hasattr(super_proxy, 'get_base_queryset'):
-            proxy = super_proxy
-        else:
-            proxy = self
-        queryset = proxy.get_base_queryset()
+        queryset = self.get_chain_queryset(SyncedModelMixin)
 
         if self.action in ('list', 'deleted'):
             if self.since:
@@ -80,15 +77,10 @@ class SyncedModelMixin(object):
         self.since = self.get_timestamp(self.SINCE_PARAM)
         self.until = self.get_timestamp(self.UNTIL_PARAM, timezone.now())
 
-        base_response = super(SyncedModelMixin, self).list(request, *args, **kwargs)
-        base_data = base_response.data
-        assert isinstance(base_data, OrderedDict), 'unexpected response data type'
-
         data = OrderedDict(((self.SINCE_PARAM, self.since),
                             (self.UNTIL_PARAM, self.until)))
-        data.update(base_data)
 
-        return response.Response(data)
+        return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
 
     def init_write_conditions(self):
         self.at = self.get_timestamp(self.AT_PARAM)

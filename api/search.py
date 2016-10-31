@@ -6,9 +6,10 @@ from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import response
 
 import util
+from mixins import ViewSetMixin
 
 
-class SearchableModelMixin(object):
+class SearchableModelMixin(ViewSetMixin):
     SEARCH_PARAM = 'q'
     full_text_vector = ()
 
@@ -40,12 +41,7 @@ class SearchableModelMixin(object):
         return queryset
 
     def get_queryset(self):
-        super_proxy = super(SearchableModelMixin, self)
-        if hasattr(super_proxy, 'get_base_queryset'):
-            proxy = super_proxy
-        else:
-            proxy = self
-        queryset = proxy.get_base_queryset()
+        queryset = self.get_chain_queryset(SearchableModelMixin)
 
         if self.action != 'list' or not self.terms:
             return queryset
@@ -59,14 +55,9 @@ class SearchableModelMixin(object):
     get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
-        qterms = self.request.query_params.getlist(self.SEARCH_PARAM)
-        self.terms = ' '.join(qterms) if qterms else None
-
-        base_response = super(SearchableModelMixin, self).list(request, *args, **kwargs)
-        base_data = base_response.data
-        assert isinstance(base_data, OrderedDict), 'unexpected response data type'
+        query_terms = self.request.query_params.getlist(self.SEARCH_PARAM)
+        self.terms = ' '.join(query_terms) if query_terms else None
 
         data = OrderedDict(terms=self.terms)
-        data.update(base_data)
 
-        return response.Response(data)
+        return self.decorated_base_list(SearchableModelMixin, data, request, *args, **kwargs)
