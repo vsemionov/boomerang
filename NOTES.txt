@@ -1,6 +1,3 @@
-0.4:
- * tests
-
 0.5:
  * search notes in all notebooks
   * add a notes endpoint to users (/uses/<username>/notes/, read-only)
@@ -8,6 +5,7 @@
   * pass a notebook wildcard
   * in the notes view, do not call get_notebook() and do not filter by notebook if its id is the wildcard
   * to support hyperlinked representations, change the notebook links serializer to lookup the notebook id from the instance
+ * tests
 
 ui:
  * django messages framework, add messages to api template
