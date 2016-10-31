@@ -1,4 +1,12 @@
+/.project
+/.pydevproject
+
 /.idea
+
 /db.sqlite3
-*.pyc
+
+/env
+
 /static
+
+*.pyc
