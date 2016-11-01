@@ -109,7 +109,6 @@ class SyncedModelMixin(ViewSetMixin):
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
-        self.deleted_object = True
         self.deleted_parent = None
         self.init_write_conditions()
         return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
@@ -125,5 +124,6 @@ class SyncedModelMixin(ViewSetMixin):
 
     @decorators.list_route()
     def deleted(self, request, *args, **kwargs):
+        self.deleted_object = True
         self.deleted_parent = None
         return self.list(request, *args, **kwargs)
