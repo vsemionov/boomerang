@@ -19,7 +19,7 @@ class SearchableSyncedModelViewSet(search.SearchableModelMixin,
         raise NotImplementedError()
 
     def get_serializer_class(self):
-        if self.action == 'deleted':
+        if self.deleted_object:
             return self.serializer_class
         else:
             return self.get_hyperlinked_serializer_class()
@@ -36,12 +36,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
             return self.queryset
         else:
             return User.objects.filter(id=self.request.user.id)
-
-    def get_serializer_class(self):
-        if self.action == 'deleted':
-            return self.serializer_class
-        else:
-            return serializers.get_dynamic_user_serializer()
 
 
 class NotebookViewSet(SearchableSyncedModelViewSet):

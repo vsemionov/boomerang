@@ -3,7 +3,6 @@ from django.conf import settings
 from django.db.models import TextField
 from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
-from rest_framework import response
 
 import util
 from mixins import ViewSetMixin
@@ -43,12 +42,8 @@ class SearchableModelMixin(ViewSetMixin):
     def get_queryset(self):
         queryset = self.get_chain_queryset(SearchableModelMixin)
 
-        if self.action != 'list' or not self.terms:
-            return queryset
-
-        terms = ' '.join(self.request.query_params.getlist(self.SEARCH_PARAM))
-
-        queryset = self.search_queryset(queryset, terms)
+        if self.terms:
+            queryset = self.search_queryset(queryset, self.terms)
 
         return queryset
 

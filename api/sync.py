@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from django.db import transaction
 from django.utils import timezone, dateparse
-from rest_framework import decorators, exceptions, status, response
+from rest_framework import decorators, exceptions, status
 
 from mixins import ViewSetMixin
 
@@ -23,22 +23,23 @@ class SyncedModelMixin(ViewSetMixin):
         self.at = None
         self.since = None
         self.until = None
+        self.atomic = False
+        self.deleted_object = False
         self.deleted_parent = False
         super(SyncedModelMixin, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         queryset = self.get_chain_queryset(SyncedModelMixin)
 
-        if self.action in ('list', 'deleted'):
-            if self.since:
-                queryset = queryset.filter(updated__gte=self.since)
-            if self.until:
-                queryset = queryset.filter(updated__lt=self.until)
+        if self.since:
+            queryset = queryset.filter(updated__gte=self.since)
+        if self.until:
+            queryset = queryset.filter(updated__lt=self.until)
 
-        if self.action in ('update', 'partial_update', 'destroy'):
+        if self.atomic:
             queryset = queryset.select_for_update()
 
-        if self.action == 'deleted':
+        if self.deleted_object:
             queryset = queryset.filter(deleted=True)
         else:
             queryset = queryset.filter(deleted=False)
@@ -100,12 +101,15 @@ class SyncedModelMixin(ViewSetMixin):
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
+        self.atomic = True
         self.deleted_parent = None
         self.init_write_conditions()
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
+        self.atomic = True
+        self.deleted_object = True
         self.deleted_parent = None
         self.init_write_conditions()
         return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
