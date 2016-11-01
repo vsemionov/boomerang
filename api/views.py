@@ -5,15 +5,18 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Value
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Notebook, Note, Task
+from .filters import NotebookFilter, NoteFilter, TaskFilter
 import serializers, permissions, limits, sync, search
 
 
 class SearchableSyncedModelViewSet(search.SearchableModelMixin,
                                    sync.SyncedModelMixin,
                                    viewsets.ModelViewSet):
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend, filters.OrderingFilter)
 
     def get_hyperlinked_serializer_class(self):
         raise NotImplementedError()
@@ -46,7 +49,12 @@ class NotebookViewSet(SearchableSyncedModelViewSet):
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
+
     full_text_vector = ('name', Value(' '))
+
+    filter_class = NotebookFilter
+    search_fields = ('name')
+    ordering_fields = ('created', 'updated', 'name')
 
     def get_base_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
@@ -65,7 +73,12 @@ class NoteViewSet(SearchableSyncedModelViewSet):
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
     permission_classes = permissions.nested_permissions
+
     full_text_vector = ('title', Value(' '), 'text')
+
+    filter_class = NoteFilter
+    search_fields = ('title', 'text')
+    ordering_fields = ('created', 'updated', 'title')
 
     def get_deleted_parent_filter_kwargs(self, name):
         filter_kwargs = {}
@@ -106,7 +119,12 @@ class TaskViewSet(SearchableSyncedModelViewSet):
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
+
     full_text_vector = ('title', Value(' '), 'description')
+
+    filter_class = TaskFilter
+    search_fields = ('title', 'description')
+    ordering_fields = ('created', 'updated', 'done', 'title')
 
     def get_base_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
