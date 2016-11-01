@@ -37,6 +37,9 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             return User.objects.filter(id=self.request.user.id)
 
+    def get_serializer_class(self):
+        return serializers.get_dynamic_user_serializer()
+
 
 class NotebookViewSet(SearchableSyncedModelViewSet):
     lookup_field = 'ext_id'
