@@ -1,13 +1,12 @@
 0.5:
  * configurable page size with limited max value
- * check if search terms or page size params will be considered unsupported write conditions
- * refactor user permissions - first check for list action (with a comment that filtering will do the rest), and else all others
  * search notes in all notebooks
   * add a notes endpoint to users (/uses/<username>/notes/, read-only)
   * from there, call the notes view with resolve(reverse(view_name))
   * pass a notebook wildcard
   * in the notes view, do not call get_notebook() and do not filter by notebook if its id is the wildcard
   * to support hyperlinked representations, change the notebook links serializer to lookup the notebook id from the instance
+ * evaluate the replacement of sync mixins with filter backends
  * open-source mixins
  * tests
 
