@@ -5,7 +5,7 @@
   * pass a notebook wildcard
   * in the notes view, do not call get_notebook() and do not filter by notebook if its id is the wildcard
   * to support hyperlinked representations, change the notebook links serializer to lookup the notebook id from the instance
- * custom sort filter
+ * custom sort mixin
  * what should be the default sort order
  * explicit default sort order (currently note id order is reversed in notebook detail and note list)
  * consider indexing created and updated timestamps
