@@ -209,6 +209,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.Pagination',
     'PAGE_SIZE': 25,
     'HTML_SELECT_CUTOFF': 50,
     'DEFAULT_THROTTLE_CLASSES': (
@@ -245,5 +246,6 @@ API_LIMITS = {
         'api.Note': 250,
     },
 }
+API_MAX_PAGE_SIZE = 100
 API_DELETED_EXPIRY_DAYS = 30
 API_SEARCH_USE_TRIGRAM = True

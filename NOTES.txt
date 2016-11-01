@@ -2,7 +2,6 @@
  * filter serializer child set by deleted flag
  * custom sort filter (default sort order)
  * consider indexing created and updated timestamps
- * configurable page size with limited max value
  * search notes in all notebooks
   * add a notes endpoint to users (/uses/<username>/notes/, read-only)
   * from there, call the notes view with resolve(reverse(view_name))
