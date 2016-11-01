@@ -1,4 +1,6 @@
 0.5:
+ * in SyncedModelMixin.get_queryset(), the check for list or delete action is unnecessary (since and until are only set then)
+ * in SearchableModelMixin.get_queryset(), the check for list action is unnecessary (and even unwanted, because it prevents searching on deleted)
  * search notes in all notebooks
   * add a notes endpoint to users (/uses/<username>/notes/, read-only)
   * from there, call the notes view with resolve(reverse(view_name))
