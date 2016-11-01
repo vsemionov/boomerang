@@ -38,9 +38,14 @@ class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 
+User.get_active_notebooks = lambda self: self.notebook_set.filter(deleted=False)
+User.get_active_tasks = lambda self: self.task_set.filter(deleted=False)
+Notebook.get_active_notes = lambda self: self.note_set.filter(deleted=False)
+
+
 class UserSerializer(serializers.ModelSerializer):
-    notebooks = SecondaryKeyRelatedField(read_only=True, many=True, source='notebook_set')
-    tasks = SecondaryKeyRelatedField(read_only=True, many=True, source='task_set')
+    notebooks = SecondaryKeyRelatedField(read_only=True, many=True, source='get_active_notebooks')
+    tasks = SecondaryKeyRelatedField(read_only=True, many=True, source='get_active_tasks')
 
     class Meta:
         model = User
@@ -50,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
 class NotebookSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    notes = SecondaryKeyRelatedField(read_only=True, many=True, source='note_set')
+    notes = SecondaryKeyRelatedField(read_only=True, many=True, source='get_active_notes')
 
     class Meta:
         model = Notebook

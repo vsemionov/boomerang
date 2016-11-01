@@ -1,5 +1,4 @@
 0.5:
- * filter serializer child set by deleted flag
  * custom sort filter (default sort order)
  * consider indexing created and updated timestamps
  * search notes in all notebooks
