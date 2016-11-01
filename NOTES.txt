@@ -6,8 +6,6 @@
   * pass a notebook wildcard
   * in the notes view, do not call get_notebook() and do not filter by notebook if its id is the wildcard
   * to support hyperlinked representations, change the notebook links serializer to lookup the notebook id from the instance
- * consider indexing updated timestamps and ordering list results by them (in descending order)
- * consiger using filter backends for search, ordering and filtering (but find a way to apply them only to list views)
  * tests
 
 ui:
