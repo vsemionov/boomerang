@@ -88,9 +88,8 @@ def get_dynamic_user_serializer():
                                                lookup_field='username')
         notebooks = DynamicHyperlinkedIdentityField(view_name='notebook-list',
                                                     lookup_url_kwarg='user_username', lookup_field='username')
-        notes = DynamicHyperlinkedIdentityField(view_name='note-list',
-                                                lookup_url_kwarg='user_username', lookup_field='username',
-                                                parent_lookup=dict(notebook_ext_id='all'))
+        notes = DynamicHyperlinkedIdentityField(view_name='user-notes',
+                                                lookup_field='username')
         tasks = DynamicHyperlinkedIdentityField(view_name='task-list',
                                                 lookup_url_kwarg='user_username', lookup_field='username')
 
