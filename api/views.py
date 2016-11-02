@@ -5,8 +5,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Value
-from django.urls import resolve, reverse
-from rest_framework import viewsets, decorators
+from rest_framework import viewsets
 
 from .models import Notebook, Note, Task
 import serializers, permissions, limits, sync, search
@@ -42,13 +41,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         return serializers.get_dynamic_user_serializer()
-
-    @decorators.list_route()
-    def notes(self, request, *args, **kwargs):
-        list_kwargs = dict(user_username=self.kwargs['username'], notebook_ext_id=WILDCARD_ID)
-        path = reverse('note-list', kwargs=list_kwargs)
-        view = resolve(path)
-        return view(request, **list_kwargs)
 
 
 class NotebookViewSet(SearchableSyncedModelViewSet):
