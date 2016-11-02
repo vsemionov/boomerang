@@ -40,12 +40,14 @@ class SearchableModelMixin(ViewSetMixin):
         return queryset
 
     def get_queryset(self):
-        queryset = super(SearchableModelMixin, self).get_queryset()
+        queryset = self.get_chain_queryset(SearchableModelMixin)
 
         if self.terms:
             queryset = self.search_queryset(queryset, self.terms)
 
         return queryset
+
+    get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
         query_terms = self.request.query_params.getlist(self.SEARCH_PARAM)
