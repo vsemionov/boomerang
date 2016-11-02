@@ -1,5 +1,5 @@
 0.5:
- * wip: user-notes view shows User in api browser view name and bread crumbs
+ * wip: .../notebooks/all/ returns error on get; allows post, but returns error
  * custom sort mixin
  * resolve sort order collision with search mixin
  * what should be the default sort order (created ascending for consistent listints?)
