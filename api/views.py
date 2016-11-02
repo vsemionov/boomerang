@@ -43,12 +43,12 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         return serializers.get_dynamic_user_serializer()
 
-    @decorators.list_route()
+    @decorators.detail_route()
     def notes(self, request, *args, **kwargs):
         list_kwargs = dict(user_username=self.kwargs['username'], notebook_ext_id=WILDCARD_ID)
         path = reverse('note-list', kwargs=list_kwargs)
-        view = resolve(path)
-        return view(request, **list_kwargs)
+        match = resolve(path)
+        return match.func(request, **list_kwargs)
 
 
 class NotebookViewSet(SearchableSyncedModelViewSet):
