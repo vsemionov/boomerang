@@ -3,6 +3,7 @@ checklist:
  * requirements: pip install -r requirements.txt
  * remove .pyc: find . -name \*.pyc -exec rm \{\} \;
  * collectstatic: ./manage.py collectstatic
+ * database: sudo -u postgres createuser -P notes && sudo -u postgres createdb -O notes notes && sudo -u postgres psql -c "create extension pg_trgm;" notes
  * migrate: ./manage.py migrate
  * populate: ./manage.py loaddata fixtures/init.json
  * createcachetable cache_api_throttle: ./manage.py createcachetable cache_api_throttle
