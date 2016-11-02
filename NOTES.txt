@@ -9,7 +9,7 @@
  * what should be the default sort order (created ascending for consistent listints?)
  * explicit default sort order (currently note id order is reversed in notebook detail and note list)
  * consider indexing created and updated timestamps
- * Is trigram similarity greater when an equal-length document contains more occurrences of the search terms?
+ * Is trigram similarity greater when an equal-length document contains more occurrences of the search terms? Answer: YES!
  * consider re-adding all or some of the filter backends from commit 6a4ed822a61927fdba6adc25bb980040fe6d257e
  * Try to fetch related objects in a single query for lists of parents.
  * Max page size 50 if query count is proportional.
