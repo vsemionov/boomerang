@@ -5,10 +5,14 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Value
-from rest_framework import viewsets
+from django.urls import resolve, reverse
+from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
 import serializers, permissions, limits, sync, search
+
+
+WILDCARD_ID = 'all'
 
 
 class SearchableSyncedModelViewSet(search.SearchableModelMixin,
@@ -38,6 +42,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         return serializers.get_dynamic_user_serializer()
+
+    @decorators.list_route()
+    def notes(self, request, *args, **kwargs):
+        list_kwargs = dict(user_username=self.kwargs['username'], notebook_ext_id=WILDCARD_ID)
+        path = reverse('note-list', kwargs=list_kwargs)
+        view = resolve(path)
+        return view(request, **list_kwargs)
 
 
 class NotebookViewSet(SearchableSyncedModelViewSet):
@@ -74,8 +85,9 @@ class NoteViewSet(SearchableSyncedModelViewSet):
 
     def get_base_queryset(self):
         filter_kwargs = self.get_deleted_parent_filter_kwargs('notebook__deleted')
+        if self.kwargs['notebook_ext_id'] != WILDCARD_ID:
+            filter_kwargs['notebook_id'] = self.kwargs['notebook_ext_id']
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
-                                   notebook_id=self.kwargs['notebook_ext_id'],
                                    **filter_kwargs)
 
     def get_notebook(self):
@@ -87,11 +99,11 @@ class NoteViewSet(SearchableSyncedModelViewSet):
         return notebook
 
     def get_hyperlinked_serializer_class(self):
-        return serializers.get_hyperlinked_note_serializer_class(self.kwargs['user_username'],
-                                                                 self.kwargs['notebook_ext_id'])
+        return serializers.get_hyperlinked_note_serializer_class(self.kwargs['user_username'])
 
     def list(self, request, *args, **kwargs):
-        self.get_notebook()
+        if self.kwargs['notebook_ext_id'] != WILDCARD_ID:
+            self.get_notebook()
         return super(NoteViewSet, self).list(request, *args, **kwargs)
 
     def perform_create(self, serializer):

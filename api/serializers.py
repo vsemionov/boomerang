@@ -18,8 +18,9 @@ class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
-    def __init__(self, parent_lookup=None, *args, **kwargs):
+    def __init__(self, parent_lookup=None, aux_lookup=None, *args, **kwargs):
         self.parent_lookup = parent_lookup or {}
+        self.aux_lookup = aux_lookup or {}
         super(DynamicHyperlinkedIdentityField, self).__init__(*args, **kwargs)
 
     def get_url(self, obj, view_name, request, format):
@@ -29,6 +30,7 @@ class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         lookup_value = getattr(obj, self.lookup_field)
         kwargs = {self.lookup_url_kwarg: lookup_value}
         kwargs.update(self.parent_lookup)
+        kwargs.update({kwarg: getattr(obj, field) for (kwarg, field) in self.aux_lookup.iteritems()})
 
         for key in kwargs:
             value = kwargs[key]
@@ -86,6 +88,8 @@ def get_dynamic_user_serializer():
                                                lookup_field='username')
         notebooks = DynamicHyperlinkedIdentityField(view_name='notebook-list',
                                                     lookup_url_kwarg='user_username', lookup_field='username')
+        notes = DynamicHyperlinkedIdentityField(view_name='user-notes',
+                                                lookup_field='username')
         tasks = DynamicHyperlinkedIdentityField(view_name='task-list',
                                                 lookup_url_kwarg='user_username', lookup_field='username')
 
@@ -118,12 +122,12 @@ def get_hyperlinked_notebook_serializer_class(user_username):
     return DynamicNotebookSerializer
 
 
-def get_hyperlinked_note_serializer_class(user_username, notebook_ext_id):
+def get_hyperlinked_note_serializer_class(user_username):
     class NoteLinksSerializer(serializers.Serializer):
         self = DynamicHyperlinkedIdentityField(view_name='note-detail',
                                                lookup_field='ext_id',
-                                               parent_lookup=dict(user_username=user_username,
-                                                                  notebook_ext_id=notebook_ext_id))
+                                               parent_lookup=dict(user_username=user_username),
+                                               aux_lookup=dict(notebook_ext_id='notebook_id'))
         notebook = DynamicHyperlinkedIdentityField(view_name='notebook-detail',
                                                    lookup_url_kwarg='ext_id', lookup_field='notebook_id',
                                                    parent_lookup=dict(user_username=user_username))
