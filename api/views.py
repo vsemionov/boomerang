@@ -14,7 +14,6 @@ import serializers, permissions, limits, sync, search
 class SearchableSyncedModelViewSet(search.SearchableModelMixin,
                                    sync.SyncedModelMixin,
                                    viewsets.ModelViewSet):
-
     def get_hyperlinked_serializer_class(self):
         raise NotImplementedError()
 
