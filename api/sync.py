@@ -29,7 +29,7 @@ class SyncedModelMixin(ViewSetMixin):
         super(SyncedModelMixin, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
-        queryset = self.get_chain_queryset(SyncedModelMixin)
+        queryset = super(SyncedModelMixin, self).get_queryset()
 
         if self.since:
             queryset = queryset.filter(updated__gte=self.since)
@@ -45,8 +45,6 @@ class SyncedModelMixin(ViewSetMixin):
             queryset = queryset.filter(deleted=False)
 
         return queryset
-
-    get_base_queryset = get_queryset
 
     def get_timestamp(self, name, default=None):
         timestamp_reprs = self.request.query_params.getlist(name)
