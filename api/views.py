@@ -9,12 +9,13 @@ from django.db.models import Value
 from rest_framework import viewsets
 
 from .models import Notebook, Note, Task
-import serializers, permissions, limits, sync, search
+import serializers, permissions, limits, sync, search, sort
 
 
-class SearchableSyncedModelViewSet(search.SearchableModelMixin,
-                                   sync.SyncedModelMixin,
-                                   viewsets.ModelViewSet):
+class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
+                                         search.SearchableModelMixin,
+                                         sync.SyncedModelMixin,
+                                         viewsets.ModelViewSet):
     def get_hyperlinked_serializer_class(self):
         raise NotImplementedError()
 
@@ -31,7 +32,7 @@ class SearchableSyncedModelViewSet(search.SearchableModelMixin,
         return filter_kwargs
 
 
-class UserChildViewSet(SearchableSyncedModelViewSet):
+class UserChildViewSet(SortedSearchableSyncedModelViewSet):
     def get_base_queryset(self):
         return self.queryset.filter(user_id=self.kwargs['user_username'])
 
@@ -54,7 +55,7 @@ class UserChildViewSet(SearchableSyncedModelViewSet):
         serializer.save(user=user)
 
 
-class BaseNoteBiewSet(SearchableSyncedModelViewSet):
+class BaseNoteBiewSet(SortedSearchableSyncedModelViewSet):
     view_name = 'Note'
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
