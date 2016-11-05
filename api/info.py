@@ -3,7 +3,7 @@ from rest_framework import viewsets, mixins, response, reverse
 
 
 NAME = 'vsemionov.notes.api'
-VERSION = '0.5.2'
+VERSION = '0.5.2.1'
 
 
 class InfoViewSet(mixins.ListModelMixin,
