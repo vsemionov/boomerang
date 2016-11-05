@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import FieldDoesNotExist
 from rest_framework import exceptions, status
 
 
@@ -21,6 +22,14 @@ def check_limits(parent, child_type):
 
     child_set_name = child_type._meta.verbose_name + '_set'
     child_set = getattr(parent, child_set_name)
-    if child_set.count() >= limit:
+
+    try:
+        child_type._meta.get_field('deleted')
+    except FieldDoesNotExist:
+        effective_child_set = child_set
+    else:
+        effective_child_set = child_set.filter(deleted=False)
+
+    if effective_child_set.count() >= limit:
         raise LimitExceededError('exceeded limit of %d %s per %s' %
                                  (limit, child_type._meta.verbose_name_plural, parent._meta.verbose_name))
