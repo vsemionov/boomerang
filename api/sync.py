@@ -39,10 +39,8 @@ class SyncedModelMixin(ViewSetMixin):
         if self.atomic:
             queryset = queryset.select_for_update()
 
-        if self.deleted_object:
-            queryset = queryset.filter(deleted=True)
-        else:
-            queryset = queryset.filter(deleted=False)
+        if self.deleted_object is not None:
+            queryset = queryset.filter(deleted=self.deleted_object)
 
         return queryset
 
@@ -102,6 +100,7 @@ class SyncedModelMixin(ViewSetMixin):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         self.atomic = True
+        self.deleted_object = None
         self.deleted_parent = None
         self.init_write_conditions()
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
