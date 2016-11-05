@@ -8,6 +8,7 @@ root_router.register(r'users', views.UserViewSet)
 
 user_router = routers.NestedSimpleRouter(root_router, r'users', lookup='user')
 user_router.register(r'notebooks', views.NotebookViewSet)
+user_router.register(r'notes', views.UserNoteViewSet)
 user_router.register(r'tasks', views.TaskViewSet)
 
 notebook_router = routers.NestedSimpleRouter(user_router, r'notebooks', lookup='notebook')
