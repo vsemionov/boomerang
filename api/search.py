@@ -22,13 +22,16 @@ class SearchableModelMixin(ViewSetMixin):
     search_fields = ()
 
     def __init__(self, *args, **kwargs):
+        super(SearchableModelMixin, self).__init__(*args, **kwargs)
+
         self.terms = None
+
         self.full_text_vector = sum(itertools.izip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
         if len(self.search_fields) > 1:
             self.full_text_vector = self.full_text_vector[:-1]
+
         self.search_filter = SearchFilter()
         self.search_filter.search_param = self.SEARCH_PARAM
-        super(SearchableModelMixin, self).__init__(*args, **kwargs)
 
     def get_full_text_expr(self):
         return Concat(*self.full_text_vector, output_field=TextField())

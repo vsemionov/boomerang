@@ -12,8 +12,9 @@ class SortedModelMixin(ViewSetMixin):
     }
 
     def __init__(self, *args, **kwargs):
-        self.sort = None
         super(SortedModelMixin, self).__init__(*args, **kwargs)
+
+        self.sort = None
 
     def get_queryset(self):
         queryset = self.get_chain_queryset(SortedModelMixin)

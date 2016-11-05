@@ -19,9 +19,10 @@ class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, parent_lookup=None, aux_lookup=None, *args, **kwargs):
+        super(DynamicHyperlinkedIdentityField, self).__init__(*args, **kwargs)
+
         self.parent_lookup = parent_lookup or {}
         self.aux_lookup = aux_lookup or {}
-        super(DynamicHyperlinkedIdentityField, self).__init__(*args, **kwargs)
 
     def get_url(self, obj, view_name, request, format):
         if hasattr(obj, 'pk') and obj.pk in (None, ''):

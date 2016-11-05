@@ -20,13 +20,16 @@ class SyncedModelMixin(ViewSetMixin):
     exclusive_write_conditions = (AT_PARAM, UNTIL_PARAM)
 
     def __init__(self, *args, **kwargs):
+        super(SyncedModelMixin, self).__init__(*args, **kwargs)
+
         self.at = None
         self.since = None
         self.until = None
+
         self.atomic = False
+
         self.deleted_object = False
         self.deleted_parent = False
-        super(SyncedModelMixin, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         queryset = self.get_chain_queryset(SyncedModelMixin)

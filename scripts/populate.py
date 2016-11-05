@@ -52,11 +52,12 @@ class Populator(threading.Thread):
     added_users_lock = threading.Lock()
 
     def __init__(self, users, notebooks_per_user, notes_per_notebook, tasks_per_user, *args, **kwargs):
+        super(Populator, self).__init__(*args, **kwargs)
+
         self.users = users
         self.notebooks_per_user = notebooks_per_user
         self.notes_per_notebook = notes_per_notebook
         self.tasks_per_user = tasks_per_user
-        super(Populator, self).__init__(*args, **kwargs)
 
     def run(self):
         with transaction.atomic():
