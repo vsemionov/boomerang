@@ -6,7 +6,6 @@ from mixins import ViewSetMixin
 class SortedModelMixin(ViewSetMixin):
     SORT_PARAM = 'sort'
     DEFAULT_SORT = ('created',)
-
     SORT_FIELD_MAP = {
         'id': 'ext_id',
         '-id': '-ext_id',
