@@ -1,6 +1,7 @@
 0.5:
  * wip: .../notebooks/all/ returns error on get; allows post, but returns error; .../notebooks/all/notes/ allows post, but returns error
   * possible solution: create an AllNotes viewset (list only) and route it at /notebooks/all/notes/
+ * prevent race conditions on limit checks by locking the parent object
  * view name suffix for deleted lists
  * custom sort mixin
  * resolve sort order collision with search mixin
