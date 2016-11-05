@@ -50,7 +50,7 @@ class SearchableModelMixin(ViewSetMixin):
     get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
-        query_terms = self.request.query_params.getlist(self.SEARCH_PARAM)
+        query_terms = request.query_params.getlist(self.SEARCH_PARAM)
         self.terms = ' '.join(query_terms) if query_terms else None
 
         data = OrderedDict(terms=self.terms)

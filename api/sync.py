@@ -46,8 +46,8 @@ class SyncedModelMixin(ViewSetMixin):
 
     get_base_queryset = get_queryset
 
-    def get_timestamp(self, name, default=None):
-        timestamp_reprs = self.request.query_params.getlist(name)
+    def get_timestamp(self, request, name, default=None):
+        timestamp_reprs = request.query_params.getlist(name)
         if len(timestamp_reprs) > 1:
             raise exceptions.ValidationError({name: 'multiple timestamp values'})
 
@@ -64,24 +64,24 @@ class SyncedModelMixin(ViewSetMixin):
         return timestamp
 
     def list(self, request, *args, **kwargs):
-        self.since = self.get_timestamp(self.SINCE_PARAM)
-        self.until = self.get_timestamp(self.UNTIL_PARAM, timezone.now())
+        self.since = self.get_timestamp(request, self.SINCE_PARAM)
+        self.until = self.get_timestamp(request, self.UNTIL_PARAM, timezone.now())
 
         data = OrderedDict(((self.SINCE_PARAM, self.since),
                             (self.UNTIL_PARAM, self.until)))
 
         return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
 
-    def init_write_conditions(self):
-        self.at = self.get_timestamp(self.AT_PARAM)
-        self.until = self.get_timestamp(self.UNTIL_PARAM)
+    def init_write_conditions(self, request):
+        self.at = self.get_timestamp(request, self.AT_PARAM)
+        self.until = self.get_timestamp(request, self.UNTIL_PARAM)
 
-        exclusive_conditions = [param for param in self.request.query_params
+        exclusive_conditions = [param for param in request.query_params
                                 if param in self.exclusive_write_conditions]
         if len(exclusive_conditions) > 1:
             raise exceptions.ValidationError("unsupported combination: " + ', '.join(exclusive_conditions))
 
-        unsupported_conditions = [param for param in self.request.query_params
+        unsupported_conditions = [param for param in request.query_params
                                   if param not in self.supported_write_conditions]
         if unsupported_conditions:
             unsupported_condition = unsupported_conditions[0]
@@ -102,14 +102,14 @@ class SyncedModelMixin(ViewSetMixin):
         self.atomic = True
         self.deleted_object = None
         self.deleted_parent = None
-        self.init_write_conditions()
+        self.init_write_conditions(request)
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
         self.deleted_parent = None
-        self.init_write_conditions()
+        self.init_write_conditions(request)
         return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
 
     def perform_update(self, serializer):
