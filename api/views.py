@@ -54,7 +54,7 @@ class UserChildViewSet(SortedSearchableSyncedModelViewSet):
         serializer.save(user=user)
 
 
-class BaseNoteBiewSet(SortedSearchableSyncedModelViewSet):
+class BaseNoteViewSet(SortedSearchableSyncedModelViewSet):
     view_name = 'Note'
     lookup_field = 'ext_id'
     queryset = Note.objects.all()
@@ -108,7 +108,7 @@ class TaskViewSet(UserChildViewSet):
     search_fields = ('title', 'description')
 
 
-class NoteViewSet(BaseNoteBiewSet):
+class NoteViewSet(BaseNoteViewSet):
     def get_base_queryset(self):
         filter_kwargs = self.get_deleted_parent_filter_kwargs('notebook__deleted')
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
@@ -143,7 +143,7 @@ class NoteViewSet(BaseNoteBiewSet):
         serializer.save(notebook=notebook)
 
 
-class UserNoteViewSet(BaseNoteBiewSet):
+class UserNoteViewSet(BaseNoteViewSet):
     def get_base_queryset(self):
         filter_kwargs = self.get_deleted_parent_filter_kwargs('notebook__deleted')
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
