@@ -31,6 +31,44 @@ class SearchableSyncedModelViewSet(search.SearchableModelMixin,
         return filter_kwargs
 
 
+class UserChildViewSet(SearchableSyncedModelViewSet):
+    hyperlinked_serializer_class_func = None
+
+    def lock_user(self):
+        queryset = User.objects.filter(username=self.kwargs['user_username'])
+        queryset = queryset.select_for_update()
+        user = get_object_or_404(queryset)
+        return user
+
+    def get_base_queryset(self):
+        return self.queryset.filter(user_id=self.kwargs['user_username'])
+
+    def get_hyperlinked_serializer_class(self):
+        return self.hyperlinked_serializer_class_func(self.kwargs['user_username'])
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        user = self.lock_user()
+        limits.check_limits(user, self.queryset.model)
+        serializer.save(user=user)
+
+
+class BaseNoteBiewSet(SearchableSyncedModelViewSet):
+    view_name = 'Note'
+    lookup_field = 'ext_id'
+    queryset = Note.objects.all()
+    serializer_class = serializers.NoteSerializer
+    permission_classes = permissions.nested_permissions
+
+    full_text_vector = ('title', Value(' '), 'text')
+
+    def get_view_name(self):
+        name = self.view_name
+        if self.suffix:
+            name += ' ' + self.suffix
+        return name
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'username'
     queryset = User.objects.all()
@@ -47,45 +85,26 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         return serializers.get_dynamic_user_serializer()
 
 
-class NotebookViewSet(SearchableSyncedModelViewSet):
+class NotebookViewSet(UserChildViewSet):
     lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
+
+    hyperlinked_serializer_class_func = serializers.get_hyperlinked_notebook_serializer_class
+
     full_text_vector = ('name', Value(' '))
 
-    def get_base_queryset(self):
-        return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
-    def lock_user(self):
-        queryset = User.objects.filter(username=self.kwargs['user_username'])
-        queryset = queryset.select_for_update()
-        user = get_object_or_404(queryset)
-        return user
-
-    def get_hyperlinked_serializer_class(self):
-        return serializers.get_hyperlinked_notebook_serializer_class(self.kwargs['user_username'])
-
-    @transaction.atomic
-    def perform_create(self, serializer):
-        user = self.lock_user()
-        limits.check_limits(user, Notebook)
-        serializer.save(user=user)
-
-
-class BaseNoteBiewSet(SearchableSyncedModelViewSet):
-    view_name = 'Note'
+class TaskViewSet(UserChildViewSet):
     lookup_field = 'ext_id'
-    queryset = Note.objects.all()
-    serializer_class = serializers.NoteSerializer
+    queryset = Task.objects.all()
+    serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
-    full_text_vector = ('title', Value(' '), 'text')
 
-    def get_view_name(self):
-        name = self.view_name
-        if self.suffix:
-            name += ' ' + self.suffix
-        return name
+    hyperlinked_serializer_class_func = serializers.get_hyperlinked_task_serializer_class
+
+    full_text_vector = ('title', Value(' '), 'description')
 
 
 class NoteViewSet(BaseNoteBiewSet):
@@ -156,29 +175,3 @@ class UserNoteViewSet(BaseNoteBiewSet):
         notebook = self.lock_notebook(serializer.validated_data['notebook'])
         limits.check_limits(notebook, Note)
         serializer.save()
-
-
-class TaskViewSet(SearchableSyncedModelViewSet):
-    lookup_field = 'ext_id'
-    queryset = Task.objects.all()
-    serializer_class = serializers.TaskSerializer
-    permission_classes = permissions.nested_permissions
-    full_text_vector = ('title', Value(' '), 'description')
-
-    def get_base_queryset(self):
-        return Task.objects.filter(user_id=self.kwargs['user_username'])
-
-    def lock_user(self):
-        queryset = User.objects.filter(username=self.kwargs['user_username'])
-        queryset = queryset.select_for_update()
-        user = get_object_or_404(queryset)
-        return user
-
-    def get_hyperlinked_serializer_class(self):
-        return serializers.get_hyperlinked_task_serializer_class(self.kwargs['user_username'])
-
-    @transaction.atomic
-    def perform_create(self, serializer):
-        user = self.lock_user()
-        limits.check_limits(user, Task)
-        serializer.save(user=user)
