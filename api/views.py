@@ -4,6 +4,7 @@
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 from django.db.models import Value
 from rest_framework import viewsets
 
@@ -53,11 +54,20 @@ class NotebookViewSet(SearchableSyncedModelViewSet):
     def get_base_queryset(self):
         return Notebook.objects.filter(user_id=self.kwargs['user_username'])
 
+    def get_user(self, lock=False):
+        users = User.objects.all()
+        if lock:
+            users = users.select_for_update()
+        user = get_object_or_404(users,
+                                 username=self.kwargs['user_username'])
+        return user
+
     def get_hyperlinked_serializer_class(self):
         return serializers.get_hyperlinked_notebook_serializer_class(self.kwargs['user_username'])
 
+    @transaction.atomic
     def perform_create(self, serializer):
-        user = self.request.user
+        user = self.get_user(lock=True)
         limits.check_limits(user, Notebook)
         serializer.save(user=user)
 
@@ -82,9 +92,12 @@ class NoteViewSet(SearchableSyncedModelViewSet):
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
                                    **filter_kwargs)
 
-    def get_notebook(self):
+    def get_notebook(self, lock=False):
         filter_kwargs = self.get_deleted_parent_filter_kwargs('deleted')
-        notebook = get_object_or_404(Notebook.objects.all(),
+        notebooks = Notebook.objects.all()
+        if lock:
+            notebooks = notebooks.select_for_update()
+        notebook = get_object_or_404(notebooks,
                                      user_id=self.kwargs['user_username'],
                                      ext_id=self.kwargs['notebook_ext_id'],
                                      **filter_kwargs)
@@ -98,8 +111,9 @@ class NoteViewSet(SearchableSyncedModelViewSet):
             self.get_notebook()
         return super(NoteViewSet, self).list(request, *args, **kwargs)
 
+    @transaction.atomic
     def perform_create(self, serializer):
-        notebook = self.get_notebook()
+        notebook = self.get_notebook(lock=True)
         limits.check_limits(notebook, Note)
         serializer.save(notebook=notebook)
 
@@ -114,10 +128,19 @@ class TaskViewSet(SearchableSyncedModelViewSet):
     def get_base_queryset(self):
         return Task.objects.filter(user_id=self.kwargs['user_username'])
 
+    def get_user(self, lock=False):
+        users = User.objects.all()
+        if lock:
+            users = users.select_for_update()
+        user = get_object_or_404(users,
+                                 username=self.kwargs['user_username'])
+        return user
+
     def get_hyperlinked_serializer_class(self):
         return serializers.get_hyperlinked_task_serializer_class(self.kwargs['user_username'])
 
+    @transaction.atomic
     def perform_create(self, serializer):
-        user = self.request.user
+        user = self.get_user(lock=True)
         limits.check_limits(user, Task)
         serializer.save(user=user)
