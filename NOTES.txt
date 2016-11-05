@@ -1,12 +1,21 @@
 0.5:
- * resolve sort order collision with search mixin
- * Is trigram similarity greater when an equal-length document contains more occurrences of the search terms? Answer: YES!
- * consider re-adding all or some of the filter backends (search and ordering, for filter forms) from commit 6a4ed822a61927fdba6adc25bb980040fe6d257e
- * Try to fetch related objects in a single query for lists of parents.
- * Max page size 50 if query count is proportional.
- * Check cause of duplicated queries in notebook detail.
- * Why do listings of  unfiltered querysets with millions of items take long to execute? Doesn't the pagination add an offaet/limit clause?
- * tests
+ * search:
+  - combine rest framework filters (search and ordering, for filter forms) with viewset mixins (for result decoration)
+   + use current query parameters (q and sort, respectively)
+  - do not perform trigram similarity search in sorted views
+  - add endpoints for full text search with trigram similarity
+   + endpoints:
+    ! /api/users/id/notebooks/search/
+    ! /api/users/id/notebooks/id/notes/search/
+    ! /api/users/id/notes/search/
+    ! /api/users/id/tasks/search/
+   + no sorting or sync on full text search endpoints
+   + sort results by -rank, (internal) id
+ * performance:
+  - Try to fetch related objects in a single query for lists of parents.
+  - Max page size 50 if query count is proportional.
+  - Check cause of duplicated queries in notebook detail.
+  - Why do listings of  unfiltered querysets with millions of items take long to execute? Doesn't the pagination add an offaet/limit clause?
 
 ui:
  * django messages framework, add messages to api template
