@@ -32,7 +32,8 @@ class SearchableSyncedModelViewSet(search.SearchableModelMixin,
 
 
 class UserChildViewSet(SearchableSyncedModelViewSet):
-    hyperlinked_serializer_class_func = None
+    def get_base_queryset(self):
+        return self.queryset.filter(user_id=self.kwargs['user_username'])
 
     def lock_user(self):
         queryset = User.objects.filter(username=self.kwargs['user_username'])
@@ -40,8 +41,8 @@ class UserChildViewSet(SearchableSyncedModelViewSet):
         user = get_object_or_404(queryset)
         return user
 
-    def get_base_queryset(self):
-        return self.queryset.filter(user_id=self.kwargs['user_username'])
+    def hyperlinked_serializer_class_func(self, username):
+        raise NotImplementedError()
 
     def get_hyperlinked_serializer_class(self):
         return self.hyperlinked_serializer_class_func(self.kwargs['user_username'])
@@ -91,7 +92,7 @@ class NotebookViewSet(UserChildViewSet):
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
 
-    hyperlinked_serializer_class_func = serializers.get_hyperlinked_notebook_serializer_class
+    hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_notebook_serializer_class)
 
     full_text_vector = ('name', Value(' '))
 
@@ -102,7 +103,7 @@ class TaskViewSet(UserChildViewSet):
     serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
 
-    hyperlinked_serializer_class_func = serializers.get_hyperlinked_task_serializer_class
+    hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_task_serializer_class)
 
     full_text_vector = ('title', Value(' '), 'description')
 
