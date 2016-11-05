@@ -121,7 +121,7 @@ class SyncedModelMixin(ViewSetMixin):
         instance.deleted = True
         instance.save()
 
-    @decorators.list_route()
+    @decorators.list_route(suffix='Deleted List')
     def deleted(self, request, *args, **kwargs):
         self.deleted_object = True
         self.deleted_parent = None
