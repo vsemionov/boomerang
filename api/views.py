@@ -5,7 +5,6 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.db.models import Value
 from rest_framework import viewsets
 
 from .models import Notebook, Note, Task
@@ -62,7 +61,7 @@ class BaseNoteBiewSet(SortedSearchableSyncedModelViewSet):
     serializer_class = serializers.NoteSerializer
     permission_classes = permissions.nested_permissions
 
-    full_text_vector = ('title', Value(' '), 'text')
+    search_fields = ('title', 'text')
 
     def get_view_name(self):
         name = self.view_name
@@ -95,7 +94,7 @@ class NotebookViewSet(UserChildViewSet):
 
     hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_notebook_serializer_class)
 
-    full_text_vector = ('name', Value(' '))
+    search_fields = ('name',)
 
 
 class TaskViewSet(UserChildViewSet):
@@ -106,7 +105,7 @@ class TaskViewSet(UserChildViewSet):
 
     hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_task_serializer_class)
 
-    full_text_vector = ('title', Value(' '), 'description')
+    search_fields = ('title', 'description')
 
 
 class NoteViewSet(BaseNoteBiewSet):
