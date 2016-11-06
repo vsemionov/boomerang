@@ -1,8 +1,3 @@
-0.5:
- * performance:
-  - Check cause of duplicated queries in notebook detail.
-  - Why do listings of  unfiltered querysets with millions of items take long to execute? Doesn't the pagination add an offaet/limit clause?
-
 ui:
  * django messages framework, add messages to api template
  * allauth templates
