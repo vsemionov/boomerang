@@ -45,7 +45,7 @@ class SearchableModelMixin(ViewSetMixin):
         return queryset.annotate(rank=similarity).filter(rank__gt=0).order_by('-rank')
 
     def search_queryset(self, queryset):
-        if util.is_pgsql() and settings.API_SEARCH_USE_TRIGRAM:
+        if settings.API_SEARCH_USE_TRIGRAM and util.is_pgsql():
             search_func = self.search_trigram_similarity
         else:
             search_func = self.search_basic
