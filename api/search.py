@@ -27,22 +27,20 @@ class SearchableModelMixin(ViewSetMixin):
 
         self.full_text_search = False
 
-        self.full_text_vector = sum(itertools.izip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
-        if len(self.search_fields) > 1:
-            self.full_text_vector = self.full_text_vector[:-1]
-
-        self.search_filter = SearchFilter()
-        self.search_filter.search_param = self.SEARCH_PARAM
-
-    def get_full_text_expr(self):
-        return Concat(*self.full_text_vector, output_field=TextField())
-
     def search_basic(self, queryset):
-        return self.search_filter.filter_queryset(self.request, queryset, self)
+        search_filter = SearchFilter()
+        search_filter.search_param = self.SEARCH_PARAM
+        return search_filter.filter_queryset(self.request, queryset, self)
 
     def search_trigram_similarity(self, queryset):
-        full_text_expr = self.get_full_text_expr()
+        full_text_vector = sum(itertools.izip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
+        if len(self.search_fields) > 1:
+            full_text_vector = full_text_vector[:-1]
+
+        full_text_expr = Concat(*full_text_vector, output_field=TextField())
+
         similarity = TrigramSimilarity(full_text_expr, self.terms)
+
         queryset = queryset.annotate(rank=similarity)
         queryset = queryset.filter(rank__gt=0)
         queryset = queryset.order_by('-rank', 'created', 'id')
