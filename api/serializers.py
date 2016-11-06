@@ -41,9 +41,9 @@ class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 
-User.get_active_notebooks = lambda self: self.notebook_set.filter(deleted=False)
-User.get_active_tasks = lambda self: self.task_set.filter(deleted=False)
-Notebook.get_active_notes = lambda self: self.note_set.filter(deleted=False)
+User.get_active_notebooks = lambda self: self.notebook_set.filter(deleted=False).order_by('created', 'id')
+User.get_active_tasks = lambda self: self.task_set.filter(deleted=False).order_by('created', 'id')
+Notebook.get_active_notes = lambda self: self.note_set.filter(deleted=False).order_by('created', 'id')
 
 
 class UserSerializer(serializers.ModelSerializer):
