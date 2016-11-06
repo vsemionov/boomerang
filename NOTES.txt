@@ -2,16 +2,6 @@
  * search:
   - combine rest framework filters (search and ordering, for filter forms) with viewset mixins (for result decoration)
    + use current query parameters (q and sort, respectively)
-  - do not perform trigram similarity search in sorted views
-  - add endpoints for full text search with trigram similarity
-   + endpoints:
-    ! /api/users/id/notebooks/search/
-    ! /api/users/id/notebooks/id/notes/search/
-    ! /api/users/id/notes/search/
-    ! /api/users/id/tasks/search/
-   + no sorting or sync on full text search endpoints
-   + sort results by -rank, (internal) id
-   + remove use trigram search setting
  * performance:
   - Try to fetch related objects in a single query for lists of parents.
   - Max page size 50 if query count is proportional.

@@ -5,7 +5,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from rest_framework import viewsets
+from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
 import serializers, permissions, limits, sync, search, sort
@@ -29,6 +29,12 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
         if self.deleted_parent is not None:
             filter_kwargs[name] = self.deleted_parent
         return filter_kwargs
+
+    @decorators.list_route(suffix='Search')
+    def search(self, request, *args, **kwargs):
+        self.full_text_search = True
+        self.disabled_mixins = {sort.SortedModelMixin, sync.SyncedModelMixin}
+        return self.list(request, *args, **kwargs)
 
 
 class UserChildViewSet(SortedSearchableSyncedModelViewSet):

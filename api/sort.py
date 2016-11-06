@@ -33,6 +33,9 @@ class SortedModelMixin(ViewSetMixin):
         return sort + ('id',)
 
     def list(self, request, *args, **kwargs):
+        if SortedModelMixin in self.disabled_mixins:
+            return super(SortedModelMixin, self).list(request, *args, **kwargs)
+
         sort_args = request.query_params.getlist(self.SORT_PARAM)
         sort_order = ','.join([sort_arg.replace(' ', '') for sort_arg in sort_args])
         self.sort = tuple(sort_order.split(',')) if sort_order else self.DEFAULT_SORT

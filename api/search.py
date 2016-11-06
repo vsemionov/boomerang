@@ -1,6 +1,5 @@
 import itertools
 from collections import OrderedDict
-from django.conf import settings
 from django.db.models import Value, TextField
 from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
@@ -26,6 +25,8 @@ class SearchableModelMixin(ViewSetMixin):
 
         self.terms = None
 
+        self.full_text_search = False
+
         self.full_text_vector = sum(itertools.izip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
         if len(self.search_fields) > 1:
             self.full_text_vector = self.full_text_vector[:-1]
@@ -42,10 +43,13 @@ class SearchableModelMixin(ViewSetMixin):
     def search_trigram_similarity(self, queryset):
         full_text_expr = self.get_full_text_expr()
         similarity = TrigramSimilarity(full_text_expr, self.terms)
-        return queryset.annotate(rank=similarity).filter(rank__gt=0).order_by('-rank')
+        queryset = queryset.annotate(rank=similarity)
+        queryset = queryset.filter(rank__gt=0)
+        queryset = queryset.order_by('-rank', 'created', 'id')
+        return queryset
 
     def search_queryset(self, queryset):
-        if settings.API_SEARCH_USE_TRIGRAM and util.is_pgsql():
+        if self.full_text_search and util.is_pgsql():
             search_func = self.search_trigram_similarity
         else:
             search_func = self.search_basic
@@ -65,6 +69,9 @@ class SearchableModelMixin(ViewSetMixin):
     get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
+        if SearchableModelMixin in self.disabled_mixins:
+            return super(SearchableModelMixin, self).list(request, *args, **kwargs)
+
         query_terms = request.query_params.getlist(self.SEARCH_PARAM)
         self.terms = ' '.join(query_terms) if query_terms else None
 

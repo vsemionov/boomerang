@@ -2,6 +2,8 @@ from rest_framework import response
 
 
 class ViewSetMixin(object):
+    disabled_mixins = set()
+
     def get_chain_queryset(self, cls):
         super_proxy = super(cls, self)
         if hasattr(super_proxy, 'get_base_queryset'):
