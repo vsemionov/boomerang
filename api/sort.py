@@ -1,6 +1,6 @@
 import itertools
 from collections import OrderedDict
-from rest_framework import filters
+from rest_framework import filters, exceptions
 
 from mixins import ViewSetMixin
 
@@ -23,6 +23,11 @@ def translated_sort(fields):
     return tuple(SORT_FIELD_MAP.get(field, field) for field in fields)
 
 
+def reverse_translated_sort(fields):
+    sort_field_reverse_map = {value: key for (key, value) in SORT_FIELD_MAP.iteritems()}
+    return tuple(sort_field_reverse_map.get(field, field) for field in fields)
+
+
 def consistent_sort(fields):
     return fields + type(fields)(('id',))
 
@@ -35,9 +40,16 @@ class OrderingFilter(filters.OrderingFilter):
         if fields:
             fields = translated_sort(fields)
             ordering = self.remove_invalid_fields(queryset, fields, view)
-            if ordering:
-                ordering = consistent_sort(ordering)
-                return ordering
+            if len(ordering) != len(fields):
+                ext_fields = reverse_translated_sort(fields)
+                ext_ordering = reverse_translated_sort(ordering)
+                errors = {}
+                for ext_field in ext_fields:
+                    if ext_field not in ext_ordering:
+                        errors[ext_field] = 'unknown or disallowed field'
+                raise exceptions.ValidationError(errors)
+            ordering = consistent_sort(ordering)
+            return ordering
         return self.get_default_ordering(view)
 
 
