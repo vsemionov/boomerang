@@ -15,6 +15,16 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
                                          search.SearchableModelMixin,
                                          sync.SyncedModelMixin,
                                          viewsets.ModelViewSet):
+    filter_backends = (search.SearchFilter, sort.OrderingFilter)
+
+    ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
+
+    def __init__(self, *args, **kwargs):
+        super(SortedSearchableSyncedModelViewSet, self).__init__(*args, **kwargs)
+
+        self.perform_search = False
+        self.perform_sort = False
+
     def get_hyperlinked_serializer_class(self):
         raise NotImplementedError()
 
@@ -32,8 +42,10 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
 
     @decorators.list_route(suffix='Search')
     def search(self, request, *args, **kwargs):
+        self.perform_search = True
         self.full_text_search = True
         self.disabled_mixins = {sort.SortedModelMixin, sync.SyncedModelMixin}
+        self.filter_backends = ()
         return self.list(request, *args, **kwargs)
 
 
@@ -68,6 +80,7 @@ class BaseNoteViewSet(SortedSearchableSyncedModelViewSet):
     permission_classes = permissions.nested_permissions
 
     search_fields = ('title', 'text')
+    ordering_fields = ('created', 'updated', 'title')
 
     def get_view_name(self):
         name = self.view_name
@@ -101,6 +114,7 @@ class NotebookViewSet(UserChildViewSet):
     hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_notebook_serializer_class)
 
     search_fields = ('name',)
+    ordering_fields = ('created', 'updated', 'name')
 
 
 class TaskViewSet(UserChildViewSet):
@@ -112,6 +126,7 @@ class TaskViewSet(UserChildViewSet):
     hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_task_serializer_class)
 
     search_fields = ('title', 'description')
+    ordering_fields = ('created', 'updated', 'done', 'title')
 
 
 class NoteViewSet(BaseNoteViewSet):

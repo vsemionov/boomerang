@@ -1,7 +1,4 @@
 0.5:
- * search:
-  - combine rest framework filters (search and ordering, for filter forms) with viewset mixins (for result decoration)
-   + use current query parameters (q and sort, respectively)
  * performance:
   - Try to fetch related objects in a single query for lists of parents.
   - Max page size 50 if query count is proportional.

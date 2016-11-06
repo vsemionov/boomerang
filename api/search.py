@@ -9,19 +9,26 @@ import util
 from mixins import ViewSetMixin
 
 
+DEFAULT_SEARCH_PARAM = 'q'
+
+
 class SearchFilter(filters.SearchFilter):
+    search_param = DEFAULT_SEARCH_PARAM
+
     def get_search_terms(self, request):
         params = ' '.join(request.query_params.getlist(self.search_param))
         return params.replace(',', ' ').split()
 
 
 class SearchableModelMixin(ViewSetMixin):
-    SEARCH_PARAM = 'q'
+    SEARCH_PARAM = DEFAULT_SEARCH_PARAM
 
     search_fields = ()
 
     def __init__(self, *args, **kwargs):
         super(SearchableModelMixin, self).__init__(*args, **kwargs)
+
+        self.perform_search = True
 
         self.terms = None
 
@@ -59,7 +66,7 @@ class SearchableModelMixin(ViewSetMixin):
     def get_queryset(self):
         queryset = self.get_chain_queryset(SearchableModelMixin)
 
-        if self.terms:
+        if self.terms and self.perform_search:
             queryset = self.search_queryset(queryset)
 
         return queryset
