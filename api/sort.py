@@ -16,6 +16,14 @@ class SortedModelMixin(ViewSetMixin):
 
         self.sort = None
 
+    @classmethod
+    def translated_sort(cls, sort):
+        return tuple(cls.SORT_FIELD_MAP.get(field, field) for field in sort)
+
+    @staticmethod
+    def consistent_sort(sort):
+        return sort + ('id',)
+
     def get_queryset(self):
         queryset = self.get_chain_queryset(SortedModelMixin)
 
@@ -25,12 +33,6 @@ class SortedModelMixin(ViewSetMixin):
         return queryset
 
     get_base_queryset = get_queryset
-
-    def translated_sort(self, sort):
-        return tuple(self.SORT_FIELD_MAP.get(field, field) for field in sort)
-
-    def consistent_sort(self, sort):
-        return sort + ('id',)
 
     def list(self, request, *args, **kwargs):
         if SortedModelMixin in self.disabled_mixins:

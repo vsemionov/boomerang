@@ -31,6 +31,24 @@ class SyncedModelMixin(ViewSetMixin):
         self.deleted_object = False
         self.deleted_parent = False
 
+    @staticmethod
+    def get_timestamp(request, name, default=None):
+        timestamp_reprs = request.query_params.getlist(name)
+        if len(timestamp_reprs) > 1:
+            raise exceptions.ValidationError({name: 'multiple timestamp values'})
+
+        if timestamp_reprs:
+            timestamp_repr = timestamp_reprs[0]
+            timestamp = dateparse.parse_datetime(timestamp_repr)
+            if timestamp is None:
+                raise exceptions.ValidationError({name: 'invalid timestamp format'})
+            if timestamp.tzinfo is None:
+                raise exceptions.ValidationError({name: 'timestamp without timezone'})
+        else:
+            timestamp = default
+
+        return timestamp
+
     def get_queryset(self):
         queryset = self.get_chain_queryset(SyncedModelMixin)
 
@@ -48,23 +66,6 @@ class SyncedModelMixin(ViewSetMixin):
         return queryset
 
     get_base_queryset = get_queryset
-
-    def get_timestamp(self, request, name, default=None):
-        timestamp_reprs = request.query_params.getlist(name)
-        if len(timestamp_reprs) > 1:
-            raise exceptions.ValidationError({name: 'multiple timestamp values'})
-
-        if timestamp_reprs:
-            timestamp_repr = timestamp_reprs[0]
-            timestamp = dateparse.parse_datetime(timestamp_repr)
-            if timestamp is None:
-                raise exceptions.ValidationError({name: 'invalid timestamp format'})
-            if timestamp.tzinfo is None:
-                raise exceptions.ValidationError({name: 'timestamp without timezone'})
-        else:
-            timestamp = default
-
-        return timestamp
 
     def list(self, request, *args, **kwargs):
         if SyncedModelMixin in self.disabled_mixins:

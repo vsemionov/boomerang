@@ -150,6 +150,13 @@ class NoteViewSet(BaseNoteViewSet):
 
 
 class UserNoteViewSet(BaseNoteViewSet):
+    @staticmethod
+    def lock_notebook(notebook):
+        queryset = Notebook.objects.filter(id=notebook.id)
+        queryset = queryset.select_for_update()
+        notebook = get_object_or_404(queryset)
+        return notebook
+
     def get_base_queryset(self):
         filter_kwargs = self.get_deleted_parent_filter_kwargs('notebook__deleted')
         return Note.objects.filter(notebook__user_id=self.kwargs['user_username'],
@@ -160,12 +167,6 @@ class UserNoteViewSet(BaseNoteViewSet):
         notebooks = Notebook.objects.filter(user_id=self.kwargs['user_username'],
                                             **filter_kwargs)
         return notebooks
-
-    def lock_notebook(self, notebook):
-        queryset = Notebook.objects.filter(id=notebook.id)
-        queryset = queryset.select_for_update()
-        notebook = get_object_or_404(queryset)
-        return notebook
 
     def get_hyperlinked_serializer_class(self):
         notebooks = self.get_user_notebooks()
