@@ -5,16 +5,26 @@
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.db.models.query import Prefetch
 from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
 import serializers, permissions, limits, sync, search, sort
 
 
+def prefetch_children(model, queryset, relation, deleted, ordering, attr):
+    queryset = queryset.prefetch_related(Prefetch(relation,
+                                                  queryset=model.objects.filter(deleted=deleted).order_by(*ordering),
+                                                  to_attr=attr))
+    return queryset
+
+
 class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
                                          search.SearchableModelMixin,
                                          sync.SyncedModelMixin,
                                          viewsets.ModelViewSet):
+    read_actions = {'list', 'retrieve', 'search', 'deleted'}
+
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
 
     ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
@@ -97,9 +107,16 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return self.queryset
+            queryset = self.queryset
         else:
-            return User.objects.filter(id=self.request.user.id)
+            queryset =  User.objects.filter(id=self.request.user.id)
+
+        queryset = prefetch_children(Notebook, queryset, 'notebook_set', False, NotebookViewSet.ordering,
+                                     'active_notebooks')
+        queryset = prefetch_children(Task, queryset, 'task_set', False, TaskViewSet.ordering,
+                                     'active_tasks')
+
+        return queryset
 
     def get_serializer_class(self):
         return serializers.get_dynamic_user_serializer()
@@ -115,6 +132,15 @@ class NotebookViewSet(UserChildViewSet):
 
     search_fields = ('name',)
     ordering_fields = ('created', 'updated', 'name')
+
+    def get_base_queryset(self):
+        queryset = super(NotebookViewSet, self).get_base_queryset()
+
+        if self.action in self.read_actions:
+            queryset = prefetch_children(Note, queryset, 'note_set', self.deleted_child, NoteViewSet.ordering,
+                                         'active_notes')
+
+        return queryset
 
 
 class TaskViewSet(UserChildViewSet):

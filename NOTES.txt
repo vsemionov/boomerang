@@ -1,7 +1,5 @@
 0.5:
  * performance:
-  - Try to fetch related objects in a single query for lists of parents.
-  - Max page size 50 if query count is proportional.
   - Check cause of duplicated queries in notebook detail.
   - Why do listings of  unfiltered querysets with millions of items take long to execute? Doesn't the pagination add an offaet/limit clause?
 
