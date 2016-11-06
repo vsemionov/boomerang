@@ -11,6 +11,7 @@
     ! /api/users/id/tasks/search/
    + no sorting or sync on full text search endpoints
    + sort results by -rank, (internal) id
+   + remove use trigram search setting
  * performance:
   - Try to fetch related objects in a single query for lists of parents.
   - Max page size 50 if query count is proportional.
