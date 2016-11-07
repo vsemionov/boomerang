@@ -23,7 +23,7 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
                                          search.SearchableModelMixin,
                                          sync.SyncedModelMixin,
                                          viewsets.ModelViewSet):
-    read_actions = {'list', 'retrieve', 'search', 'deleted'}
+    no_content_actions = {'deleted'}
 
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
 
@@ -136,11 +136,15 @@ class NotebookViewSet(UserChildViewSet):
     def get_base_queryset(self):
         queryset = super(NotebookViewSet, self).get_base_queryset()
 
-        if self.action in self.read_actions:
+        if self.action not in self.no_content_actions:
             queryset = prefetch_children(Note, queryset, 'note_set', self.deleted_child, NoteViewSet.ordering,
                                          'active_notes')
 
         return queryset
+
+    def perform_create(self, serializer):
+        super(NotebookViewSet, self).perform_create(serializer)
+        serializer.instance.active_notes = []
 
 
 class TaskViewSet(UserChildViewSet):
