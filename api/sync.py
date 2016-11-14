@@ -108,7 +108,6 @@ class SyncedModelMixin(ViewSetMixin):
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         self.atomic = True
-        self.deleted_object = None
         self.deleted_parent = None
         self.init_write_conditions(request)
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
