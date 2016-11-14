@@ -23,7 +23,7 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
                                          search.SearchableModelMixin,
                                          sync.SyncedModelMixin,
                                          viewsets.ModelViewSet):
-    no_content_actions = {'deleted'}
+    no_content_actions = {'destroy'}
 
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
 
