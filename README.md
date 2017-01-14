@@ -1,25 +1,35 @@
-Notes
-=====
+Boomerang
+=========
 
-A note-taking web application
------------------------------
+An experimental web application
+-------------------------------
+
+
+### Features
+* Support for data synchronization with conflict detection
+* Fuzzy (approximate) full-text search
+* Social login with automatic verified account linking
+* Request rate throttling and resource quotas
+* REST API
+
 
 ### Roadmap
 
 #### 0.1
 * database model
-* ReST API
+* REST API
 * hosting
 
 #### 0.2
-* email authentication
+* social login
 * user registration
+* email authentication
 
 #### 0.3
-* api rate/size/count limits
+* API rate/size/count limits
 
 #### 0.4
-* synchronization API support
+* data synchronization API support
 
 #### 0.5
 * search API support
