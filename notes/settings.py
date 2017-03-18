@@ -160,7 +160,6 @@ MANAGERS = ADMINS
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE = [
-                     'notes.profile.ProfileMiddleware',
                      'debug_toolbar.middleware.DebugToolbarMiddleware',
                  ] + MIDDLEWARE
 else:

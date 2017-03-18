@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import uuid
 from django.db import models
 
@@ -19,7 +17,7 @@ class Notebook(models.Model):
 
     name = models.CharField(max_length=MAX_NAME_SIZE)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -34,7 +32,7 @@ class Note(models.Model):
     title = models.CharField(max_length=MAX_NAME_SIZE)
     text = models.TextField(max_length=MAX_TEXT_SIZE)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
@@ -50,5 +48,5 @@ class Task(models.Model):
     title = models.CharField(max_length=MAX_NAME_SIZE)
     description = models.TextField(null=True, max_length=MAX_TEXT_SIZE)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title

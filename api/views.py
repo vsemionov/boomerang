@@ -9,7 +9,7 @@ from django.db.models.query import Prefetch
 from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
-import serializers, permissions, limits, sync, search, sort
+from . import serializers, permissions, limits, sync, search, sort
 
 
 def prefetch_children(model, queryset, relation, deleted, ordering, attr):

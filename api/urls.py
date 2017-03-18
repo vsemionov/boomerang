@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework_nested import routers
 
-import views, info
+from . import views, info
 
 root_router = routers.DefaultRouter()
 root_router.register(r'users', views.UserViewSet)

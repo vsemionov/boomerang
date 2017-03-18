@@ -31,7 +31,7 @@ class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
         lookup_value = getattr(obj, self.lookup_field)
         kwargs = {self.lookup_url_kwarg: lookup_value}
         kwargs.update(self.parent_lookup)
-        kwargs.update({kwarg: getattr(obj, field) for (kwarg, field) in self.aux_lookup.iteritems()})
+        kwargs.update({kwarg: getattr(obj, field) for (kwarg, field) in self.aux_lookup.items()})
 
         for key in kwargs:
             value = kwargs[key]

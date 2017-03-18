@@ -5,8 +5,8 @@ from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import filters
 
-import util
-from mixins import ViewSetMixin
+from . import util
+from .mixins import ViewSetMixin
 
 
 DEFAULT_SEARCH_PARAM = 'q'
@@ -40,7 +40,7 @@ class SearchableModelMixin(ViewSetMixin):
         return search_filter.filter_queryset(self.request, queryset, self)
 
     def search_trigram_similarity(self, queryset):
-        full_text_vector = sum(itertools.izip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
+        full_text_vector = sum(itertools.zip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
         if len(self.search_fields) > 1:
             full_text_vector = full_text_vector[:-1]
 

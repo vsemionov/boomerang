@@ -29,4 +29,4 @@ class Command(BaseCommand):
                 deletions[cls] += subdeletions[cls]
 
         for cls in deletions:
-            print '%s: %d' % (cls, deletions[cls])
+            print('%s: %d' % (cls, deletions[cls]))

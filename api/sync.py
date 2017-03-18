@@ -3,7 +3,7 @@ from django.db import transaction
 from django.utils import timezone, dateparse
 from rest_framework import decorators, exceptions, status
 
-from mixins import ViewSetMixin
+from .mixins import ViewSetMixin
 
 
 class ConflictError(exceptions.APIException):

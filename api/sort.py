@@ -2,7 +2,7 @@ import itertools
 from collections import OrderedDict
 from rest_framework import filters, exceptions
 
-from mixins import ViewSetMixin
+from .mixins import ViewSetMixin
 
 
 DEFAULT_SORT_PARAM = 'sort'
@@ -24,7 +24,7 @@ def translated_sort(fields):
 
 
 def reverse_translated_sort(fields):
-    sort_field_reverse_map = {value: key for (key, value) in SORT_FIELD_MAP.iteritems()}
+    sort_field_reverse_map = {value: key for (key, value) in SORT_FIELD_MAP.items()}
     return tuple(sort_field_reverse_map.get(field, field) for field in fields)
 
 
