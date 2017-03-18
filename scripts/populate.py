@@ -6,7 +6,7 @@ import uuid
 import threading
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "notes.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "boomerang.settings")
 import django
 django.setup()
 

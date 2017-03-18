@@ -2,7 +2,7 @@ from collections import OrderedDict
 from rest_framework import viewsets, mixins, response, reverse
 
 
-NAME = 'vsemionov.notes.api'
+NAME = 'vsemionov.boomerang.api'
 VERSION = '0.5.5'
 
 
