@@ -90,9 +90,13 @@ DATABASES = {
         'NAME': 'boomerang',
         'USER': 'boomerang',
         'PASSWORD': 'honda1',
-        'CONN_MAX_AGE': 1800,
+        'CONN_MAX_AGE': 0,
     }
 }
+
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=1800)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation

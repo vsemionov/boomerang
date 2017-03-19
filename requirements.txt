@@ -11,3 +11,5 @@ python-openid==2.2.5
 requests==2.11.1
 requests-oauthlib==0.7.0
 six==1.10.0
+gunicorn==19.7.0
+dj-database-url==0.4.2
