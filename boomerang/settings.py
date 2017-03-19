@@ -194,16 +194,30 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_REDIRECT_URL = 'index'
 
+import urllib
+redis_url = urllib.parse.urlparse(os.environ.get('REDIS_URL', 'redis://:honda1@ubuntu:6379/0'))
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
     'api_throttle': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache_api_throttle',
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': 'redis://{0}@{1}:{2}/{3}'.format(
+            ':' + redis_url.password if redis_url.password is not None else '',
+            redis_url.hostname,
+            int(redis_url.port or 6379),
+            int(redis_url.path.strip('/')) if redis_url.path else 0),
         'TIMEOUT': 300,
         'OPTIONS': {
             'MAX_ENTRIES': 50*1000,
+            'SOCKET_TIMEOUT': 5,
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+            'CONNECTION_POOL_CLASS_KWARGS': {
+                'max_connections': 20,
+                'timeout': 5,
+            },
         },
     }
 }
