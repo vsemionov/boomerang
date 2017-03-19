@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'boomerang.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'HOST': 'localhost',
+        'HOST': 'ubuntu',
         'NAME': 'boomerang',
         'USER': 'boomerang',
         'PASSWORD': 'honda1',
-        # 'CONN_MAX_AGE': 1800,
+        'CONN_MAX_AGE': 1800,
     }
 }
 
