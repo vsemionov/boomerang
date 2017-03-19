@@ -24,6 +24,4 @@ class InfoViewSet(mixins.ListModelMixin,
                             ('url', self._get_user_url(request))))
         info = OrderedDict((('app', app),
                             ('user', user)))
-        print("X-Forwarded-For", request.META.get('HTTP_X_FORWARDED_FOR'))
-        print("Remote-Addr", request.META.get('REMOTE_ADDR'))
         return response.Response(info)
