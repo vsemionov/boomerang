@@ -168,7 +168,7 @@ if DEBUG:
                      'debug_toolbar.middleware.DebugToolbarMiddleware',
                  ] + MIDDLEWARE
 else:
-    ALLOWED_HOSTS = ['vsemionov.pythonanywhere.com']
+    ALLOWED_HOSTS = ['boomerang-notes.herokuapp.com']
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
