@@ -209,8 +209,8 @@ CACHES = {
             int(redis_url.port or 6379),
             int(redis_url.path.strip('/')) if redis_url.path else 0),
         'TIMEOUT': 300,
+        'KEY_PREFIX': 'boomerang',
         'OPTIONS': {
-            'MAX_ENTRIES': 50*1000,
             'SOCKET_TIMEOUT': 5,
             'SOCKET_CONNECT_TIMEOUT': 5,
             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
