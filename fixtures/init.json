@@ -39,7 +39,7 @@
     "model": "auth.user",
     "pk": 1,
     "fields": {
-        "password": "pbkdf2_sha256$30000$cOBbPwiGKIxv$5reqz8piyVVe+9UVw9sXq0oymUhBjqhTle2bbUKz1Pg=",
+        "password": "pbkdf2_sha256$30000$a4DVsY67I4v6$HcaFT2J2g/jWh/HaShXNGKicMB2GmEswWYhSdNV2drg=",
         "last_login": null,
         "is_superuser": true,
         "username": "admin",
@@ -57,7 +57,7 @@
     "model": "auth.user",
     "pk": 2,
     "fields": {
-        "password": "pbkdf2_sha256$30000$Ru7UNI4OH9VS$EYrcRMcc6MH4MOGiUPjmAmbY9QFxFLaB49iN/b0Fvtw=",
+        "password": "pbkdf2_sha256$30000$a4DVsY67I4v6$HcaFT2J2g/jWh/HaShXNGKicMB2GmEswWYhSdNV2drg=",
         "last_login": null,
         "is_superuser": false,
         "username": "staff",
