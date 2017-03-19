@@ -18,17 +18,6 @@ class InfoViewSet(mixins.ListModelMixin,
         return self.view_name
 
     def list(self, request, *args, **kwargs):
-        from django.core.cache import caches
-        import time
-        THROTTLE_CACHE_ALIAS = 'api_throttle'
-        throttle_cache = caches[THROTTLE_CACHE_ALIAS]
-        t0 = time.time()
-        o = throttle_cache.get('throttle_user_3')
-        t = time.time() - t0
-        if o:
-            print("cache found in %f s" % t)
-        else:
-            print("cache not found")
         app = OrderedDict((('name', NAME),
                            ('version', VERSION)))
         user = OrderedDict((('username', request.user.username),
