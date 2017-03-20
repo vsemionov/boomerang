@@ -1,10 +1,22 @@
-checklist:
- * pull: git pull
- * requirements: pip install -r requirements.txt
- * remove .pyc: find . -name __pycache__ -type d -exec rm -rf \{\} \;
- * collectstatic: ./manage.py collectstatic
- * database: sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang
- * migrate: ./manage.py migrate
- * populate: ./manage.py loaddata fixtures/init.json
- * createcachetable cache_api_throttle: ./manage.py createcachetable cache_api_throttle
- * schedule maintenance: scripts/maintenance.sh
+common:
+ * update boomerang/settings.py and fixtures/init.json with the target domain
+ * update boomerang/settings.py with the server email
+ * commit changes: git commit -a -m "configured"
+
+local:
+ * setup services: postgresql and redis
+ * update settings.py to point to the configured services
+ * install requirements: pip install -r requirements.txt
+ * collect static files: ./manage.py collectstatic
+ * setup database: sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang
+ * migrate data: ./manage.py migrate
+ * populate data: ./manage.py loaddata fixtures/init.json
+ * start server: ./manage.py runserver
+ * perform maintenance: bin/maintenance.sh
+
+heroku:
+ * create heroku application, provision heroku postgres, heroku redis, and heroku scheduler
+ * connect: heroku login && heroku git:remote -a <app_name>
+ * deploy: git push heroku
+ * populate data: heroku run python manage.py loaddata fixtures/init.json
+ * schedule daily maintenance: bin/maintenance.sh
