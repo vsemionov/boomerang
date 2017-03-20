@@ -10,6 +10,9 @@ redis==2.10.5
 whitenoise==3.3.0
 dj-database-url==0.4.2
 gunicorn==19.7.0
+gevent==1.2.1
+greenlet==0.4.12
+psycogreen==1.0
 sqlparse==0.2.2
 oauthlib==2.0.0
 python-openid==2.2.5
