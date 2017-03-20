@@ -145,7 +145,7 @@ STATIC_URL = '/static/'
 
 # Email
 
-ADMIN_NAME = 'Boomerang Admin'
+ADMIN_NAME = 'Boomerang Notes'
 SERVER_EMAIL = 'boomerang.notes@gmail.com'
 DEFAULT_FROM_EMAIL = '%s <%s>' % (ADMIN_NAME, SERVER_EMAIL)
 
