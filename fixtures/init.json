@@ -3,8 +3,8 @@
     "model": "sites.site",
     "pk": 1,
     "fields": {
-        "domain": "vsemionov.pythonanywhere.com",
-        "name": "vsemionov.pythonanywhere.com"
+        "domain": "boomerang-notes.herokuapp.com",
+        "name": "boomerang-notes.herokuapp.com"
     }
 },
 {
@@ -43,9 +43,9 @@
         "last_login": null,
         "is_superuser": true,
         "username": "admin",
-        "first_name": "Admin",
+        "first_name": "Boomerang",
         "last_name": "Notes",
-        "email": "vsemionov.notes@gmail.com",
+        "email": "boomerang.notes@gmail.com",
         "is_staff": true,
         "is_active": true,
         "date_joined": "2016-10-10T00:00:00.000Z",
