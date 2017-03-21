@@ -1,6 +1,7 @@
 import uuid
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from .models import Notebook, Note, Task
@@ -9,12 +10,26 @@ from .models import Notebook, Note, Task
 class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def __init__(self, *args, **kwargs):
         kwargs['pk_field'] = serializers.UUIDField(format='hex')
+        self.optimized = 'source' in kwargs
         super(SecondaryKeyRelatedField, self).__init__(*args, **kwargs)
+
+    def to_internal_value(self, data):
+        if self.pk_field is not None:
+            data = self.pk_field.to_internal_value(data)
+        try:
+            return self.get_queryset().get(ext_id=data)
+        except ObjectDoesNotExist:
+            self.fail('does_not_exist', pk_value=data)
+        except (TypeError, ValueError):
+            self.fail('incorrect_type', data_type=type(data).__name__)
 
     def to_representation(self, value):
         if self.pk_field is not None:
             return self.pk_field.to_representation(value.ext_id)
         return value.ext_id
+
+    def use_pk_only_optimization(self):
+        return self.optimized
 
 
 class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
@@ -62,7 +77,7 @@ class NotebookSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
-    notebook = serializers.PrimaryKeyRelatedField(read_only=True)
+    notebook = SecondaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Note
@@ -130,7 +145,7 @@ def get_hyperlinked_note_serializer_class(user_username, notebooks=None):
 
     class DynamicNoteSerializer(NoteSerializer):
         if notebooks is not None:
-            notebook = serializers.PrimaryKeyRelatedField(queryset=notebooks)
+            notebook = SecondaryKeyRelatedField(queryset=notebooks)
 
         links = NoteLinksSerializer(read_only=True, source='*')
 
