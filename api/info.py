@@ -3,7 +3,7 @@ from rest_framework import viewsets, mixins, response, reverse
 
 
 NAME = 'vsemionov.boomerang.api'
-VERSION = '0.5.5'
+VERSION = '0.5.6'
 
 
 class InfoViewSet(mixins.ListModelMixin,
