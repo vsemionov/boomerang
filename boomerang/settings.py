@@ -232,13 +232,14 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 25,
     'HTML_SELECT_CUTOFF': 50,
     'DEFAULT_THROTTLE_CLASSES': (
-        'boomerang.throttle.UserRateThrottle',
-        # 'boomerang.throttle.HostRateThrottle',
+        'api.throttle.UserRateThrottle',
+        # 'api.throttle.HostRateThrottle',
     ),
     'DEFAULT_THROTTLE_RATES': {
         'user': '120/min',
         'host': '120/min',
     },
+    'VIEW_DESCRIPTION_FUNCTION': 'api.util.get_view_description',
 }
 if not DEBUG:
     REST_FRAMEWORK.update({

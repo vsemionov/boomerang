@@ -6,9 +6,9 @@ NAME = 'vsemionov.boomerang.api'
 VERSION = '0.5.8'
 
 
-class InfoViewSet(mixins.ListModelMixin,
+class ApiInfoViewSet(mixins.ListModelMixin,
                   viewsets.GenericViewSet):
-    view_name = 'Info'
+    view_name = 'Api Info'
 
     @staticmethod
     def _get_user_url(request):
