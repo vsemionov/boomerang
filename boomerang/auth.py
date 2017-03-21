@@ -1,5 +1,3 @@
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.utils.http import is_safe_url
 from allauth.account.models import EmailAddress
 from allauth.account.adapter import DefaultAccountAdapter, app_settings
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
