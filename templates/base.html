@@ -10,7 +10,7 @@
         <meta name="robots" content="NONE,NOARCHIVE" />
       {% endblock %}
 
-      <title>{% if page_title %}{{ page_title }} | {% endif %}{% block site_title %}{% endblock %}</title>
+      <title>{% block head_title %}{% endblock %} - Boomerang</title>
 
       <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" type="text/css">
     {% endblock head %}
