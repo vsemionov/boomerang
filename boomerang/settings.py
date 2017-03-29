@@ -192,8 +192,6 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = 'index'
-
 import urllib
 redis_url = urllib.parse.urlparse(os.environ.get('REDIS_URL', 'redis://:honda1@ubuntu:6379/0'))
 
