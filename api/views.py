@@ -101,6 +101,7 @@ class BaseNoteViewSet(SortedSearchableSyncedModelViewSet):
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'username'
+    lookup_value_regex = '[^/]+'
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = permissions.user_permissions
