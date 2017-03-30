@@ -17,7 +17,6 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from django.views.generic.base import RedirectView
-from allauth.account.views import login, logout
 from rest_framework.authtoken import views as authtoken_views
 from django.conf import settings
 
@@ -25,15 +24,9 @@ from django.conf import settings
 def redirect_view(view_name, query=False):
     return RedirectView.as_view(pattern_name=view_name, query_string=query)
 
-auth_urls = [
-    url(r'^login/$', login, name='login'),
-    url(r'^logout/$', logout, name='logout'),
-]
-
 urlpatterns = [
     url(r'^$', redirect_view('api-root'), name='index'),
     url(r'^api/', include('api.urls')),
-    url(r'^auth/', include(auth_urls, namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^api-token-auth/', authtoken_views.obtain_auth_token),
