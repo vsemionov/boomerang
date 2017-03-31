@@ -1,3 +1,3 @@
 
-def get_view_description(cld, html=False):
+def get_view_description(cls, html=False):
     return ''
