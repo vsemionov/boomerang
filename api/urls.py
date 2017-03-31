@@ -4,6 +4,7 @@ from rest_framework_nested import routers
 from . import views, info
 
 root_router = routers.DefaultRouter()
+root_router.include_format_suffixes = False
 root_router.register(r'users', views.UserViewSet)
 
 user_router = routers.NestedSimpleRouter(root_router, r'users', lookup='user')
