@@ -5,7 +5,6 @@ from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import filters
 
-from . import util
 from .mixins import ViewSetMixin
 
 
@@ -54,7 +53,7 @@ class SearchableModelMixin(ViewSetMixin):
         return queryset
 
     def search_queryset(self, queryset):
-        if self.full_text_search and util.is_pgsql():
+        if self.full_text_search:
             search_func = self.search_trigram_similarity
         else:
             search_func = self.search_basic
