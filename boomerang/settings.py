@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'boomerang.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'ubuntu',
+        'HOST': 'localhost',
         'NAME': 'boomerang',
         'USER': 'boomerang',
         'PASSWORD': 'honda1',
