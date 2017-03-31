@@ -196,7 +196,7 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = 'index'
 
 import urllib
-redis_url = urllib.parse.urlparse(os.environ.get('REDIS_URL', 'redis://:honda1@ubuntu:6379/0'))
+redis_url = urllib.parse.urlparse(os.environ.get('REDIS_URL', 'redis://:honda1@localhost:6379/0'))
 
 CACHES = {
     'default': {
