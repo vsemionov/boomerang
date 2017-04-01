@@ -1,0 +1,5 @@
+.horizontal-checkbox input {
+  float: left;
+  width: 1em;
+  margin-top: 10px;
+}
