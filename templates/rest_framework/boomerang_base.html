@@ -32,3 +32,16 @@
         <li><a href="{% url 'account_signup' %}"><span class="glyphicon glyphicon-check"></span>&nbsp;{% trans "Sign Up" %}</a></li>
     {% endif %}
 {% endblock %}
+
+{% block breadcrumbs %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info fade in">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {{ block.super }}
+{% endblock %}
