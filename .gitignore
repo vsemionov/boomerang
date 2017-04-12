@@ -10,3 +10,17 @@
 /static
 
 *.pyc
+
+web/node_modules
+web/jspm_packages
+web/npm-debug.log
+web/debug.log
+web/src/**/*.js
+!web/src/systemjs.config.extras.js
+!web/src/systemjs.config.js
+!web/src/systemjs-angular-loader.js
+web/*.js.map
+web/e2e/**/*.js
+web/e2e/**/*.js.map
+web/_test-output
+web/_temp
