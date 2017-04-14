@@ -11,6 +11,8 @@
 
 *.pyc
 
+Thumbs.db
+
 web/node_modules
 web/jspm_packages
 web/npm-debug.log
