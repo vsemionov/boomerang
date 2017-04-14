@@ -1,3 +1,0 @@
-ui:
- * django messages framework, add messages to api template
- * allauth templates
