@@ -89,17 +89,20 @@ WSGI_APPLICATION = 'boomerang.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django_db_geventpool.backends.postgresql_psycopg2',
         'HOST': 'localhost',
         'NAME': 'boomerang',
         'USER': 'boomerang',
         'PASSWORD': 'honda1',
         'CONN_MAX_AGE': 0,
+        'OPTIONS': {
+            'MAX_CONNS': 10,
+        }
     }
 }
 
 import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=1800)
+db_from_env = dj_database_url.config(DATABASES['default']['ENGINE'], conn_max_age=0) # conn_max_age must be 0 for pools
 DATABASES['default'].update(db_from_env)
 
 
