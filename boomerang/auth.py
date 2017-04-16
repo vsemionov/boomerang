@@ -29,7 +29,7 @@ class AccountAdapter(DefaultAccountAdapter):
 # http://stackoverflow.com/questions/19354009/django-allauth-social-login-automatically-linking-social-site-profiles-using-th
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     @staticmethod
-    def _is_email_verified(provider, data):
+    def __is_email_verified(provider, data):
         if provider == 'google':
             return data.get('verified_email')
         elif provider == 'facebook':
@@ -60,7 +60,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             return
 
         # prevent connecting unverified social accounts
-        if not self._is_email_verified(sociallogin.account.provider, sociallogin.account.extra_data):
+        if not self.__is_email_verified(sociallogin.account.provider, sociallogin.account.extra_data):
             return
 
         # check if given email address already exists.
