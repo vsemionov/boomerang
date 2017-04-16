@@ -1,5 +1,5 @@
 common:
- * update boomerang/settings.py and fixtures/init.json with the target domain
+ * update boomerang/settings.py with the target domain
  * update boomerang/settings.py with the server email
  * commit changes: git commit -a -m "configured"
 
@@ -10,13 +10,17 @@ local:
  * collect static files: ./manage.py collectstatic
  * setup database: sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang
  * migrate data: ./manage.py migrate
- * populate data: ./manage.py loaddata fixtures/init.json
+ * create superuser: ./manage.py createsuperuser
  * start server: ./manage.py runserver
  * perform maintenance: bin/maintenance.sh
 
 heroku:
- * create heroku application, provision heroku postgres, heroku redis, and heroku scheduler
+ * create heroku python application, provision heroku postgres, heroku redis, and heroku scheduler
  * connect: heroku login && heroku git:remote -a <app_name>
+ * configure: heroku config:set EMAIL_PASSWORD=<email_password>
  * deploy: git push heroku
- * populate data: heroku run python manage.py loaddata fixtures/init.json
+ * create superuser: heroku run python manage.py createsuperuser
  * schedule daily maintenance: bin/maintenance.sh
+
+configure:
+ * login to /admin/, create a site and social applications
