@@ -102,7 +102,7 @@ DATABASES = {
 }
 
 import dj_database_url
-db_from_env = dj_database_url.config(DATABASES['default']['ENGINE'], conn_max_age=0) # conn_max_age must be 0 for pools
+db_from_env = dj_database_url.config(engine=DATABASES['default']['ENGINE'], conn_max_age=0) # conn_max_age must be 0 for pools
 DATABASES['default'].update(db_from_env)
 
 
