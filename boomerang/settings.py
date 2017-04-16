@@ -217,7 +217,7 @@ CACHES = {
             'SOCKET_CONNECT_TIMEOUT': 5,
             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
             'CONNECTION_POOL_CLASS_KWARGS': {
-                'max_connections': 20,
+                'max_connections': 10,
                 'timeout': 5,
             },
         },
