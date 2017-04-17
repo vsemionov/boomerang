@@ -6,9 +6,11 @@ import {AppRoutingModule} from './app-routing.module';
 
 import {AuthService} from './auth.service';
 
-import {AppComponent}       from './app.component';
-import {NotebooksComponent} from './notebooks.component';
-import {TasksComponent}     from './tasks.component';
+import {AppComponent}         from './app.component';
+import {NavbarComponent}      from './navbar.component';
+import {BreadcrumbsComponent} from './breadcrumbs.component';
+import {NotebooksComponent}   from './notebooks.component';
+import {TasksComponent}       from './tasks.component';
 
 
 @NgModule({
@@ -19,6 +21,8 @@ import {TasksComponent}     from './tasks.component';
     ],
     declarations: [
         AppComponent,
+        NavbarComponent,
+        BreadcrumbsComponent,
         NotebooksComponent,
         TasksComponent,
     ],

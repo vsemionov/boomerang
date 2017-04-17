@@ -5,15 +5,17 @@ import {Router}            from '@angular/router';
     selector: 'app',
     template: `
         <h1>Boomerang {{version}}</h1>
+        <navbar></navbar>
+        <breadcrumbs></breadcrumbs>
+        <hr/>
         <div>
             <a routerLink="/notebooks" routerLinkActive="active">Notebooks</a>
         </div>
         <div>
             <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
         </div>
-        <div>
-            <router-outlet></router-outlet>
-        </div>
+        <hr/>
+        <router-outlet></router-outlet>
     `,
 })
 export class AppComponent implements OnInit {
