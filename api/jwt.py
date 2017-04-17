@@ -1,11 +1,8 @@
 from collections import OrderedDict
 
 from rest_framework import viewsets, mixins, permissions, response, reverse
-from rest_framework_jwt.settings import api_settings
 
-
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+from .util import create_jwt
 
 
 class JWTViewSet(mixins.ListModelMixin,
@@ -22,11 +19,7 @@ class JWTViewSet(mixins.ListModelMixin,
 
     def list(self, request, *args, **kwargs):
         user = request.user
-
-        payload = jwt_payload_handler(user)
-        token = jwt_encode_handler(payload)
-
+        token = create_jwt(user)
         jwt = OrderedDict((('username', user.username),
                            ('token', token)))
-
         return response.Response(jwt)
