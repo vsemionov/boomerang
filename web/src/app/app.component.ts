@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
-  selector: 'my-app',
-  template: `<h1>Hello {{name}}</h1>`,
+    selector: 'app',
+    template: `<h1>Boomerang {{version}}</h1>`,
 })
-export class AppComponent  { name = 'Angular'; }
+export class AppComponent {
+    version = '0.6-dev';
+}
