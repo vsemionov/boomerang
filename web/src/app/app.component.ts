@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {Router}            from '@angular/router';
 
+import {AuthService} from './auth.service';
+
+
 @Component({
     selector: 'app',
     template: `
@@ -9,20 +12,21 @@ import {Router}            from '@angular/router';
         <breadcrumbs></breadcrumbs>
         <hr/>
         <div>
-            <a routerLink="/notebooks" routerLinkActive="active">Notebooks</a>
+            <a routerLink="/notebooks" routerLinkActive="btn">Notebooks</a>
         </div>
         <div>
-            <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
+            <a routerLink="/tasks" routerLinkActive="btn">Tasks</a>
         </div>
         <hr/>
         <router-outlet></router-outlet>
     `,
 })
 export class AppComponent implements OnInit {
-    constructor(private router: Router) {
+    constructor(private router: Router, private authService: AuthService) {
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
+        this.authService.init();
         this.router.navigate(['/notebooks']);
     }
 }

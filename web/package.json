@@ -37,7 +37,10 @@
     "systemjs": "0.19.40",
     "core-js": "^2.4.1",
     "rxjs": "5.0.1",
-    "zone.js": "^0.8.4"
+    "zone.js": "^0.8.4",
+
+    "angular2-jwt": "0.2.2",
+    "angular2-cookie": "1.2.6"
   },
   "devDependencies": {
     "concurrently": "^3.2.0",

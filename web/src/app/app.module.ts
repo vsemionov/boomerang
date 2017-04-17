@@ -1,6 +1,9 @@
-import {NgModule}      from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {FormsModule}   from '@angular/forms';
+import {NgModule}             from '@angular/core';
+import {BrowserModule}        from '@angular/platform-browser';
+import {Http, RequestOptions} from '@angular/http';
+
+import {AuthHttp}      from 'angular2-jwt';
+import {CookieService} from 'angular2-cookie/services/cookies.service';
 
 import {AppRoutingModule} from './app-routing.module';
 
@@ -13,10 +16,14 @@ import {NotebooksComponent}   from './notebooks.component';
 import {TasksComponent}       from './tasks.component';
 
 
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+    return new AuthHttp(AuthService.getAuthConfig(), http, options);
+}
+
+
 @NgModule({
     imports: [
         BrowserModule,
-        FormsModule,
         AppRoutingModule,
     ],
     declarations: [
@@ -26,7 +33,15 @@ import {TasksComponent}       from './tasks.component';
         NotebooksComponent,
         TasksComponent,
     ],
-    providers: [AuthService],
+    providers: [
+        {
+            provide: AuthHttp,
+            useFactory: authHttpServiceFactory,
+            deps: [Http, RequestOptions]
+        },
+        CookieService,
+        AuthService
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
