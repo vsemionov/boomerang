@@ -16,9 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from django.views.generic.base import RedirectView
-from rest_framework.authtoken import views as authtoken_views
 from django.conf import settings
+from django.views.generic.base import RedirectView
 
 
 def redirect_view(view_name, query=False):
@@ -29,7 +28,6 @@ urlpatterns = [
     url(r'^api/', include('api.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^api-token-auth/', authtoken_views.obtain_auth_token),
 ]
 
 
