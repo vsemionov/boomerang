@@ -18,7 +18,8 @@
     "test": "concurrently \"npm run build:watch\" \"karma start karma.conf.js\"",
     "pretest:once": "npm run build",
     "test:once": "karma start karma.conf.js --single-run",
-    "lint": "tslint ./src/**/*.ts -t verbose"
+    "lint": "tslint ./src/**/*.ts -t verbose",
+    "build:aot": "ngc -p tsconfig.json && rollup -c rollup-config.js"
   },
   "keywords": [],
   "author": "",
@@ -60,7 +61,15 @@
     "rimraf": "^2.5.4",
 
     "@types/node": "^6.0.46",
-    "@types/jasmine": "2.5.36"
+    "@types/jasmine": "2.5.36",
+
+    "@angular/compiler-cli": "~4.0.0",
+    "@angular/platform-server": "~4.0.0",
+
+    "rollup": "^0.41.6",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "rollup-plugin-uglify": "^1.0.2"
   },
   "repository": {}
 }

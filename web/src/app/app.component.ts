@@ -22,6 +22,8 @@ import {AuthService} from './auth.service';
     `,
 })
 export class AppComponent implements OnInit {
+    version = '0.6-dev';
+
     constructor(private router: Router, private authService: AuthService) {
     }
 

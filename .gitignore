@@ -14,14 +14,10 @@
 Thumbs.db
 
 web/node_modules
-web/jspm_packages
-web/npm-debug.log
-web/debug.log
+web/aot
 web/src/**/*.js
+web/src/**/*.js.map
+web/boomerang.js
 !web/src/systemjs.config.extras.js
 !web/src/systemjs.config.js
 !web/src/systemjs-angular-loader.js
-web/e2e/**/*.js
-web/**/*.js.map
-web/_test-output
-web/_temp
