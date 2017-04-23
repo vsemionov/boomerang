@@ -20,6 +20,10 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     return new AuthHttp(AuthService.getAuthConfig(), http, options);
 }
 
+export function cookieServiceFactory() {
+    return new CookieService();
+}
+
 
 @NgModule({
     imports: [
@@ -37,10 +41,13 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
         {
             provide: AuthHttp,
             useFactory: authHttpServiceFactory,
-            deps: [Http, RequestOptions]
+            deps: [Http, RequestOptions],
         },
-        CookieService,
-        AuthService
+        {
+            provide: CookieService,
+            useFactory: cookieServiceFactory, // workaround; see https://github.com/salemdar/angular2-cookie/issues/37
+        },
+        AuthService,
     ],
     bootstrap: [AppComponent]
 })
