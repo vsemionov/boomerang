@@ -23,6 +23,8 @@ from .index import index
 
 urlpatterns = [
     url(r'^$', index, name='index'),
+    url(r'^notebooks$', index, name='index'),
+    url(r'^tasks$', index, name='index'),
     url(r'^api/', include('api.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
