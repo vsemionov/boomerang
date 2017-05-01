@@ -1,1 +1,2 @@
 automate and document front-end deployment on heroku
+if possible, remove core-js and zone.js from git and deploy them from node_modules
