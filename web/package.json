@@ -1,6 +1,6 @@
 {
   "name": "boomerang",
-  "version": "0.6-dev",
+  "version": "1.0.0",
   "description": "Boomerang Notes",
   "scripts": {
     "build": "tsc -p src/",
