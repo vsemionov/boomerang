@@ -1,3 +1,2 @@
 automate and document front-end deployment on heroku
-handle 404 by serving index.html
 if possible, remove core-js and zone.js from git and deploy them from node_modules
