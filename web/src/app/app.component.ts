@@ -29,6 +29,6 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.authService.init();
-        this.router.navigate(['/notebooks']);
+        // this.router.navigate(['/notebooks']);
     }
 }
