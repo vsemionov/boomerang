@@ -1,7 +1,7 @@
 {
-  "name": "angular-quickstart",
-  "version": "1.0.0",
-  "description": "QuickStart package.json from the documentation, supplemented with testing support",
+  "name": "boomerang",
+  "version": "0.6-dev",
+  "description": "Boomerang Notes",
   "scripts": {
     "build": "tsc -p src/",
     "build:watch": "tsc -p src/ -w",

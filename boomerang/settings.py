@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'bootstrapform',
     'api',
+    'web',
 ]
 
 MIDDLEWARE = [

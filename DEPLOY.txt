@@ -5,6 +5,9 @@ common:
 
 local:
  * setup services: postgresql and redis
+ * install node.js (and npm)
+ * install js dependencies: (cd web && npm install)
+ * build front-end: (cd web && npm run build:aot)
  * update settings.py to point to the configured services
  * install requirements: pip install -r requirements.txt
  * collect static files: ./manage.py collectstatic
