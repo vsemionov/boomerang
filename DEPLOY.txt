@@ -10,7 +10,6 @@ local:
  * build front-end: (cd web && npm run build:aot)
  * update settings.py to point to the configured services
  * install requirements: pip install -r requirements.txt
- * collect static files: ./manage.py collectstatic
  * setup database: sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang
  * migrate data: ./manage.py migrate
  * create superuser: ./manage.py createsuperuser
