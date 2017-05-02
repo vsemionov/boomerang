@@ -4,8 +4,8 @@ import commonjs    from 'rollup-plugin-commonjs';
 import uglify      from 'rollup-plugin-uglify';
 
 export default {
-    entry: 'src/main.js',
-    dest: 'static/web/boomerang.js', // output a single application bundle
+    entry: 'web/src/main.js',
+    dest: 'web/static/web/boomerang.js', // output a single application bundle
     sourceMap: false,
     format: 'iife',
     onwarn: function (warning) {

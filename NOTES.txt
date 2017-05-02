@@ -1,3 +1,1 @@
-automate and document front-end deployment on heroku
 no redirect to / on login/logout
-if possible, remove core-js and zone.js from git and deploy them from node_modules

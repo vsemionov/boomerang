@@ -13,12 +13,12 @@
 
 
   "files": [
-    "src/app/app.module.ts",
-    "src/main.ts"
+    "web/src/app/app.module.ts",
+    "web/src/main.ts"
   ],
 
   "angularCompilerOptions": {
-   "genDir": "aot",
+   "genDir": "web/aot",
    "skipMetadataEmit" : true
  }
 }

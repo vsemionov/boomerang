@@ -6,18 +6,17 @@ common:
 local:
  * setup services: postgresql and redis
  * install node.js (and npm)
- * install js dependencies: (cd web && npm install)
- * build front-end: (cd web && npm run build:aot)
  * update settings.py to point to the configured services
  * install requirements: pip install -r requirements.txt
  * setup database: sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang
  * migrate data: ./manage.py migrate
  * create superuser: ./manage.py createsuperuser
+ * build front-end: npm install
  * start server: ./manage.py runserver
  * perform maintenance: bin/maintenance.sh
 
 heroku:
- * create heroku python application, provision heroku postgres, heroku redis, and heroku scheduler
+ * create heroku python application, add node.js buildpack, provision heroku postgres, heroku redis, and heroku scheduler
  * connect: heroku login && heroku git:remote -a <app_name>
  * configure: heroku config:set EMAIL_PASSWORD=<email_password>
  * deploy: git push heroku
