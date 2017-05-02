@@ -3,8 +3,7 @@
   "version": "0.6.0",
   "description": "Boomerang Notes",
   "engines": {
-    "node": "6.10.2",
-    "npm": "4.5.0"
+    "node": "6.10.2"
   },
   "scripts": {
     "build": "tsc -p web/src/",
