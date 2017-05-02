@@ -16,7 +16,7 @@ local:
  * perform maintenance: bin/maintenance.sh
 
 heroku:
- * create heroku python application, add node.js buildpack, provision heroku postgres, heroku redis, and heroku scheduler
+ * create heroku python application, insert buildpack heroku/nodejs before heroku/python, provision heroku postgres, heroku redis, and heroku scheduler
  * connect: heroku login && heroku git:remote -a <app_name>
  * configure: heroku config:set EMAIL_PASSWORD=<email_password>
  * deploy: git push heroku
