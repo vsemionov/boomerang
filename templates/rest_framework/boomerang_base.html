@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}{% if name %}{{ name }} - {% endif %}Boomerang{% endblock %}
+{% block title %}{% if name %}{{ name }} - {% endif %}Boomerang API{% endblock %}
 
 {% block bootstrap_theme %}
     <link rel="icon" href="{% static "boomerang/favicon.ico" %}">
@@ -17,7 +17,7 @@
 {% endcomment %}
 
 {% block branding %}
-    <a class='navbar-brand' href='{% url 'index' %}'>Boomerang</a>
+    <a class='navbar-brand' href='{% url 'index' %}'>Boomerang API</a>
 {% endblock %}
 
 {% block userlinks %}

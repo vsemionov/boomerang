@@ -5,7 +5,7 @@
 <html>
   <head>
     {% block head %}
-      <title>{% block head_title %}{% endblock %} - Boomerang</title>
+      <title>{% block head_title %}{% endblock %} - Boomerang API</title>
 
       <link rel="icon" href="{% static "boomerang/favicon.ico" %}">
 
@@ -20,7 +20,7 @@
     <div class="navbar navbar-static-top navbar-inverse" role="navigation">
       <div class="container">
         <span>
-          <a class='navbar-brand' href='{% url 'index' %}'>Boomerang</a>
+          <a class='navbar-brand' href='{% url 'index' %}'>Boomerang API</a>
         </span>
         <ul class="nav navbar-nav pull-right">
           {% if user.is_authenticated %}
