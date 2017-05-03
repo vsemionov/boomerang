@@ -1,1 +1,1 @@
-logout behavior (logout clicked, requested on backend, but jwt persists OR jwt cleared but logged-in session persists)
+logout behavior (logout clicked, requested on backend, but jwt persists OR jwt cleared but logged-in session persists): - logout onclick: remove jwt
