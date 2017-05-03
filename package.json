@@ -3,7 +3,7 @@
   "version": "0.6.0",
   "description": "Boomerang Notes",
   "engines": {
-    "node": "6.10.2"
+    "node": "6.10.3"
   },
   "scripts": {
     "build": "tsc -p web/src/",
@@ -26,8 +26,8 @@
     "postinstall": "npm run build:aot && cpx node_modules/core-js/client/shim.min.js web/static/web/node_modules/core-js/client && cpx node_modules/zone.js/dist/zone.min.js web/static/web/node_modules/zone.js/dist"
   },
   "keywords": [],
-  "author": "",
-  "license": "MIT",
+  "author": "Victor Semionov <vsemionov@gmail.com>",
+  "license": "Apache-2.0",
   "dependencies": {
     "@angular/common": "~4.0.0",
     "@angular/compiler": "~4.0.0",
@@ -44,8 +44,8 @@
     "rxjs": "5.0.1",
     "zone.js": "^0.8.4",
 
-    "angular2-jwt": "0.2.2",
-    "angular2-cookie": "1.2.6",
+    "angular2-jwt": "~0.2.3",
+    "angular2-cookie": "~1.2.6",
 
     "typescript": "~2.1.0",
 
