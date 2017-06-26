@@ -5,7 +5,7 @@ import {AppModuleNgFactory} from '../aot/web/src/app/app.module.ngfactory';
 
 
 // Enable production mode unless running locally
-if (!/^localhost(:\d+)?$/.test(document.location.host) && !/^127\.0\.0\.1(:\d+)?$/.test(document.location.host)) {
+if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
     enableProdMode();
 }
 
