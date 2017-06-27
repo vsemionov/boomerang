@@ -19,12 +19,12 @@ export class AuthService {
 
     init() {
         let token = this.cookieService.get('jwt');
+        this.cookieService.remove('jwt');
         if (token) {
             this.login(token);
         } else {
             this.logout();
         }
-        this.cookieService.remove('jwt');
     }
 
     login(token: string) {
