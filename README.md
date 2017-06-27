@@ -16,6 +16,7 @@ An experimental web application
 ### Deployment
 
 #### Pre-install
+* regenerate secret key in *boomerang/settings.py*
 * update *boomerang/settings.py* with the target domain and server email
 * commit changes: `git commit -a -m "configured"`
 
