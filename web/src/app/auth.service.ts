@@ -21,6 +21,8 @@ export class AuthService {
         let token = this.cookieService.get('jwt');
         if (token) {
             this.login(token);
+        } else {
+            this.logout();
         }
         this.cookieService.remove('jwt');
     }
