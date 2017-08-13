@@ -29,31 +29,31 @@
   "author": "Victor Semionov <vsemionov@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@angular/common": "^4.2.4",
-    "@angular/compiler": "^4.2.4",
-    "@angular/core": "^4.2.4",
-    "@angular/forms": "^4.2.4",
-    "@angular/http": "^4.2.4",
-    "@angular/platform-browser": "^4.2.4",
-    "@angular/platform-browser-dynamic": "^4.2.4",
-    "@angular/router": "^4.2.4",
+    "@angular/common": "^4.3.4",
+    "@angular/compiler": "^4.3.4",
+    "@angular/core": "^4.3.4",
+    "@angular/forms": "^4.3.4",
+    "@angular/http": "^4.3.4",
+    "@angular/platform-browser": "^4.3.4",
+    "@angular/platform-browser-dynamic": "^4.3.4",
+    "@angular/router": "^4.3.4",
 
-    "angular-in-memory-web-api": "^0.3.2",
-    "systemjs": "^0.20.14",
-    "core-js": "^2.4.1",
-    "rxjs": "^5.4.1",
-    "zone.js": "^0.8.12",
+    "systemjs": "^0.20.17",
+    "core-js": "^2.5.0",
+    "rxjs": "^5.4.3",
+    "zone.js": "^0.8.16",
 
     "angular2-jwt": "^0.2.3",
     "angular2-cookie": "^1.2.6",
 
-    "typescript": "^2.3.4",
+    "typescript": "^2.4.2",
 
-    "@angular/compiler-cli": "^4.2.4",
-    "@angular/platform-server": "^4.2.4",
+    "@angular/compiler-cli": "^4.3.4",
+    "@angular/platform-server": "^4.3.4",
+    "@angular/animations": "^4.3.4",
 
-    "rollup": "^0.43.0",
-    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup": "^0.47.2",
+    "rollup-plugin-commonjs": "^8.1.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1",
 
@@ -64,9 +64,9 @@
     "lite-server": "^2.3.0",
 
     "canonical-path": "^0.0.2",
-    "tslint": "^5.4.3",
+    "tslint": "^5.6.0",
     "lodash": "^4.17.4",
-    "jasmine-core": "^2.6.4",
+    "jasmine-core": "^2.7.0",
     "karma": "^1.7.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-cli": "^1.0.1",
@@ -75,7 +75,7 @@
     "protractor": "^5.1.2",
     "rimraf": "^2.6.1",
 
-    "@types/node": "^8.0.3",
+    "@types/node": "^8.0.20",
     "@types/jasmine": "^2.5.53"
   },
   "repository": {}
