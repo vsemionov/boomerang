@@ -12,12 +12,3 @@
 *.pyc
 
 Thumbs.db
-
-node_modules
-web/aot
-web/src/**/*.js
-web/src/**/*.js.map
-web/static/web/boomerang.js
-!web/src/systemjs.config.extras.js
-!web/src/systemjs.config.js
-!web/src/systemjs-angular-loader.js

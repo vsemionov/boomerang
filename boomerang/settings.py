@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'bootstrapform',
     'api',
-    'web',
 ]
 
 MIDDLEWARE = [
@@ -196,7 +195,8 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'api-root'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'api-root'
 
 import urllib
 redis_url = urllib.parse.urlparse(os.environ.get('REDIS_URL', 'redis://:honda1@localhost:6379/0'))

@@ -22,7 +22,6 @@ An experimental web application
 
 #### Local
 * install *python* (3.6)
-* install *node.js* (and *npm*)
 * install *heroku* toolbelt
 * setup services: *postgresql* and *redis*
 * update *settings.py* to point to the configured services
@@ -30,12 +29,11 @@ An experimental web application
 * create the database: `sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang`
 * initialize the database: `./manage.py migrate`
 * create the superuser: `./manage.py createsuperuser`
-* build the front-end: `npm install`
 * start the server: `./manage.py runserver`
 * perform routine maintenance: `bin/maintenance.sh`
 
 #### Heroku
-* create a heroku python application, insert buildpack *heroku/nodejs* before *heroku/python*, provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
+* create a heroku python application, provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
 * connect: `heroku login && heroku git:remote -a <app_name>`
 * configure: `heroku config:set EMAIL_PASSWORD=<email_password>`
 * deploy: `git push heroku`
@@ -68,17 +66,4 @@ An experimental web application
     - search API support
 
 * 0.6
-    - web front end
-
-* 0.7
-    - note/task search in web app
-
-* 0.8
-    - android app
-
-* 0.9
-    - note/task search in mobile app
-
-* 1.0
-    - android app offline mode
-    - android app data synchronization
+    - monitoring
