@@ -1,1 +1,29 @@
-{% extends "rest_framework/boomerang_base.html" %}
+{% extends "rest_framework/base.html" %}
+
+{% load static %}
+
+{% block title %}{% if name %}{{ name }} - {% endif %}Boomerang API{% endblock %}
+
+{% block bootstrap_theme %}
+    <link rel="icon" href="{% static "boomerang/favicon.ico" %}">
+
+    <link rel="stylesheet" href="{% static "rest_framework/css/bootstrap.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "boomerang/css/bootstrap-tweaks.css" %}" type="text/css">
+{% endblock %}
+
+{% comment %}
+{% block bootstrap_navbar_variant %}{% endblock %}
+{% endcomment %}
+
+{% block branding %}
+    <a class='navbar-brand' href='{% url 'index' %}'>Boomerang API</a>
+{% endblock %}
+
+{% block userlinks %}
+    {% include "profile.html" %}
+{% endblock %}
+
+{% block content %}
+    {% include "messages.html" %}
+    {{ block.super }}
+{% endblock %}
