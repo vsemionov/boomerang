@@ -2,41 +2,41 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     {% block head %}
-      <title>{% block head_title %}{% endblock %} - Boomerang API</title>
+        <title>{% block head_title %}{% endblock %} - Boomerang API</title>
 
-      <link rel="icon" href="{% static "boomerang/favicon.ico" %}">
+        <link rel="icon" href="{% static "boomerang/favicon.ico" %}">
 
-      <link rel="stylesheet" href="{% static "rest_framework/css/bootstrap.min.css" %}" type="text/css">
-      <link rel="stylesheet" href="{% static "boomerang/css/bootstrap-tweaks.css" %}" type="text/css">
-      <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}" type="text/css">
-      <link rel="stylesheet" href="{% static "bootstrap-social/css/bootstrap-social.css" %}" type="text/css">
+        <link rel="stylesheet" href="{% static "rest_framework/css/bootstrap.min.css" %}" type="text/css">
+        <link rel="stylesheet" href="{% static "boomerang/css/bootstrap-tweaks.css" %}" type="text/css">
+        <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}" type="text/css">
+        <link rel="stylesheet" href="{% static "bootstrap-social/css/bootstrap-social.css" %}" type="text/css">
     {% endblock head %}
-  </head>
+</head>
 
-  <body>
-    <div class="navbar navbar-static-top navbar-inverse" role="navigation">
-      <div class="container">
+<body>
+<div class="navbar navbar-static-top navbar-inverse" role="navigation">
+    <div class="container">
         <span>
           <a class='navbar-brand' href='{% url 'index' %}'>Boomerang API</a>
         </span>
         <ul class="nav navbar-nav pull-right">
-          {% include "profile.html" %}
+            {% include "profile.html" %}
         </ul>
-      </div>
     </div>
+</div>
 
-    <div class="container">
-      {% include "messages.html" %}
+<div class="container">
+    {% include "messages.html" %}
 
-      {% block content %}
-      {% endblock content %}
-    </div>
+    {% block content %}
+    {% endblock content %}
+</div>
 
-    {% block javascript %}
-      <script src="{% static "rest_framework/js/jquery-1.12.4.min.js" %}" type="text/javascript"></script>
-      <script src="{% static "rest_framework/js/bootstrap.min.js" %}" type="text/javascript"></script>
-    {% endblock javascript %}
-  </body>
+{% block javascript %}
+    <script src="{% static "rest_framework/js/jquery-1.12.4.min.js" %}" type="text/javascript"></script>
+    <script src="{% static "rest_framework/js/bootstrap.min.js" %}" type="text/javascript"></script>
+{% endblock javascript %}
+</body>
 </html>
