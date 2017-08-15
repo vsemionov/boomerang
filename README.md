@@ -39,8 +39,9 @@ https://boomerang-notes.herokuapp.com/
 #### Heroku
 * install *heroku toolbelt*
 * create a heroku python application, provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
+* (optional) create a *sentry* project or provision *sentry* from heroku
 * connect: `heroku login && heroku git:remote -a <app_name>`
-* configure: `heroku config:set SECRET_KEY=<secret_key> EMAIL_PASSWORD=<email_password>`
+* configure: `heroku config:set SECRET_KEY=<secret_key> EMAIL_PASSWORD=<email_password> SENTRY_DSN=<sentry_dsn>` (set `SENTRY_DSN` only if a sentry project was created manually)
 * deploy: `git push heroku`
 * create superuser: `heroku run python manage.py createsuperuser`
 * schedule daily maintenance: `bin/maintenance.sh`

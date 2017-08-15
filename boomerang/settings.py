@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', '26w+70vb7!sz!xm_j5tp-9dp5es^u^9dy0ykc0-lcu3v*b3@ke')
+SECRET_KEY = os.getenv('SECRET_KEY', '26w+70vb7!sz!xm_j5tp-9dp5es^u^9dy0ykc0-lcu3v*b3@ke')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
@@ -153,7 +153,7 @@ SERVER_EMAIL = 'boomerang.notes@gmail.com'
 DEFAULT_FROM_EMAIL = '%s <%s>' % (ADMIN_NAME, SERVER_EMAIL)
 
 EMAIL_HOST_USER = 'boomerang.notes@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'noteslow')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD', 'noteslow')
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -199,7 +199,7 @@ LOGIN_REDIRECT_URL = 'api-root'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'api-root'
 
 import urllib
-redis_url = urllib.parse.urlparse(os.environ.get('REDIS_URL', 'redis://:honda1@localhost:6379/0'))
+redis_url = urllib.parse.urlparse(os.getenv('REDIS_URL', 'redis://:honda1@localhost:6379/0'))
 
 CACHES = {
     'default': {
@@ -277,6 +277,18 @@ API_LIMITS = {
 }
 API_MAX_PAGE_SIZE = 100
 API_DELETED_EXPIRY_DAYS = 30
+
+
+import raven
+
+sentry_dsn = os.getenv('SENTRY_DSN')
+if sentry_dsn:
+    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
+
+RAVEN_CONFIG = {
+    'dsn': sentry_dsn,
+    'release': raven.fetch_git_sha(BASE_DIR),
+}
 
 
 # LOGGING = {
