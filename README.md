@@ -37,7 +37,7 @@ https://boomerang-notes.herokuapp.com/
 * perform routine maintenance: `bin/maintenance.sh`
 
 #### Heroku
-* install *heroku* toolbelt
+* install *heroku toolbelt*
 * create a heroku python application, provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
 * connect: `heroku login && heroku git:remote -a <app_name>`
 * configure: `heroku config:set SECRET_KEY=<secret_key> EMAIL_PASSWORD=<email_password>`
