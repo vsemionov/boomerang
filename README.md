@@ -16,16 +16,15 @@ An experimental web application
 ### Deployment
 
 #### Pre-install
-* regenerate secret key in *boomerang/settings.py*
-* update *boomerang/settings.py* with the target domain and server email
+* create facebook and google social applications
+* update the target domain and server email in *boomerang/settings.py*
 * commit changes: `git commit -a -m "configured"`
 
 #### Local
 * install *python* (3.6)
-* install *heroku* toolbelt
 * setup services: *postgresql* and *redis*
 * update *settings.py* to point to the configured services
-* install python packages: `pip install -r requirements.txt`
+* install python packages: `pip install -r requirements.txt` (preferably in a virtualenv)
 * create the database: `sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang`
 * initialize the database: `./manage.py migrate`
 * create the superuser: `./manage.py createsuperuser`
@@ -33,9 +32,10 @@ An experimental web application
 * perform routine maintenance: `bin/maintenance.sh`
 
 #### Heroku
+* install *heroku* toolbelt
 * create a heroku python application, provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
 * connect: `heroku login && heroku git:remote -a <app_name>`
-* configure: `heroku config:set EMAIL_PASSWORD=<email_password>`
+* configure: `heroku config:set SECRET_KEY=<secret_key> EMAIL_PASSWORD=<email_password>`
 * deploy: `git push heroku`
 * create superuser: `heroku run python manage.py createsuperuser`
 * schedule daily maintenance: `bin/maintenance.sh`
