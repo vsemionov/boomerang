@@ -23,12 +23,7 @@ from django.conf import settings
 def redirect_view(view_name, query=False):
     return RedirectView.as_view(pattern_name=view_name, query_string=query)
 
-
-def error_view(request):
-    1 / 0
-
 urlpatterns = [
-    url(r'^error/', error_view),
     url(r'^$', redirect_view('api-root'), name='index'),
     url(r'^api/', include('api.urls')),
     url(r'^admin/', admin.site.urls),
