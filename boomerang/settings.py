@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+PROJECT_NAME = 'vsemionov.boomerang.api'
+PROJECT_VERSION = '0.5.19'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -279,15 +282,13 @@ API_MAX_PAGE_SIZE = 100
 API_DELETED_EXPIRY_DAYS = 30
 
 
-import raven
-
 sentry_dsn = os.getenv('SENTRY_DSN')
 if sentry_dsn:
     INSTALLED_APPS.append('raven.contrib.django.raven_compat')
 
 RAVEN_CONFIG = {
     'dsn': sentry_dsn,
-    'release': raven.fetch_git_sha(BASE_DIR),
+    'release': PROJECT_VERSION,
 }
 
 

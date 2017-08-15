@@ -1,9 +1,6 @@
 from collections import OrderedDict
 from rest_framework import viewsets, mixins, response, reverse
-
-
-NAME = 'vsemionov.boomerang.api'
-VERSION = '0.5.19'
+from django.conf import settings
 
 
 class ApiInfoViewSet(mixins.ListModelMixin,
@@ -18,8 +15,8 @@ class ApiInfoViewSet(mixins.ListModelMixin,
         return self.view_name
 
     def list(self, request, *args, **kwargs):
-        app = OrderedDict((('name', NAME),
-                           ('version', VERSION)))
+        app = OrderedDict((('name', settings.PROJECT_NAME),
+                           ('version', settings.PROJECT_VERSION)))
         user = OrderedDict((('username', request.user.username),
                             ('url', self._get_user_url(request)))) \
             if request.user.id else None
