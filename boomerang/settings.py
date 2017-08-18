@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     'bootstrapform',
+    'corsheaders',
     'api',
 ]
 
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -280,6 +282,15 @@ API_LIMITS = {
 }
 API_MAX_PAGE_SIZE = 100
 API_DELETED_EXPIRY_DAYS = 30
+
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ORIGIN_WHITELIST = [
+    'boomerang-ng.herokuapp.com',
+]
+if DEBUG:
+    CORS_ORIGIN_WHITELIST.extend(['localhost:3000', '127.0.0.1:3000'])
 
 
 sentry_dsn = os.getenv('SENTRY_DSN')

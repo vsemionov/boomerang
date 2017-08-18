@@ -72,4 +72,5 @@ https://boomerang-notes.herokuapp.com/
     - search API support
 
 * 0.6
+    - cross-origin front-end support
     - monitoring
