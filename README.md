@@ -23,7 +23,7 @@ https://boomerang-core.herokuapp.com/
 #### Pre-install
 * create facebook and google social applications
 * update the target domain and server email in *boomerang/settings.py*
-* update the allowed front-end origins and login redirects in *boomerang/settings.py*
+* update the front-end origins in *boomerang/settings.py*
 * commit changes: `git commit -a -m "configured"`
 
 #### Local
