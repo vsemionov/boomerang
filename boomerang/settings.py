@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import urllib
+import datetime
 
 PROJECT_NAME = 'vsemionov.boomerang.api'
 PROJECT_VERSION = '0.6.0'
@@ -203,7 +205,6 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = 'api-root'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'api-root'
 
-import urllib
 redis_url = urllib.parse.urlparse(os.getenv('REDIS_URL', 'redis://:honda1@localhost:6379/0'))
 
 CACHES = {
@@ -255,7 +256,6 @@ if not DEBUG:
         'NUM_PROXIES': 1,
     })
 
-import datetime
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=1800),
 }
