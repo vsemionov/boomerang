@@ -16,14 +16,15 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from django.views.generic.base import RedirectView
 from django.conf import settings
 
-from . import views
 
+def redirect_view(view_name, query=False):
+    return RedirectView.as_view(pattern_name=view_name, query_string=query)
 
 urlpatterns = [
-    url(r'^$', views.redirect_internal('api-root'), name='index'),
-    url(r'^redirect$', views.redirect_arbitrary, name='redirect'),
+    url(r'^$', redirect_view('api-root'), name='index'),
     url(r'^api/', include('api.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
