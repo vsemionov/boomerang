@@ -29,6 +29,7 @@ https://boomerang-core.herokuapp.com/
 * install *python* (3.6)
 * setup services: *postgresql* and *redis*
 * update *settings.py* to point to the configured services
+* (optional) update *settings.py* with the allowed origins and redirect urls
 * install python packages: `pip install -r requirements.txt` (preferably in a virtualenv)
 * create the database: `sudo -u postgres createuser -P boomerang && sudo -u postgres createdb -O boomerang boomerang && sudo -u postgres psql -c "create extension pg_trgm;" boomerang`
 * initialize the database: `./manage.py migrate`
