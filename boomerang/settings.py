@@ -293,6 +293,16 @@ if DEBUG:
     CORS_ORIGIN_WHITELIST.extend(['localhost:3000', '127.0.0.1:3000'])
 
 
+REDIRECT_ALLOWED_URLS = set((
+    'https://boomerang-ng.herokuapp.com/login/success',
+))
+if DEBUG:
+    REDIRECT_ALLOWED_URLS.update(set((
+        'http://localhost:3000/login/success',
+        'http://127.0.0.1:3000/login/success',
+    )))
+
+
 sentry_dsn = os.getenv('SENTRY_DSN')
 if sentry_dsn:
     INSTALLED_APPS.append('raven.contrib.django.raven_compat')
