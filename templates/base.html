@@ -19,7 +19,7 @@
 <div class="navbar navbar-static-top navbar-inverse" role="navigation">
     <div class="container">
         <span>
-          <a class='navbar-brand' href='{% url 'index' %}'>Boomerang API</a>
+          {% include "navbrand.html" %}
         </span>
         <ul class="nav navbar-nav pull-right">
             {% include "profile.html" %}
