@@ -15,7 +15,7 @@ An experimental web application
 
 ### Location
 
-https://boomerang-notes.herokuapp.com/
+https://boomerang-core.herokuapp.com/
 
 
 ### Deployment
