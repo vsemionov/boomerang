@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import urllib
 import datetime
+import dj_database_url
 
 PROJECT_NAME = 'vsemionov.boomerang.api'
 PROJECT_VERSION = '0.6.5'
@@ -89,6 +90,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'boomerang.wsgi.application'
 
 
+NUM_PROCS = int(os.getenv('WEB_CONCURRENCY', 2))
+DATABASE_MAX_CONNS = int(os.getenv('DATABASE_MAX_CONNS', 20))
+REDIS_MAX_CONNS = int(os.getenv('REDIS_MAX_CONNS', 20))
+
+
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -101,12 +107,11 @@ DATABASES = {
         'PASSWORD': 'honda1',
         'CONN_MAX_AGE': 0,
         'OPTIONS': {
-            'MAX_CONNS': 10,
+            'MAX_CONNS': DATABASE_MAX_CONNS // NUM_PROCS,
         }
     }
 }
 
-import dj_database_url
 db_from_env = dj_database_url.config(engine=DATABASES['default']['ENGINE'], conn_max_age=0) # conn_max_age must be 0 for pools
 DATABASES['default'].update(db_from_env)
 
@@ -225,7 +230,7 @@ CACHES = {
             'SOCKET_CONNECT_TIMEOUT': 5,
             'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
             'CONNECTION_POOL_CLASS_KWARGS': {
-                'max_connections': 10,
+                'max_connections': REDIS_MAX_CONNS // NUM_PROCS,
                 'timeout': 5,
             },
         },
