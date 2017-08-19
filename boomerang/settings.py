@@ -15,7 +15,7 @@ import urllib
 import datetime
 
 PROJECT_NAME = 'vsemionov.boomerang.api'
-PROJECT_VERSION = '0.6.4'
+PROJECT_VERSION = '0.6.5'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
