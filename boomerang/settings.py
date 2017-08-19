@@ -90,7 +90,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'boomerang.wsgi.application'
 
 
-NUM_PROCS = int(os.getenv('WEB_CONCURRENCY', 2))
+NUM_PROCS = int(os.getenv('NUM_WORKERS', 4))
 REDIS_MAX_CONNS = int(os.getenv('REDIS_MAX_CONNS', 20))
 
 
@@ -254,7 +254,7 @@ REST_FRAMEWORK = {
 }
 if not DEBUG:
     REST_FRAMEWORK.update({
-        'NUM_PROXIES': 1,
+        'NUM_PROXIES': 2,
     })
 
 JWT_AUTH = {

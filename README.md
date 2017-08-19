@@ -39,7 +39,7 @@ https://boomerang-core.herokuapp.com/
 
 #### Heroku
 * install *heroku toolbelt*
-* create a heroku python application, provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
+* create a heroku application; add buildpacks *heroku/python*, *https://github.com/heroku/heroku-buildpack-pgbouncer*, and *https://github.com/vsemionov/nginx-buildpack*; provision *heroku postgres*, *heroku redis*, and *heroku scheduler*
 * (optional) create a *sentry* project or provision *sentry* from heroku
 * connect: `heroku login && heroku git:remote -a <app_name>`
 * configure: `heroku config:set SECRET_KEY=<secret_key> ALLOW_ORIGIN=<optional_origin> FRONTEND_LOGIN_REDIRECT_URL=<optional_url> EMAIL_PASSWORD=<email_password> SENTRY_DSN=<sentry_dsn>` (set `SENTRY_DSN` only if a sentry project was created manually)
@@ -48,6 +48,7 @@ https://boomerang-core.herokuapp.com/
     * DATABASE_URL
     * EMAIL_PASSWORD
     * FRONTEND_LOGIN_REDIRECT_URL
+    * NUM_WORKERS
     * PGBOUNCER_DEFAULT_POOL_SIZE
     * PGBOUNCER_MIN_POOL_SIZE
     * PGBOUNCER_RESERVE_POOL_SIZE
