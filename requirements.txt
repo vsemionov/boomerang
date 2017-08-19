@@ -30,4 +30,3 @@ requests-oauthlib==0.8.0
 six==1.10.0
 sqlparse==0.2.3
 urllib3==1.22
-whitenoise==3.3.0
