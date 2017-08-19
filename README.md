@@ -87,5 +87,7 @@ https://boomerang-core.herokuapp.com/
     - search API support
 
 * 0.6
+    - enhanced application error tracking
+    - enhanced database connection pooling
     - cross-origin front-end support
-    - monitoring
+    - buffering reverse proxy
