@@ -43,6 +43,17 @@ https://boomerang-core.herokuapp.com/
 * (optional) create a *sentry* project or provision *sentry* from heroku
 * connect: `heroku login && heroku git:remote -a <app_name>`
 * configure: `heroku config:set SECRET_KEY=<secret_key> ALLOW_ORIGIN=<optional_origin> FRONTEND_LOGIN_REDIRECT_URL=<optional_url> EMAIL_PASSWORD=<email_password> SENTRY_DSN=<sentry_dsn>` (set `SENTRY_DSN` only if a sentry project was created manually)
+* example production configuration
+    * ALLOW_ORIGIN
+    * DATABASE_URL
+    * EMAIL_PASSWORD
+    * FRONTEND_LOGIN_REDIRECT_URL
+    * PGBOUNCER_DEFAULT_POOL_SIZE
+    * PGBOUNCER_RESERVE_POOL_SIZE
+    * REDIS_MAX_CONNS
+    * REDIS_URL
+    * SECRET_KEY
+    * SENTRY_DSN
 * deploy: `git push heroku`
 * create superuser: `heroku run python manage.py createsuperuser`
 * schedule daily maintenance: `bin/maintenance.sh`
