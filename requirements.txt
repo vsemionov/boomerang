@@ -7,7 +7,6 @@ Django==1.11.4
 django-allauth==0.32.0
 django-bootstrap-form==3.3
 django-cors-headers==2.1.0
-django-db-geventpool==1.21
 django-debug-toolbar==1.8
 django-extensions==1.8.1
 django-redis-cache==1.7.1

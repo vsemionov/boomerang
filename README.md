@@ -47,6 +47,7 @@ https://boomerang-core.herokuapp.com/
 * create superuser: `heroku run python manage.py createsuperuser`
 * schedule daily maintenance: `bin/maintenance.sh`
 
+
 #### Post-install
 * login to */admin/*, edit the site and create the social applications
 
