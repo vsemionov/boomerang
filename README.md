@@ -13,7 +13,7 @@ An experimental web application
 * REST API
 
 
-### Location
+### Website
 
 https://boomerang-core.herokuapp.com/
 
