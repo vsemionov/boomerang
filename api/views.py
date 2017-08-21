@@ -2,6 +2,7 @@
 
 # Create your views here.
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import transaction
@@ -112,10 +113,11 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             queryset = User.objects.filter(id=self.request.user.id)
 
-        queryset = prefetch_children(Notebook, queryset, 'notebook_set', False, NotebookViewSet.ordering,
-                                     'active_notebooks')
-        queryset = prefetch_children(Task, queryset, 'task_set', False, TaskViewSet.ordering,
-                                     'active_tasks')
+        if settings.API_SHOW_CHILDREN_IDS:
+            queryset = prefetch_children(Notebook, queryset, 'notebook_set', False, NotebookViewSet.ordering,
+                                         'active_notebooks')
+            queryset = prefetch_children(Task, queryset, 'task_set', False, TaskViewSet.ordering,
+                                         'active_tasks')
 
         return queryset
 
@@ -137,15 +139,18 @@ class NotebookViewSet(UserChildViewSet):
     def get_base_queryset(self):
         queryset = super(NotebookViewSet, self).get_base_queryset()
 
-        if self.action not in self.no_content_actions:
-            queryset = prefetch_children(Note, queryset, 'note_set', self.deleted_child, NoteViewSet.ordering,
-                                         'active_notes')
+        if settings.API_SHOW_CHILDREN_IDS:
+            if self.action not in self.no_content_actions:
+                queryset = prefetch_children(Note, queryset, 'note_set', self.deleted_child, NoteViewSet.ordering,
+                                             'active_notes')
 
         return queryset
 
     def perform_create(self, serializer):
         super(NotebookViewSet, self).perform_create(serializer)
-        serializer.instance.active_notes = []
+
+        if settings.API_SHOW_CHILDREN_IDS:
+            serializer.instance.active_notes = []
 
 
 class TaskViewSet(UserChildViewSet):
