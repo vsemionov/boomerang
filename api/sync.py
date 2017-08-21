@@ -1,4 +1,6 @@
+import datetime
 from collections import OrderedDict
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone, dateparse
 from rest_framework import decorators, exceptions, status
@@ -132,4 +134,10 @@ class SyncedModelMixin(ViewSetMixin):
     def deleted(self, request, *args, **kwargs):
         self.deleted_object = True
         self.deleted_parent = None
-        return self.list(request, *args, **kwargs)
+
+        response = self.list(request, *args, **kwargs)
+
+        if self.since is None or self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS)):
+            response.status_code = status.HTTP_206_PARTIAL_CONTENT
+
+        return response
