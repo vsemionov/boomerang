@@ -7,13 +7,10 @@ from django.utils import timezone
 from api.models import Notebook, Note, Task
 
 
-DELETED_EXPIRY_DAYS = getattr(settings, 'API_DELETED_EXPIRY_DAYS', 30)
-
-
 class Command(BaseCommand):
     def handle(self, *args, **options):
         exectime = timezone.now()
-        expiry = datetime.timedelta(days=DELETED_EXPIRY_DAYS)
+        expiry = datetime.timedelta(days=settings.API_DELETED_EXPIRY_DAYS)
         threshold = exectime - expiry
 
         classes = (Notebook, Note, Task)
