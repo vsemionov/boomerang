@@ -110,7 +110,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
         if self.request.user.is_staff:
             queryset = self.queryset
         else:
-            queryset =  User.objects.filter(id=self.request.user.id)
+            queryset = User.objects.filter(id=self.request.user.id)
 
         queryset = prefetch_children(Notebook, queryset, 'notebook_set', False, NotebookViewSet.ordering,
                                      'active_notebooks')
