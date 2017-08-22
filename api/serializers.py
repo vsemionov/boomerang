@@ -58,29 +58,18 @@ class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    if settings.API_SHOW_CHILDREN_IDS:
-        notebooks = SecondaryKeyRelatedField(read_only=True, many=True, source='active_notebooks')
-        tasks = SecondaryKeyRelatedField(read_only=True, many=True, source='active_tasks')
-
     class Meta:
         model = User
         fields = ('username', 'date_joined', 'last_login', 'first_name', 'last_name', 'email')
-        if settings.API_SHOW_CHILDREN_IDS:
-            fields += ('notebooks', 'tasks')
 
 
 class NotebookSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    if settings.API_SHOW_CHILDREN_IDS:
-        notes = SecondaryKeyRelatedField(read_only=True, many=True, source='active_notes')
-
     class Meta:
         model = Notebook
         fields = ('id', 'user', 'created', 'updated', 'name')
-        if settings.API_SHOW_CHILDREN_IDS:
-            fields += ('notes',)
 
 
 class NoteSerializer(serializers.ModelSerializer):
