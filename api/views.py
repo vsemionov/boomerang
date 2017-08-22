@@ -109,10 +109,10 @@ class NotebookViewSet(UserChildViewSet):
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
 
-    hyperlinked_serializer_class_func = staticmethod(links.create_hyperlinked_notebook_serializer_class)
-
     search_fields = ('name',)
     ordering_fields = ('created', 'updated', 'name')
+
+    hyperlinked_serializer_class_func = staticmethod(links.create_hyperlinked_notebook_serializer_class)
 
 
 class TaskViewSet(UserChildViewSet):
@@ -121,10 +121,10 @@ class TaskViewSet(UserChildViewSet):
     serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
 
-    hyperlinked_serializer_class_func = staticmethod(links.create_hyperlinked_task_serializer_class)
-
     search_fields = ('title', 'description')
     ordering_fields = ('created', 'updated', 'done', 'title')
+
+    hyperlinked_serializer_class_func = staticmethod(links.create_hyperlinked_task_serializer_class)
 
 
 class NoteViewSet(BaseNoteViewSet):
