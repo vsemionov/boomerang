@@ -60,7 +60,7 @@ class SortedModelMixin(ViewSetMixin):
     def __init__(self, *args, **kwargs):
         super(SortedModelMixin, self).__init__(*args, **kwargs)
 
-        self.perform_sort = True
+        self.perform_sort = False
 
         self.sort = None
 

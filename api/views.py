@@ -30,12 +30,6 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
 
     ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
 
-    def __init__(self, *args, **kwargs):
-        super(SortedSearchableSyncedModelViewSet, self).__init__(*args, **kwargs)
-
-        self.perform_search = False
-        self.perform_sort = False
-
     def get_hyperlinked_serializer_class(self):
         raise NotImplementedError()
 

@@ -27,7 +27,7 @@ class SearchableModelMixin(ViewSetMixin):
     def __init__(self, *args, **kwargs):
         super(SearchableModelMixin, self).__init__(*args, **kwargs)
 
-        self.perform_search = True
+        self.perform_search = False
 
         self.terms = None
 
