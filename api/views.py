@@ -8,7 +8,8 @@ from django.db import transaction
 from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
-from . import serializers, permissions, limits, sync, search, sort
+from .rest import serializers, links
+from . import permissions, limits, sync, search, sort
 
 
 class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
@@ -89,7 +90,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'username'
     lookup_value_regex = '[^/]+'
     queryset = User.objects.all()
-    serializer_class = serializers.UserSerializer
+    serializer_class = links.HyperlinkedUserSerializer
     permission_classes = permissions.user_permissions
 
     def get_queryset(self):
@@ -100,9 +101,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-    def get_serializer_class(self):
-        return serializers.get_dynamic_user_serializer()
-
 
 class NotebookViewSet(UserChildViewSet):
     lookup_field = 'ext_id'
@@ -110,7 +108,7 @@ class NotebookViewSet(UserChildViewSet):
     serializer_class = serializers.NotebookSerializer
     permission_classes = permissions.nested_permissions
 
-    hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_notebook_serializer_class)
+    hyperlinked_serializer_class_func = staticmethod(links.create_hyperlinked_notebook_serializer_class)
 
     search_fields = ('name',)
     ordering_fields = ('created', 'updated', 'name')
@@ -122,7 +120,7 @@ class TaskViewSet(UserChildViewSet):
     serializer_class = serializers.TaskSerializer
     permission_classes = permissions.nested_permissions
 
-    hyperlinked_serializer_class_func = staticmethod(serializers.get_hyperlinked_task_serializer_class)
+    hyperlinked_serializer_class_func = staticmethod(links.create_hyperlinked_task_serializer_class)
 
     search_fields = ('title', 'description')
     ordering_fields = ('created', 'updated', 'done', 'title')
@@ -150,7 +148,7 @@ class NoteViewSet(BaseNoteViewSet):
         return self.get_notebook(lock=True)
 
     def get_hyperlinked_serializer_class(self):
-        return serializers.get_hyperlinked_note_serializer_class(self.kwargs['user_username'])
+        return links.create_hyperlinked_note_serializer_class(self.kwargs['user_username'])
 
     def list(self, request, *args, **kwargs):
         self.get_notebook()
@@ -184,7 +182,7 @@ class UserNoteViewSet(BaseNoteViewSet):
 
     def get_hyperlinked_serializer_class(self):
         notebooks = self.get_user_notebooks()
-        return serializers.get_hyperlinked_note_serializer_class(self.kwargs['user_username'], notebooks)
+        return links.create_hyperlinked_note_serializer_class(self.kwargs['user_username'], notebooks)
 
     @transaction.atomic
     def perform_create(self, serializer):
