@@ -60,17 +60,7 @@ class SortedModelMixin(ViewSetMixin):
     def __init__(self, *args, **kwargs):
         super(SortedModelMixin, self).__init__(*args, **kwargs)
 
-        self.perform_sort = False
-
         self.sort = None
-
-    def get_queryset(self):
-        queryset = super(SortedModelMixin, self).get_queryset()
-
-        if self.sort and self.perform_sort:
-            queryset = queryset.order_by(*self.sort)
-
-        return queryset
 
     def list(self, request, *args, **kwargs):
         if SortedModelMixin in self.disabled_mixins:
