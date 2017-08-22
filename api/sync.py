@@ -32,7 +32,6 @@ class SyncedModelMixin(ViewSetMixin):
 
         self.deleted_object = False
         self.deleted_parent = False
-        self.deleted_child = False
 
     @staticmethod
     def get_timestamp(request, name, default=None):
