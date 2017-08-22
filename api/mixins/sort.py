@@ -1,8 +1,9 @@
 import itertools
 from collections import OrderedDict
+
 from rest_framework import filters, exceptions
 
-from .mixins import ViewSetMixin
+from .mixin import ViewSetMixin
 
 
 DEFAULT_SORT_PARAM = 'sort'

@@ -9,7 +9,8 @@ from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links
-from . import permissions, limits, sync, search, sort
+from .mixins import sync, search, sort
+from . import permissions, limits
 
 
 class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,

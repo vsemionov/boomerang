@@ -1,11 +1,12 @@
 import itertools
 from collections import OrderedDict
+
 from django.db.models import Value, TextField
 from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import filters
 
-from .mixins import ViewSetMixin
+from .mixin import ViewSetMixin
 
 
 DEFAULT_SEARCH_PARAM = 'q'
