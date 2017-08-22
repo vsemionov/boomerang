@@ -1,7 +1,7 @@
-from django.views.generic.base import RedirectView
 from django.conf import settings
-from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
+from django.http import HttpResponseBadRequest
+from django.views.generic.base import RedirectView
 
 
 def redirect_internal(view_name, query=False):

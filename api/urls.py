@@ -3,6 +3,7 @@ from rest_framework_nested import routers
 
 from . import views, info, jwt
 
+
 root_router = routers.DefaultRouter()
 root_router.include_format_suffixes = False
 root_router.register(r'users', views.UserViewSet)

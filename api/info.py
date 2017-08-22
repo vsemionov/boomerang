@@ -1,6 +1,7 @@
 from collections import OrderedDict
-from rest_framework import viewsets, mixins, response, reverse
+
 from django.conf import settings
+from rest_framework import viewsets, mixins, response, reverse
 
 
 class ApiInfoViewSet(mixins.ListModelMixin,

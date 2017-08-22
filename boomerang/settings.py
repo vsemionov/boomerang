@@ -13,7 +13,9 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import urllib
 import datetime
+
 import dj_database_url
+
 
 PROJECT_NAME = 'vsemionov.boomerang.api'
 PROJECT_VERSION = '0.6.10'
