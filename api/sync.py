@@ -53,7 +53,7 @@ class SyncedModelMixin(ViewSetMixin):
         return timestamp
 
     def get_queryset(self):
-        queryset = self.get_chain_queryset(SyncedModelMixin)
+        queryset = super(SyncedModelMixin, self).get_queryset()
 
         if self.since:
             queryset = queryset.filter(updated__gte=self.since)
@@ -67,8 +67,6 @@ class SyncedModelMixin(ViewSetMixin):
             queryset = queryset.filter(deleted=self.deleted_object)
 
         return queryset
-
-    get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
         if SyncedModelMixin in self.disabled_mixins:

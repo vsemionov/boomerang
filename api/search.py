@@ -63,14 +63,12 @@ class SearchableModelMixin(ViewSetMixin):
         return queryset
 
     def get_queryset(self):
-        queryset = self.get_chain_queryset(SearchableModelMixin)
+        queryset = super(SearchableModelMixin, self).get_queryset()
 
         if self.terms and self.perform_search:
             queryset = self.search_queryset(queryset)
 
         return queryset
-
-    get_base_queryset = get_queryset
 
     def list(self, request, *args, **kwargs):
         if SearchableModelMixin in self.disabled_mixins:
