@@ -28,7 +28,7 @@ class SearchableModelMixin(ViewSetMixin):
     def __init__(self, *args, **kwargs):
         super(SearchableModelMixin, self).__init__(*args, **kwargs)
 
-        self.perform_search = False
+        self.explicit_search = False
 
         self.terms = None
 
@@ -66,15 +66,12 @@ class SearchableModelMixin(ViewSetMixin):
     def get_queryset(self):
         queryset = super(SearchableModelMixin, self).get_queryset()
 
-        if self.terms and self.perform_search:
+        if self.explicit_search and self.terms:
             queryset = self.search_queryset(queryset)
 
         return queryset
 
     def list(self, request, *args, **kwargs):
-        if SearchableModelMixin in self.disabled_mixins:
-            return super(SearchableModelMixin, self).list(request, *args, **kwargs)
-
         query_terms = request.query_params.getlist(self.SEARCH_PARAM)
         self.terms = ' '.join(query_terms) if query_terms else None
 

@@ -40,7 +40,7 @@ class SortedSearchableSyncedModelViewSet(sort.SortedModelMixin,
 
     @decorators.list_route(suffix='Search')
     def search(self, request, *args, **kwargs):
-        self.perform_search = True
+        self.explicit_search = True
         self.full_text_search = True
         self.disabled_mixins = {sort.SortedModelMixin, sync.SyncedModelMixin}
         self.filter_backends = ()
