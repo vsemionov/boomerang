@@ -229,8 +229,7 @@ class UserNoteViewSet(BaseNoteViewSet):
         limits.check_limits(notebook, Note)
         serializer.save()
 
-    @transaction.atomic
     def perform_update(self, serializer):
         notebook = self.lock_notebook(serializer.validated_data['notebook'])
         limits.check_limits(notebook, Note)
-        serializer.save()
+        super(UserNoteViewSet, self).perform_update(serializer)
