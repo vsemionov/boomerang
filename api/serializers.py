@@ -1,6 +1,5 @@
 import uuid
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
@@ -98,10 +97,6 @@ def get_dynamic_user_serializer():
                                                     lookup_url_kwarg='user_username', lookup_field='username')
         tasks = DynamicHyperlinkedIdentityField(view_name='task-list',
                                                 lookup_url_kwarg='user_username', lookup_field='username')
-
-        if settings.API_SHOW_GRANDCHILDREN_LINKS:
-            notes = DynamicHyperlinkedIdentityField(view_name='note-list',
-                                                    lookup_url_kwarg='user_username', lookup_field='username')
 
     class DynamicUserSerializer(UserSerializer):
         links = UserLinksSerializer(read_only=True, source='*')
