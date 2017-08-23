@@ -36,7 +36,7 @@ class NestedModelMixin(ViewSetMixin):
         return queryset
 
     def get_parent(self):
-        queryset = self.get_base_queryset()
+        queryset = self.get_parent_queryset()
         parent = get_object_or_404(queryset)
         return parent
 
