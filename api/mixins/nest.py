@@ -7,7 +7,7 @@ from .. import util
 class NestedModelMixin(ViewSetMixin):
 
     parent_model = None
-    safe_parent = False
+    safe_parent = False # set to false if the parent url argument has been verified (e.g. by permissions)
 
     object_filters = {}
     parent_filters = {}
@@ -30,9 +30,13 @@ class NestedModelMixin(ViewSetMixin):
         queryset = queryset.filter(**filter_kwargs)
         return queryset
 
-    def get_parent(self):
+    def get_parent_queryset(self):
         queryset = self.parent_model.objects
         queryset = self.filter_queryset(queryset, self.parent_filters, True)
+        return queryset
+
+    def get_parent(self):
+        queryset = self.get_base_queryset()
         parent = get_object_or_404(queryset)
         return parent
 
