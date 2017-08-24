@@ -18,7 +18,7 @@ class LimitedModelMixin(ViewSetMixin):
         super().__init__(*args, **kwargs)
         self.check_limits = False
 
-    def check_limits(self, parent):
+    def _check_limits(self, parent):
         child_type = self.queryset.model
 
         parent_limits = settings.API_LIMITS.get(parent._meta.label)
@@ -51,7 +51,7 @@ class LimitedModelMixin(ViewSetMixin):
         parent = super().get_parent()
 
         if self.check_limits:
-            self.check_limits(parent)
+            self._check_limits(parent)
 
         return parent
 
