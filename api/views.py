@@ -129,7 +129,6 @@ class UserNoteViewSet(BaseNoteViewSet):
     safe_parent = True
 
     object_filters = {'notebook__user_id': 'user_username'}
-    parent_filters = {'user_id': 'user_username'} # TODO: maybe remove this to avoid masking errors from unsafe methods
+    # parent_filters = {'user_id': 'user_username'}
 
-# TODO: prefix private mixin method names with underscores
 # TODO: check for unnecessary code in .rest.fields

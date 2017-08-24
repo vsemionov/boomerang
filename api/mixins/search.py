@@ -34,12 +34,12 @@ class SearchableModelMixin(ViewSetMixin):
 
         self.full_text_search = False
 
-    def search_basic(self, queryset):
+    def _search_basic(self, queryset):
         search_filter = SearchFilter()
         search_filter.search_param = self.SEARCH_PARAM
         return search_filter.filter_queryset(self.request, queryset, self)
 
-    def search_trigram_similarity(self, queryset):
+    def _search_trigram_similarity(self, queryset):
         full_text_vector = sum(itertools.zip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
         if len(self.search_fields) > 1:
             full_text_vector = full_text_vector[:-1]
@@ -53,11 +53,11 @@ class SearchableModelMixin(ViewSetMixin):
         queryset = queryset.order_by('-rank', 'created', 'id')
         return queryset
 
-    def search_queryset(self, queryset):
+    def _search_queryset(self, queryset):
         if self.full_text_search:
-            search_func = self.search_trigram_similarity
+            search_func = self._search_trigram_similarity
         else:
-            search_func = self.search_basic
+            search_func = self._search_basic
 
         queryset = search_func(queryset)
 
@@ -67,7 +67,7 @@ class SearchableModelMixin(ViewSetMixin):
         queryset = super().get_queryset()
 
         if self.explicit_search and self.terms:
-            queryset = self.search_queryset(queryset)
+            queryset = self._search_queryset(queryset)
 
         return queryset
 
