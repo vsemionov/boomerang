@@ -3,7 +3,7 @@ from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links
-from .mixins import nest, sync, limit, search, sort
+from .mixins import sync, nest, limit, search, sort
 from . import permissions
 
 
@@ -26,8 +26,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class NestedViewSet(sort.SortedModelMixin,
                     search.SearchableModelMixin,
                     limit.LimitedModelMixin,
-                    sync.SyncedModelMixin,
                     nest.NestedModelMixin,
+                    sync.SyncedModelMixin,
                     viewsets.ModelViewSet):
     permission_classes = permissions.nested_permissions
 
