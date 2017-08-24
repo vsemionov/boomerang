@@ -117,7 +117,7 @@ class NoteViewSet(BaseNoteViewSet):
 
 
 class UserNoteViewSet(BaseNoteViewSet):
-    # TODO: remove unsafe methods
+    # TODO: remove unsafe methods and retrieve (allow only list)
     safe_parent = True
 
     object_filters = {'notebook__user_id': 'user_username'}
