@@ -130,5 +130,3 @@ class UserNoteViewSet(BaseNoteViewSet):
 
     object_filters = {'notebook__user_id': 'user_username'}
     # parent_filters = {'user_id': 'user_username'}
-
-# TODO: check for unnecessary code in .rest.fields
