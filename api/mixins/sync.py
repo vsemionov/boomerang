@@ -100,13 +100,13 @@ class SyncedModelMixin(ViewSetMixin):
         if self.until and instance.updated >= self.until:
                 raise ConflictError()
 
-    @transaction.atomic
+    @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
         self.atomic = True
         self.init_write_conditions(request)
         return super().update(request, *args, **kwargs)
 
-    @transaction.atomic
+    @transaction.atomic(savepoint=False)
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
         self.init_write_conditions(request)

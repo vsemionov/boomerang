@@ -55,7 +55,7 @@ class LimitedModelMixin(ViewSetMixin):
 
         return parent
 
-    @transaction.atomic
+    @transaction.atomic(savepoint=False)
     def perform_create(self, serializer):
         self.check_limits = True
         return super().perform_create(serializer)
