@@ -32,7 +32,6 @@ class SyncedModelMixin(ViewSetMixin):
         self.atomic = False
 
         self.deleted_object = False
-        self.deleted_parent = False
 
     @staticmethod
     def get_timestamp(request, name, default=None):
@@ -101,21 +100,15 @@ class SyncedModelMixin(ViewSetMixin):
         if self.until and instance.updated >= self.until:
                 raise ConflictError()
 
-    def create(self, request, *args, **kwargs):
-        self.deleted_parent = None
-        return super(SyncedModelMixin, self).create(request, *args, **kwargs)
-
     @transaction.atomic
     def update(self, request, *args, **kwargs):
         self.atomic = True
-        self.deleted_parent = None
         self.init_write_conditions(request)
         return super(SyncedModelMixin, self).update(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
-        self.deleted_parent = None
         self.init_write_conditions(request)
         return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
 
@@ -131,7 +124,6 @@ class SyncedModelMixin(ViewSetMixin):
     @decorators.list_route(suffix='Deleted List')
     def deleted(self, request, *args, **kwargs):
         self.deleted_object = True
-        self.deleted_parent = None
 
         response = self.list(request, *args, **kwargs)
 
