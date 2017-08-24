@@ -1,9 +1,9 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets, decorators
+from rest_framework import viewsets, mixins, decorators
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links
-from .mixins import sync, nest, limit, search, sort
+from .core import sync, nest, limit, search, sort
 from . import permissions
 
 
@@ -17,7 +17,6 @@ class UserViewSet(sort.SortedModelMixin,
     permission_classes = permissions.user_permissions
 
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
-
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering_fields = ('username', 'date_joined', 'last_login', 'first_name', 'last_name', 'email')
     ordering = sort.consistent_sort(('date_joined',))
@@ -34,11 +33,12 @@ class UserViewSet(sort.SortedModelMixin,
 class NestedViewSet(sort.SortedModelMixin,
                     search.SearchableModelMixin,
                     limit.LimitedModelMixin,
-                    nest.NestedModelMixin,
-                    sync.SyncedModelMixin,
+                    nest.ReadWriteNestedModelMixin,
+                    sync.ReadWriteSyncedModelMixin,
                     viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     permission_classes = permissions.nested_permissions
+
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
     ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
 
@@ -63,7 +63,6 @@ class NestedViewSet(sort.SortedModelMixin,
 class UserChildViewSet(NestedViewSet):
     parent_model = User
     safe_parent = True
-
     object_filters = {'user_id': 'user_username'}
     parent_filters = {'username': 'user_username'}
 
@@ -88,8 +87,7 @@ class TaskViewSet(UserChildViewSet):
     get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_task_serializer_class)
 
 
-class BaseNoteViewSet(NestedViewSet):
-    view_name = 'Note'
+class NoteViewSet(NestedViewSet):
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
 
@@ -97,19 +95,7 @@ class BaseNoteViewSet(NestedViewSet):
     ordering_fields = ('created', 'updated', 'title')
 
     parent_model = Notebook
-
-    get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
-
-    def get_view_name(self):
-        name = self.view_name
-        if self.suffix:
-            name += ' ' + self.suffix
-        return name
-
-
-class NoteViewSet(BaseNoteViewSet):
     safe_parent = False
-
     object_filters = {
         'notebook__user_id': 'user_username',
         'notebook_id': 'notebook_ext_id'
@@ -119,10 +105,37 @@ class NoteViewSet(BaseNoteViewSet):
         'ext_id': 'notebook_ext_id'
     }
 
+    get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
 
-class UserNoteViewSet(BaseNoteViewSet):
-    # TODO: remove unsafe methods and retrieve (allow only list)
+
+class UserNoteViewSet(sort.SortedModelMixin,
+                      search.SearchableModelMixin,
+                      nest.NestedModelMixin,
+                      sync.SyncedModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
+    view_name = 'Note'
+
+    lookup_field = NoteViewSet.lookup_field
+    queryset = NoteViewSet.queryset
+    serializer_class = NoteViewSet.serializer_class
+    permission_classes = NoteViewSet.permission_classes
+
+    filter_backends = NoteViewSet.filter_backends
+    search_fields = NoteViewSet.search_fields
+    ordering_fields = NoteViewSet.ordering_fields
+    ordering = NoteViewSet.ordering
+
+    parent_model = NoteViewSet.parent_model
     safe_parent = True
-
     object_filters = {'notebook__user_id': 'user_username'}
     # parent_filters = {'user_id': 'user_username'}
+
+    get_serializer_class = NestedViewSet.get_serializer_class
+    get_hyperlinked_serializer_class = NoteViewSet.get_hyperlinked_serializer_class
+
+    def get_view_name(self):
+        name = self.view_name
+        if self.suffix:
+            name += ' ' + self.suffix
+        return name

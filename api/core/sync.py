@@ -79,7 +79,10 @@ class SyncedModelMixin(ViewSetMixin):
 
         return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
 
-    def init_write_conditions(self, request):
+
+class ReadWriteSyncedModelMixin(SyncedModelMixin):
+
+    def _init_write_conditions(self, request):
         self.at = self.get_timestamp(request, self.AT_PARAM)
         self.until = self.get_timestamp(request, self.UNTIL_PARAM)
 
@@ -94,7 +97,7 @@ class SyncedModelMixin(ViewSetMixin):
             unsupported_condition = unsupported_conditions[0]
             raise exceptions.ValidationError({unsupported_condition: 'unsupported condition'})
 
-    def check_write_conditions(self, instance):
+    def _check_write_conditions(self, instance):
         if self.at and instance.updated != self.at:
                 raise ConflictError()
         if self.until and instance.updated >= self.until:
@@ -103,21 +106,21 @@ class SyncedModelMixin(ViewSetMixin):
     @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
         self.atomic = True
-        self.init_write_conditions(request)
+        self._init_write_conditions(request)
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic(savepoint=False)
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
-        self.init_write_conditions(request)
+        self._init_write_conditions(request)
         return super().destroy(request, *args, **kwargs)
 
     def perform_update(self, serializer):
-        self.check_write_conditions(serializer.instance)
+        self._check_write_conditions(serializer.instance)
         serializer.save()
 
     def perform_destroy(self, instance):
-        self.check_write_conditions(instance)
+        self._check_write_conditions(instance)
         instance.deleted = True
         instance.save()
 
