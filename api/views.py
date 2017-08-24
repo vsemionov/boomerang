@@ -7,18 +7,26 @@ from .mixins import sync, nest, limit, search, sort
 from . import permissions
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
+class UserViewSet(sort.SortedModelMixin,
+                  search.SearchableModelMixin,
+                  viewsets.ReadOnlyModelViewSet):
     lookup_field = 'username'
     lookup_value_regex = '[^/]+'
     queryset = User.objects.all()
     serializer_class = links.HyperlinkedUserSerializer
     permission_classes = permissions.user_permissions
 
+    filter_backends = (search.SearchFilter, sort.OrderingFilter)
+
+    search_fields = ('username', 'first_name', 'last_name', 'email')
+    ordering_fields = ('username', 'date_joined', 'last_login', 'first_name', 'last_name', 'email')
+    ordering = ('date_joined',)
+
     def get_queryset(self):
         if self.request.user.is_staff:
             queryset = self.queryset
         else:
-            queryset = User.objects.filter(id=self.request.user.id)
+            queryset = self.queryset.filter(id=self.request.user.id)
 
         return queryset
 
@@ -33,7 +41,7 @@ class NestedViewSet(sort.SortedModelMixin,
 
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
 
-    ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)  # TODO: check usage
+    ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
 
     def get_hyperlinked_serializer_class(self, username):
         raise NotImplementedError()
