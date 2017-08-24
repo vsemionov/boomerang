@@ -20,7 +20,7 @@ class UserViewSet(sort.SortedModelMixin,
 
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering_fields = ('username', 'date_joined', 'last_login', 'first_name', 'last_name', 'email')
-    ordering = ('date_joined',)
+    ordering = sort.consistent_sort(('date_joined',))
 
     def get_queryset(self):
         if self.request.user.is_staff:
