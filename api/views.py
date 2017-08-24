@@ -37,10 +37,9 @@ class NestedViewSet(sort.SortedModelMixin,
                     nest.NestedModelMixin,
                     sync.SyncedModelMixin,
                     viewsets.ModelViewSet):
+    lookup_field = 'ext_id'
     permission_classes = permissions.nested_permissions
-
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
-
     ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
 
     def get_hyperlinked_serializer_class(self, username):
@@ -70,7 +69,6 @@ class UserChildViewSet(NestedViewSet):
 
 
 class NotebookViewSet(UserChildViewSet):
-    lookup_field = 'ext_id'
     queryset = Notebook.objects.all()
     serializer_class = serializers.NotebookSerializer
 
@@ -81,7 +79,6 @@ class NotebookViewSet(UserChildViewSet):
 
 
 class TaskViewSet(UserChildViewSet):
-    lookup_field = 'ext_id'
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
 
@@ -93,7 +90,6 @@ class TaskViewSet(UserChildViewSet):
 
 class BaseNoteViewSet(NestedViewSet):
     view_name = 'Note'
-    lookup_field = 'ext_id'
     queryset = Note.objects.all()
     serializer_class = serializers.NoteSerializer
 
