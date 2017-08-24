@@ -26,7 +26,7 @@ class SearchableModelMixin(ViewSetMixin):
     search_fields = ()
 
     def __init__(self, *args, **kwargs):
-        super(SearchableModelMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.explicit_search = False
 
@@ -64,7 +64,7 @@ class SearchableModelMixin(ViewSetMixin):
         return queryset
 
     def get_queryset(self):
-        queryset = super(SearchableModelMixin, self).get_queryset()
+        queryset = super().get_queryset()
 
         if self.explicit_search and self.terms:
             queryset = self.search_queryset(queryset)

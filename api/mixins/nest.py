@@ -13,7 +13,7 @@ class NestedModelMixin(ViewSetMixin):
     parent_filters = {}
 
     def __init__(self, *args, **kwargs):
-        super(NestedModelMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.deleted_parent = False
 
     def get_parent_name(self):
@@ -41,22 +41,22 @@ class NestedModelMixin(ViewSetMixin):
         return parent
 
     def get_queryset(self):
-        queryset = super(NestedModelMixin, self).get_queryset()
+        queryset = super().get_queryset()
         queryset = self._filter_queryset(queryset, self.object_filters, False)
         return queryset
 
     def list(self, request, *args, **kwargs):
         if not self.safe_parent:
             self.get_parent()
-        return super(NestedModelMixin, self).list(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         self.deleted_parent = None
-        return super(NestedModelMixin, self).update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         self.deleted_parent = None
-        return super(NestedModelMixin, self).destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         parent = self.get_parent()

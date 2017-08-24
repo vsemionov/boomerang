@@ -23,7 +23,7 @@ class SyncedModelMixin(ViewSetMixin):
     exclusive_write_conditions = (AT_PARAM, UNTIL_PARAM)
 
     def __init__(self, *args, **kwargs):
-        super(SyncedModelMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.at = None
         self.since = None
@@ -52,7 +52,7 @@ class SyncedModelMixin(ViewSetMixin):
         return timestamp
 
     def get_queryset(self):
-        queryset = super(SyncedModelMixin, self).get_queryset()
+        queryset = super().get_queryset()
 
         if self.since:
             queryset = queryset.filter(updated__gte=self.since)
@@ -69,7 +69,7 @@ class SyncedModelMixin(ViewSetMixin):
 
     def list(self, request, *args, **kwargs):
         if SyncedModelMixin in self.disabled_mixins:
-            return super(SyncedModelMixin, self).list(request, *args, **kwargs)
+            return super().list(request, *args, **kwargs)
 
         self.since = self.get_timestamp(request, self.SINCE_PARAM)
         self.until = self.get_timestamp(request, self.UNTIL_PARAM, timezone.now())
@@ -104,13 +104,13 @@ class SyncedModelMixin(ViewSetMixin):
     def update(self, request, *args, **kwargs):
         self.atomic = True
         self.init_write_conditions(request)
-        return super(SyncedModelMixin, self).update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
         self.init_write_conditions(request)
-        return super(SyncedModelMixin, self).destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
     def perform_update(self, serializer):
         self.check_write_conditions(serializer.instance)

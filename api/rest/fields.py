@@ -8,7 +8,7 @@ class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def __init__(self, *args, **kwargs):
         kwargs['pk_field'] = serializers.UUIDField(format='hex')
         self.optimized = 'source' in kwargs
-        super(SecondaryKeyRelatedField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def to_internal_value(self, data):
         if self.pk_field is not None:
@@ -31,7 +31,7 @@ class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
 
 class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, parent_lookup=None, aux_lookup=None, *args, **kwargs):
-        super(DynamicHyperlinkedIdentityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.parent_lookup = parent_lookup or {}
         self.aux_lookup = aux_lookup or {}

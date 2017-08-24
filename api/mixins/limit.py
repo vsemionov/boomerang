@@ -15,7 +15,7 @@ class LimitExceededError(exceptions.APIException):
 class LimitedModelMixin(ViewSetMixin):
 
     def __init__(self, *args, **kwargs):
-        super(LimitedModelMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.check_limits = False
 
     def check_limits(self, parent):
@@ -40,7 +40,7 @@ class LimitedModelMixin(ViewSetMixin):
                                      (limit, child_type._meta.verbose_name_plural, parent._meta.verbose_name))
 
     def get_parent_queryset(self):
-        queryset = super(LimitedModelMixin, self).get_parent_queryset()
+        queryset = super().get_parent_queryset()
 
         if self.check_limits:
             queryset = queryset.select_for_update()
@@ -48,7 +48,7 @@ class LimitedModelMixin(ViewSetMixin):
         return queryset
 
     def get_parent(self):
-        parent = super(LimitedModelMixin, self).get_parent()
+        parent = super().get_parent()
 
         if self.check_limits:
             self.check_limits(parent)
@@ -58,4 +58,4 @@ class LimitedModelMixin(ViewSetMixin):
     @transaction.atomic
     def perform_create(self, serializer):
         self.check_limits = True
-        return super(LimitedModelMixin, self).perform_create(serializer)
+        return super().perform_create(serializer)
