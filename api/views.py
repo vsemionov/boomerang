@@ -132,7 +132,7 @@ class UserNoteViewSet(sort.SortedModelMixin,
     # parent_filters = {'user_id': 'user_username'}
 
     get_serializer_class = NestedViewSet.get_serializer_class
-    get_hyperlinked_serializer_class = NoteViewSet.get_hyperlinked_serializer_class
+    get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
 
     def get_view_name(self):
         name = self.view_name
