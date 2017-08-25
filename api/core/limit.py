@@ -64,10 +64,8 @@ class LimitedModelMixin(ViewSetMixin):
         filter_kwargs = {field: self.kwargs[kwarg]}
         filter_kwargs['deleted'] = True
 
-        queryset = child_type.objects.filter(**filter_kwargs)
-
-        delete_ids = Subquery(queryset.order_by('-updated', '-id')[limit:].values('id'))
-        queryset.filter(id__in=delete_ids).delete()
+        delete_ids = Subquery(self.queryset.filter(**filter_kwargs).order_by('-updated', '-id')[limit:].values('id'))
+        self.queryset.filter(id__in=delete_ids).delete()
 
     def get_parent_queryset(self):
         queryset = super().get_parent_queryset()
