@@ -275,11 +275,11 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 30
 
 API_LIMITS = {
     'auth.User': {
-        'api.Notebook': (8, 64),
-        'api.Task': (250, 1000),
+        'api.Notebook': (8, 8),
+        'api.Task': (250, 250),
     },
     'api.Notebook': {
-        'api.Note': (125, 500),
+        'api.Note': (125, 125),
     },
 }
 API_MAX_PAGE_SIZE = 100
