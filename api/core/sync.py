@@ -68,9 +68,6 @@ class SyncedModelMixin(ViewSetMixin):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        if SyncedModelMixin in self.disabled_mixins:
-            return super().list(request, *args, **kwargs)
-
         self.since = self.get_timestamp(request, self.SINCE_PARAM)
         self.until = self.get_timestamp(request, self.UNTIL_PARAM, timezone.now())
 

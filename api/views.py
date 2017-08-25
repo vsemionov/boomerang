@@ -55,8 +55,8 @@ class NestedViewSet(sort.SortedModelMixin,
     def search(self, request, *args, **kwargs):
         self.explicit_search = True
         self.full_text_search = True
-        self.disabled_mixins = {sort.SortedModelMixin, sync.SyncedModelMixin}
-        self.filter_backends = ()
+        self.disabled_mixins = {sort.SortedModelMixin}
+        self.filter_backends = tuple(set(self.filter_backends).difference({sort.OrderingFilter}))
         return self.list(request, *args, **kwargs)
 
 
