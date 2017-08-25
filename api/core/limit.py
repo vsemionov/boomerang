@@ -21,6 +21,9 @@ class LimitedModelMixin(ViewSetMixin):
         self.check_limits = False
 
     def _get_limit(self, deleted):
+        if settings.API_LIMITS is None:
+            return None
+
         parent_limits = settings.API_LIMITS.get(self.parent_model._meta.label)
         if not parent_limits:
             return None

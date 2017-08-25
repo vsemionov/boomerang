@@ -48,8 +48,12 @@ class NestedViewSet(sort.SortedModelMixin,
     ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
 
     def _is_deleted_expired_possible(self):
+        if settings.API_DELETED_EXPIRY_DAYS is None:
+            return False
+
         if self.since is None:
             return True
+
         return self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS))
 
     def _is_deleted_exceeded_possible(self):

@@ -9,6 +9,9 @@ from api.models import Notebook, Note, Task
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        if settings.API_DELETED_EXPIRY_DAYS is None:
+            return
+
         exectime = timezone.now()
         expiry = datetime.timedelta(days=settings.API_DELETED_EXPIRY_DAYS)
         threshold = exectime - expiry
