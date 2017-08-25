@@ -60,7 +60,6 @@ class SortedModelMixin(ViewSetMixin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.sort = None
 
     def list(self, request, *args, **kwargs):
