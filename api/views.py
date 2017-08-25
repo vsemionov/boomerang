@@ -1,5 +1,10 @@
+import datetime
+
+from django.conf import settings
+from django.utils import timezone
 from django.contrib.auth.models import User
-from rest_framework import viewsets, mixins, decorators
+from django.db.models import Count, Min
+from rest_framework import viewsets, mixins, decorators, status
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links
@@ -42,6 +47,26 @@ class NestedViewSet(sort.SortedModelMixin,
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
     ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
 
+    def _is_deleted_expired_possible(self):
+        if self.since is None:
+            return True
+        return self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS))
+
+    def _is_deleted_exceeded_possible(self):
+        del_limit = self._get_limit(True)
+        if not del_limit:
+            return False
+
+        filter_kwargs = {expr: self.kwargs[kwarg] for expr, kwarg in self.object_filters.items()}
+        filter_kwargs['deleted'] = True
+
+        results = self.queryset.filter(**filter_kwargs)
+        results = results.values(self.parent_key_filter[0])
+        results = results.annotate(ndel=Count('*'), oldest=Min('updated'))
+        results = results.filter(ndel__gte=del_limit, oldest__gte=self.since)
+
+        return len(results) > 0
+
     def get_hyperlinked_serializer_class(self, username):
         raise NotImplementedError()
 
@@ -50,6 +75,17 @@ class NestedViewSet(sort.SortedModelMixin,
             return self.serializer_class
         else:
             return self.get_hyperlinked_serializer_class(self.kwargs['user_username'])
+
+    @decorators.list_route(suffix='Deleted List')
+    def deleted(self, request, *args, **kwargs):
+        self.deleted_object = True
+
+        response = self.list(request, *args, **kwargs)
+
+        if self._is_deleted_expired_possible() or self._is_deleted_exceeded_possible():
+            response.status_code = status.HTTP_206_PARTIAL_CONTENT
+
+        return response
 
     @decorators.list_route(suffix='Search')
     def search(self, request, *args, **kwargs):
@@ -132,9 +168,17 @@ class UserNoteViewSet(sort.SortedModelMixin,
     safe_parent = True
     object_filters = {'notebook__user_id': 'user_username'}
     # parent_filters = {'user_id': 'user_username'}
+    parent_key_filter = ('notebook_id', None)
+
+    _get_limit = NestedViewSet._get_limit
+
+    _is_deleted_expired_possible = NestedViewSet._is_deleted_expired_possible
+    _is_deleted_exceeded_possible = NestedViewSet._is_deleted_exceeded_possible
 
     get_serializer_class = NestedViewSet.get_serializer_class
     get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
+
+    deleted = NestedViewSet.deleted
 
     def get_view_name(self):
         name = self.view_name

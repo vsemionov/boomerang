@@ -1,10 +1,8 @@
-import datetime
 from collections import OrderedDict
 
-from django.conf import settings
 from django.db import transaction
 from django.utils import timezone, dateparse
-from rest_framework import decorators, exceptions, status
+from rest_framework import exceptions, status
 
 from .mixin import ViewSetMixin
 
@@ -75,17 +73,6 @@ class SyncedModelMixin(ViewSetMixin):
                             (self.UNTIL_PARAM, self.until)))
 
         return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
-
-    @decorators.list_route(suffix='Deleted List')
-    def deleted(self, request, *args, **kwargs):
-        self.deleted_object = True
-
-        response = self.list(request, *args, **kwargs)
-
-        if self.since is None or self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS)):
-            response.status_code = status.HTTP_206_PARTIAL_CONTENT
-
-        return response
 
 
 class ReadWriteSyncedModelMixin(SyncedModelMixin):
