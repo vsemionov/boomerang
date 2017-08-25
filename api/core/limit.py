@@ -20,13 +20,12 @@ class LimitedModelMixin(ViewSetMixin):
         super().__init__(*args, **kwargs)
         self.check_limits = False
 
-    @staticmethod
-    def _get_limit(parent, child_type, deleted):
-        parent_limits = settings.API_LIMITS.get(parent._meta.label)
+    def _get_limit(self, deleted):
+        parent_limits = settings.API_LIMITS.get(self.parent_model._meta.label)
         if not parent_limits:
             return None
 
-        child_limit = parent_limits.get(child_type._meta.label)
+        child_limit = parent_limits.get(self.queryset.model._meta.label)
         if not child_limit:
             return None
 
@@ -37,11 +36,11 @@ class LimitedModelMixin(ViewSetMixin):
         return limit
 
     def _check_active_limits(self, parent):
-        child_type = self.queryset.model
-
-        limit = self._get_limit(parent, child_type, False)
+        limit = self._get_limit(False)
         if not limit:
             return
+
+        child_type = self.queryset.model
 
         child_set_name = child_type._meta.model_name + '_set'
         child_set = getattr(parent, child_set_name)
@@ -54,9 +53,7 @@ class LimitedModelMixin(ViewSetMixin):
                                      (limit, child_type._meta.verbose_name_plural, parent._meta.verbose_name))
 
     def _check_deleted_limits(self):
-        child_type = self.queryset.model
-
-        limit = self._get_limit(self.parent_model, child_type, True)
+        limit = self._get_limit(True)
         if not limit:
             return
 
