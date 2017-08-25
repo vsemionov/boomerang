@@ -65,6 +65,7 @@ class UserChildViewSet(NestedViewSet):
     safe_parent = True
     object_filters = {'user_id': 'user_username'}
     parent_filters = {'username': 'user_username'}
+    parent_key_filter = ('user_id', 'user_username')
 
 
 class NotebookViewSet(UserChildViewSet):
@@ -104,6 +105,7 @@ class NoteViewSet(NestedViewSet):
         'user_id': 'user_username',
         'ext_id': 'notebook_ext_id'
     }
+    parent_key_filter = ('notebook_id', 'notebook_ext_id')
 
     get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
 
