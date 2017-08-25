@@ -63,4 +63,4 @@ class ReadWriteNestedModelMixin(NestedModelMixin):
 
     def perform_create(self, serializer):
         parent = self.get_parent()
-        serializer.save({self.get_parent_name(): parent})
+        serializer.save(**{self.get_parent_name(): parent})
