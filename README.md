@@ -91,3 +91,7 @@ https://boomerang-core.herokuapp.com/
     - enhanced database connection pooling
     - cross-origin front-end support
     - buffering reverse proxy
+
+* 0.7
+    - automated testing
+    - continuous integration
