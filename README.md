@@ -4,6 +4,8 @@ Boomerang
 An experimental web application
 -------------------------------
 
+[![Build Status](https://travis-ci.org/vsemionov/boomerang.svg?branch=master)](https://travis-ci.org/vsemionov/boomerang)
+
 
 ### Features
 * Support for data synchronization with conflict detection
