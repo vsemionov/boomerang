@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = .
+omit =
+    manage.py
+    boomerang/settings.py
+    boomerang/wsgi.py
+    */migrations/**
+    **/tests/**

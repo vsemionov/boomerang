@@ -11,4 +11,7 @@
 
 *.pyc
 
+.coverage
+htmlcov
+
 Thumbs.db

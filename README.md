@@ -96,4 +96,5 @@ https://boomerang-core.herokuapp.com/
 
 * 0.7
     - automated testing
+    - coverage reports
     - continuous integration
