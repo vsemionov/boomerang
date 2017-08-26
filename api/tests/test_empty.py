@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 
-class Blank(TestCase):
+class Empty(TestCase):
 
-    def blank(self):
+    def test_empty(self):
         pass
