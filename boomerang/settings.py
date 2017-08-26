@@ -181,7 +181,7 @@ if DEBUG:
                      'debug_toolbar.middleware.DebugToolbarMiddleware',
                  ] + MIDDLEWARE
 else:
-    ALLOWED_HOSTS = ['boomerang-core.herokuapp.com']
+    ALLOWED_HOSTS = [os.environ['API_HOST']]
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
