@@ -8,6 +8,7 @@ addons:
 
 services:
   - postgresql
+  - redis-server
 
 install: "pip install -r requirements.txt"
 
