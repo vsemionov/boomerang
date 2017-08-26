@@ -98,3 +98,4 @@ https://boomerang-core.herokuapp.com/
     - automated testing
     - coverage reports
     - continuous integration
+    - synchronization documentation
