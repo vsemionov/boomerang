@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from .mixin import ViewSetMixin
-from .util import is_deletable
+from .models import TrackedModel
 
 
 class NestedModelMixin(ViewSetMixin):
@@ -23,7 +23,7 @@ class NestedModelMixin(ViewSetMixin):
         filter_kwargs = {expr: self.kwargs[kwarg] for expr, kwarg in filters.items()}
 
         if self.deleted_parent is not None:
-            if is_deletable(self.parent_model):
+            if issubclass(self.parent_model, TrackedModel):
                 expr = 'deleted' if is_parent else self.get_parent_name() + '__deleted'
                 filter_kwargs.update({expr: self.deleted_parent})
 

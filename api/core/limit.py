@@ -4,7 +4,7 @@ from django.db.models import Subquery
 from rest_framework import exceptions, status
 
 from .mixin import ViewSetMixin
-from .util import is_deletable
+from .models import TrackedModel
 
 
 class LimitExceededError(exceptions.APIException):
@@ -43,17 +43,17 @@ class LimitedModelMixin(ViewSetMixin):
         if not limit:
             return
 
-        child_type = self.queryset.model
+        object_type = self.queryset.model
 
-        child_set_name = child_type._meta.model_name + '_set'
+        child_set_name = object_type._meta.model_name + '_set'
         child_set = getattr(parent, child_set_name)
 
-        if is_deletable(child_type):
+        if issubclass(object_type, TrackedModel):
             child_set = child_set.filter(deleted=False)
 
         if child_set.count() >= limit:
             raise LimitExceededError('exceeded limit of %d %s per %s' %
-                                     (limit, child_type._meta.verbose_name_plural, parent._meta.verbose_name))
+                                     (limit, object_type._meta.verbose_name_plural, parent._meta.verbose_name))
 
     def _check_deleted_limits(self):
         limit = self._get_limit(True)

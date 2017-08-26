@@ -2,19 +2,16 @@ import uuid
 
 from django.db import models
 
-# Create your models here.
+from .core.models import TrackedModel
+
 
 MAX_NAME_SIZE = 128
 MAX_TEXT_SIZE = 32*1024
 
 
-class Notebook(models.Model):
+class Notebook(TrackedModel):
     ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     user = models.ForeignKey('auth.User', to_field='username')
-
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
 
     name = models.CharField(max_length=MAX_NAME_SIZE)
 
@@ -22,13 +19,9 @@ class Notebook(models.Model):
         return self.name
 
 
-class Note(models.Model):
+class Note(TrackedModel):
     ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     notebook = models.ForeignKey(Notebook, to_field='ext_id')
-
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
 
     title = models.CharField(max_length=MAX_NAME_SIZE)
     text = models.TextField(max_length=MAX_TEXT_SIZE)
@@ -37,13 +30,9 @@ class Note(models.Model):
         return self.title
 
 
-class Task(models.Model):
+class Task(TrackedModel):
     ext_id = models.UUIDField(unique=True, null=False, default=uuid.uuid4)
     user = models.ForeignKey('auth.User', to_field='username')
-
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    deleted = models.BooleanField(default=False)
 
     done = models.BooleanField(default=False)
     title = models.CharField(max_length=MAX_NAME_SIZE)
