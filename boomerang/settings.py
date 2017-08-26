@@ -251,7 +251,6 @@ REST_FRAMEWORK = {
         'user': '120/min',
         'host': '120/min',
     },
-    'VIEW_DESCRIPTION_FUNCTION': 'api.util.get_view_description',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 if not DEBUG:

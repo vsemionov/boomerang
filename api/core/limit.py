@@ -4,7 +4,7 @@ from django.db.models import Subquery
 from rest_framework import exceptions, status
 
 from .mixin import ViewSetMixin
-from .. import util
+from .util import is_deletable
 
 
 class LimitExceededError(exceptions.APIException):
@@ -48,7 +48,7 @@ class LimitedModelMixin(ViewSetMixin):
         child_set_name = child_type._meta.model_name + '_set'
         child_set = getattr(parent, child_set_name)
 
-        if util.is_deletable(child_type):
+        if is_deletable(child_type):
             child_set = child_set.filter(deleted=False)
 
         if child_set.count() >= limit:
