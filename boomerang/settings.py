@@ -214,7 +214,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
     'api_throttle': {
-        'BACKEND': 'redis_cache.RedisCache',
+        'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': 'redis://{0}@{1}:{2}/{3}'.format(
             ':' + redis_url.password if redis_url.password is not None else '',
             redis_url.hostname,
@@ -223,9 +223,9 @@ CACHES = {
         'TIMEOUT': 300,
         'KEY_PREFIX': 'boomerang',
         'OPTIONS': {
-            'SOCKET_TIMEOUT': 5,
             'SOCKET_CONNECT_TIMEOUT': 5,
-            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+            'SOCKET_TIMEOUT': 5,
+            'CONNECTION_POOL_CLASS': 'redis.connection.BlockingConnectionPool',
             'CONNECTION_POOL_CLASS_KWARGS': {
                 'max_connections': REDIS_MAX_CONNS // NUM_PROCS,
                 'timeout': 5,
