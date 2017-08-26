@@ -20,6 +20,27 @@ An experimental web application
 https://boomerang-core.herokuapp.com/
 
 
+### Data Synchronization
+
+The API is designed to support data synchronization by offline clients, such as mobile applications. This is accomplished by the following approach:
+* Aggregate list endpoints per object type are exposed. This allows all objects of a given type to be retrieved in a single request, even if they are nested into different objects. For example, in the hierarchy notebook/note, there is a note list endpoint that returns all notes from all notebooks.
+  - The choice to expose one endpoint per object type, as opposed to a single endpoint for all synchronized types, was made because the latter approach produces a response that is an object (as opposed to a list). This does not allow paginating responses and forces the use of a single request. Avoiding multiple round-trip times is still possible by pipelining requests for different object types.
+* List endpoints allow the client to specify the minimum modification time of the returned objects. The returned data contains the request execution timestamp. To synchronize incrementally, the client must store this timestamp and send it as the minimum modification time during their next synchronization.
+* Deletion of objects is performed softly. Upon deletion, a hidden flag is toggled, but the data itself is not removed. This allows offline clients to detect which locally-existing objects have been deleted on the server.
+  - However, to preserve system resources, objects that are deleted a specified time ago are periodically removed. Also, the number of deleted objects is limited. When an object is being deleted and this limit is reached, the object with the oldest deletion timestamp is removed.
+* Deleted objects are listed in separate (aggregate) endpoints, which also accept a minimum deletion timestamp parameter.
+  - The server is able to detect if the generated listing is complete for the requested minimum modification timestamp. If objects may have removed due to expiry or an exceeded limit, a different response status code is returned. In this case, the client must retrieve the full list of non-deleted objects and determine the deleted ones by comparing to their local database.
+
+#### Conflict Detection
+
+The API also supports conflict detection when a write request is made from a client for an object, whose contents on the client are older than the contents on the server. This is beneficial for offline as well as online clients. The approach is the following:
+* Endpoints that modify the state of an object accept a last modification timestamp. Clients shall set it to the object's modification timestamp in their database. If it does not match the object's modification timestamp on the server, the request is rejected.
+* When a conflict occurs, it is up to the client to decide how to handle it. Some possibilities are:
+  - Synchronize the newer object state on both sides.
+  - Create a copy of the object.
+  - Duplicate the two versions on both sides.
+
+
 ### Deployment
 
 #### Pre-install
@@ -65,36 +86,3 @@ https://boomerang-core.herokuapp.com/
 
 #### Post-install
 * login to */admin/*, edit the site and create the social applications
-
-
-### Roadmap
-
-* 0.1
-    - database model
-    - REST API
-    - hosting
-
-* 0.2
-    - social login
-    - user registration
-    - email authentication
-
-* 0.3
-    - API rate/size/count limits
-
-* 0.4
-    - data synchronization API support
-
-* 0.5
-    - search API support
-
-* 0.6
-    - enhanced application error tracking
-    - enhanced database connection pooling
-    - cross-origin front-end support
-    - buffering reverse proxy
-
-* 0.7
-    - automated testing
-    - coverage reports
-    - continuous integration
