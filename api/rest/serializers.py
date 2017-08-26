@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from ..models import Notebook, Note, Task
-from .fields import SecondaryKeyRelatedField
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -22,7 +21,7 @@ class NotebookSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True, source='ext_id', format='hex')
-    notebook = SecondaryKeyRelatedField(read_only=True)
+    notebook = serializers.PrimaryKeyRelatedField(read_only=True, pk_field=serializers.UUIDField(format='hex'))
 
     class Meta:
         model = Note

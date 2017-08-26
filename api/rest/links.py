@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .fields import SecondaryKeyRelatedField, DynamicHyperlinkedIdentityField
+from .fields import DynamicHyperlinkedIdentityField
 from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, TaskSerializer
 
 
