@@ -50,7 +50,7 @@ class SearchableModelMixin(ViewSetMixin):
 
         queryset = queryset.annotate(rank=similarity)
         queryset = queryset.filter(rank__gt=0)
-        queryset = queryset.order_by('-rank', *self.ordering)
+        queryset = queryset.order_by('-rank')
         return queryset
 
     def _search_queryset(self, queryset):
