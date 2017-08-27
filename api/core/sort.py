@@ -60,10 +60,12 @@ class SortedModelMixin(ViewSetMixin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.enable_sort = True
         self.sort = None
 
     def list(self, request, *args, **kwargs):
-        if SortedModelMixin in self.disabled_mixins:
+        if not self.enable_sort:
             return super().list(request, *args, **kwargs)
 
         self.sort = get_sort_order(request, self.SORT_PARAM) or self.DEFAULT_SORT

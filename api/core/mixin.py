@@ -2,7 +2,6 @@ from rest_framework import response
 
 
 class ViewSetMixin(object):
-    disabled_mixins = set()
 
     def get_queryset(self):
         return self.queryset
