@@ -44,3 +44,5 @@ class TestApiRoot(APITestCase):
     def test_has_jwt_link(self):
         data = self.client.get(self.url).data
         self.assertEqual(urllib.parse.urlparse(data['jwt']).path, reverse('jwt-list'))
+
+#TODO: check cors
