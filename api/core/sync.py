@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import time
 
 from django.db import transaction
 from django.utils import timezone, dateparse
@@ -100,6 +101,18 @@ class ReadWriteSyncedModelMixin(SyncedModelMixin):
         if self.until and instance.updated >= self.until:
                 raise ConflictError()
 
+    def _ensure_updated_past(self, instance):
+        while True:
+            now = timezone.now()
+
+            if instance.updated < now:
+                break
+
+            if instance.updated > now:
+                raise ValueError('updated timestamp is in the future')
+
+            time.sleep(0.001)
+
     @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
         self.atomic = True
@@ -119,10 +132,14 @@ class ReadWriteSyncedModelMixin(SyncedModelMixin):
     def perform_update(self, serializer):
         self._check_write_conditions(serializer.instance)
 
+        self._ensure_updated_past(serializer.instance)
+
         serializer.save()
 
     def perform_destroy(self, instance):
         self._check_write_conditions(instance)
+
+        self._ensure_updated_past(instance)
 
         instance.deleted = True
         instance.save()
