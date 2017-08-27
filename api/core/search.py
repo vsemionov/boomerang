@@ -25,18 +25,19 @@ class SearchableModelMixin(ViewSetMixin):
 
     search_fields = ()
 
+    explicit_search = False
+    full_text_search = False
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.explicit_search = False
-
         self.terms = None
-
-        self.full_text_search = False
 
     def _search_basic(self, queryset):
         search_filter = SearchFilter()
+
         search_filter.search_param = self.SEARCH_PARAM
+
         return search_filter.filter_queryset(self.request, queryset, self)
 
     def _search_trigram_similarity(self, queryset):
@@ -50,7 +51,9 @@ class SearchableModelMixin(ViewSetMixin):
 
         queryset = queryset.annotate(rank=similarity)
         queryset = queryset.filter(rank__gt=0)
+
         queryset = queryset.order_by('-rank')
+
         return queryset
 
     def _search_queryset(self, queryset):
@@ -73,6 +76,7 @@ class SearchableModelMixin(ViewSetMixin):
 
     def list(self, request, *args, **kwargs):
         query_terms = request.query_params.getlist(self.SEARCH_PARAM)
+
         self.terms = ' '.join(query_terms) if query_terms else None
 
         data = OrderedDict(terms=self.terms)

@@ -24,6 +24,7 @@ class SyncedModelMixin(ViewSetMixin):
         super().__init__(*args, **kwargs)
 
         self.at = None
+
         self.since = None
         self.until = None
 
@@ -34,12 +35,13 @@ class SyncedModelMixin(ViewSetMixin):
     @staticmethod
     def get_timestamp(request, name, default=None):
         timestamp_reprs = request.query_params.getlist(name)
+
         if len(timestamp_reprs) > 1:
             raise exceptions.ValidationError({name: 'multiple timestamp values'})
 
         if timestamp_reprs:
-            timestamp_repr = timestamp_reprs[0]
-            timestamp = dateparse.parse_datetime(timestamp_repr)
+            timestamp = dateparse.parse_datetime(timestamp_reprs[0])
+
             if timestamp is None:
                 raise exceptions.ValidationError({name: 'invalid timestamp format'})
             if timestamp.tzinfo is None:
@@ -101,20 +103,26 @@ class ReadWriteSyncedModelMixin(SyncedModelMixin):
     @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
         self.atomic = True
+
         self._init_write_conditions(request)
+
         return super().update(request, *args, **kwargs)
 
     @transaction.atomic(savepoint=False)
     def destroy(self, request, *args, **kwargs):
         self.atomic = True
+
         self._init_write_conditions(request)
+
         return super().destroy(request, *args, **kwargs)
 
     def perform_update(self, serializer):
         self._check_write_conditions(serializer.instance)
+
         serializer.save()
 
     def perform_destroy(self, instance):
         self._check_write_conditions(instance)
+
         instance.deleted = True
         instance.save()

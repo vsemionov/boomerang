@@ -18,9 +18,12 @@ class ApiInfoViewSet(mixins.ListModelMixin,
     def list(self, request, *args, **kwargs):
         app = OrderedDict((('name', settings.PROJECT_NAME),
                            ('version', settings.PROJECT_VERSION)))
+
         user = OrderedDict((('username', request.user.username),
                             ('url', self._get_user_url(request)))) \
             if request.user.id else None
+
         info = OrderedDict((('app', app),
                             ('user', user)))
+
         return response.Response(info)

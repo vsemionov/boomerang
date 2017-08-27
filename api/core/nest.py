@@ -8,13 +8,14 @@ from .models import TrackedModel
 class NestedModelMixin(ViewSetMixin):
 
     parent_model = None
-    safe_parent = False # set to false if the parent url argument has been verified (e.g. by permissions)
+    safe_parent = False
 
     object_filters = {}
     parent_filters = {}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.deleted_parent = False
 
     def get_parent_name(self):
@@ -29,28 +30,37 @@ class NestedModelMixin(ViewSetMixin):
                 filter_kwargs.update({expr: self.deleted_parent})
 
         queryset = queryset.filter(**filter_kwargs)
+
         return queryset
 
     def get_parent_queryset(self, lock):
         queryset = self.parent_model.objects
+
         queryset = self._filter_queryset(queryset, self.parent_filters, True)
+
         if lock:
             queryset = queryset.select_for_update()
+
         return queryset
 
     def get_parent(self, lock):
         queryset = self.get_parent_queryset(lock)
+
         parent = get_object_or_404(queryset)
+
         return parent
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
         queryset = self._filter_queryset(queryset, self.object_filters, False)
+
         return queryset
 
     def list(self, request, *args, **kwargs):
         if not self.safe_parent:
             self.get_parent(False)
+
         return super().list(request, *args, **kwargs)
 
 

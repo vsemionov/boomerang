@@ -38,19 +38,26 @@ class OrderingFilter(filters.OrderingFilter):
 
     def get_ordering(self, request, queryset, view):
         fields = get_sort_order(request, self.ordering_param)
+
         if fields:
             fields = translated_sort(fields)
             ordering = self.remove_invalid_fields(queryset, fields, view, request)
+
             if len(ordering) != len(fields):
                 ext_fields = reverse_translated_sort(fields)
                 ext_ordering = reverse_translated_sort(ordering)
+
                 errors = {}
+
                 for ext_field in ext_fields:
                     if ext_field not in ext_ordering:
                         errors[ext_field] = 'unknown or disallowed field'
+
                 raise exceptions.ValidationError(errors)
+
             ordering = consistent_sort(ordering)
             return ordering
+
         return self.get_default_ordering(view)
 
 

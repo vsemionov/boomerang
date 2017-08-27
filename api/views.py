@@ -93,10 +93,13 @@ class NestedViewSet(sort.SortedModelMixin,
 
     @decorators.list_route(suffix='Search')
     def search(self, request, *args, **kwargs):
+        self.filter_backends = tuple(set(self.filter_backends).difference({sort.OrderingFilter}))
+
+        self.enable_sort = False
+
         self.explicit_search = True
         self.full_text_search = True
-        self.enable_sort = False
-        self.filter_backends = tuple(set(self.filter_backends).difference({sort.OrderingFilter}))
+
         return self.list(request, *args, **kwargs)
 
 
@@ -186,6 +189,8 @@ class UserNoteViewSet(sort.SortedModelMixin,
 
     def get_view_name(self):
         name = self.view_name
+
         if self.suffix:
             name += ' ' + self.suffix
+
         return name

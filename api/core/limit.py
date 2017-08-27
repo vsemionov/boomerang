@@ -18,6 +18,7 @@ class LimitedModelMixin(ViewSetMixin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.check_limits = False
 
     def get_limit(self, deleted):
@@ -65,7 +66,9 @@ class LimitedModelMixin(ViewSetMixin):
         filter_kwargs['deleted'] = True
 
         delete_ids = Subquery(self.queryset.filter(**filter_kwargs).order_by('-updated', '-id')[limit:].values('id'))
-        self.queryset.filter(id__in=delete_ids).delete()
+
+        delete_objs = self.queryset.filter(id__in=delete_ids)
+        delete_objs.delete()
 
     def get_parent(self, lock):
         parent = super().get_parent(lock or self.check_limits)

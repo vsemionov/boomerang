@@ -28,7 +28,10 @@ class JWTViewSet(mixins.ListModelMixin,
 
     def list(self, request, *args, **kwargs):
         user = request.user
+
         token = create_jwt(user)
+
         jwt = OrderedDict((('username', user.username),
                            ('token', token)))
+
         return response.Response(jwt)
