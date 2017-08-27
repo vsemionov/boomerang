@@ -1,10 +1,11 @@
 import datetime
 from collections import OrderedDict
+
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
 
-from api.models import Notebook, Note, Task
+from api.core.models import TrackedModel
 
 
 class Command(BaseCommand):
@@ -12,12 +13,11 @@ class Command(BaseCommand):
         if settings.API_DELETED_EXPIRY_DAYS is None:
             return
 
-        exectime = timezone.now()
-        expiry = datetime.timedelta(days=settings.API_DELETED_EXPIRY_DAYS)
-        threshold = exectime - expiry
+        threshold = timezone.now() - datetime.timedelta(days=settings.API_DELETED_EXPIRY_DAYS)
 
-        classes = (Notebook, Note, Task)
-        deletions = OrderedDict(((cls._meta.label, 0) for cls in classes))
+        classes = TrackedModel.__subclasses__()
+        deletions = OrderedDict(((cls._meta.label, 0) for cls in classes\
+                                 if cls._meta.abstract is False and cls._meta.proxy is False))
 
         for cls in classes:
             deleted = cls.objects.filter(deleted=True)
@@ -25,8 +25,8 @@ class Command(BaseCommand):
 
             _, subdeletions = expired.delete()
 
-            for cls in subdeletions:
-                deletions[cls] += subdeletions[cls]
+            for delcls in subdeletions:
+                deletions[delcls] += subdeletions[delcls]
 
         for cls in deletions:
             print('%s: %d' % (cls, deletions[cls]))
