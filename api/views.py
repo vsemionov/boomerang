@@ -24,7 +24,7 @@ class UserViewSet(sort.SortedModelMixin,
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
     search_fields = ('username', 'first_name', 'last_name', 'email')
     ordering_fields = ('username', 'date_joined', 'last_login', 'first_name', 'last_name', 'email')
-    ordering = sort.consistent_sort(('date_joined',))
+    ordering = ('date_joined',)
 
     def get_queryset(self):
         if self.request.user.is_staff:
@@ -45,7 +45,7 @@ class NestedViewSet(sort.SortedModelMixin,
     permission_classes = permissions.nested_permissions
 
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
-    ordering = sort.consistent_sort(sort.SortedModelMixin.DEFAULT_SORT)
+    ordering = ('created',)
 
     def _is_deleted_expired_possible(self):
         if settings.API_DELETED_EXPIRY_DAYS is None:
