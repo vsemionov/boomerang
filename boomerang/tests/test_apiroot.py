@@ -11,10 +11,6 @@ class TestApiRoot(TestCase):
         response = self.client.get(self.url)
         self.assertTrue(response.status_code < 400)
 
-    def test_only_get(self):
-        response = RequestsClient().options('http://testserver' + self.url)
-        self.assertEqual(response.headers['Allow'], 'GET, HEAD, OPTIONS')
-
     def test_get_redirects(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
@@ -40,4 +36,6 @@ class TestApiRoot(TestCase):
         self.assertTrue(response.is_redirect)
         self.assertEqual(response.headers['Location'], reverse('api-root'))
 
-#TODO: check cors
+    def test_cors_not_allowed(self):
+        response = RequestsClient().options('http://testserver' + self.url, headers={'Origin': 'http://localhost:3000'}, allow_redirects=False)
+        self.assertFalse('Access-Control-Allow-Origin' in response.headers)

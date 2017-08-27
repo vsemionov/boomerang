@@ -45,4 +45,6 @@ class TestApiRoot(APITestCase):
         data = self.client.get(self.url).data
         self.assertEqual(urllib.parse.urlparse(data['jwt']).path, reverse('jwt-list'))
 
-#TODO: check cors
+    def test_cors_allowed(self):
+        response = RequestsClient().options('http://testserver' + self.url, headers={'Origin': 'http://localhost:3000'})
+        self.assertTrue('Access-Control-Allow-Origin' in response.headers)
