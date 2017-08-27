@@ -80,6 +80,19 @@ class SyncedModelMixin(ViewSetMixin):
 
 class ReadWriteSyncedModelMixin(SyncedModelMixin):
 
+    @staticmethod
+    def _ensure_updated_past(instance):
+        while True:
+            now = timezone.now()
+
+            if instance.updated < now:
+                break
+
+            if instance.updated > now:
+                raise ValueError('updated timestamp is in the future')
+
+            time.sleep(0.001)
+
     def _init_write_conditions(self, request):
         self.at = self.get_timestamp(request, self.AT_PARAM)
         self.until = self.get_timestamp(request, self.UNTIL_PARAM)
@@ -100,18 +113,6 @@ class ReadWriteSyncedModelMixin(SyncedModelMixin):
                 raise ConflictError()
         if self.until and instance.updated >= self.until:
                 raise ConflictError()
-
-    def _ensure_updated_past(self, instance):
-        while True:
-            now = timezone.now()
-
-            if instance.updated < now:
-                break
-
-            if instance.updated > now:
-                raise ValueError('updated timestamp is in the future')
-
-            time.sleep(0.001)
 
     @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
