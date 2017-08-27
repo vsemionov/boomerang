@@ -56,6 +56,10 @@ class NestedModelMixin(ViewSetMixin):
 
 class ReadWriteNestedModelMixin(NestedModelMixin):
 
+    def create(self, request, *args, **kwargs):
+        self.deleted_parent = None
+        return super().create(request, *args, **kwargs)
+
     def update(self, request, *args, **kwargs):
         self.deleted_parent = None
         return super().update(request, *args, **kwargs)
