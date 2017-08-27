@@ -18,8 +18,8 @@ class SyncedModelMixin(ViewSetMixin):
     SINCE_PARAM = 'since'
     UNTIL_PARAM = 'until'
 
-    supported_write_conditions = (AT_PARAM, UNTIL_PARAM)
-    exclusive_write_conditions = (AT_PARAM, UNTIL_PARAM)
+    supported_write_conditions = (AT_PARAM,)
+    exclusive_write_conditions = (AT_PARAM,)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -94,19 +94,17 @@ class ReadWriteSyncedModelMixin(SyncedModelMixin):
             time.sleep(0.001)
 
     def _init_write_conditions(self, request):
-        self.at = self.get_timestamp(request, self.AT_PARAM)
-        self.until = self.get_timestamp(request, self.UNTIL_PARAM)
+        unsupported_conditions = [param for param in request.query_params
+                                  if param not in self.supported_write_conditions]
+        if unsupported_conditions:
+            raise exceptions.ValidationError({cond: 'unsupported condition' for cond in unsupported_conditions})
 
         exclusive_conditions = [param for param in request.query_params
                                 if param in self.exclusive_write_conditions]
         if len(exclusive_conditions) > 1:
             raise exceptions.ValidationError("unsupported combination: " + ', '.join(exclusive_conditions))
 
-        unsupported_conditions = [param for param in request.query_params
-                                  if param not in self.supported_write_conditions]
-        if unsupported_conditions:
-            unsupported_condition = unsupported_conditions[0]
-            raise exceptions.ValidationError({unsupported_condition: 'unsupported condition'})
+        self.at = self.get_timestamp(request, self.AT_PARAM)
 
     def _check_write_conditions(self, instance):
         if self.at and instance.updated != self.at:
