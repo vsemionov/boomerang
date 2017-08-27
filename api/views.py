@@ -57,7 +57,7 @@ class NestedViewSet(sort.SortedModelMixin,
         return self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS))
 
     def _is_deleted_exceeded_possible(self):
-        del_limit = self._get_limit(True)
+        del_limit = self.get_limit(True)
         if not del_limit:
             return False
 
@@ -174,7 +174,7 @@ class UserNoteViewSet(sort.SortedModelMixin,
     # parent_filters = {'user_id': 'user_username'}
     parent_key_filter = ('notebook_id', None)
 
-    _get_limit = NestedViewSet._get_limit
+    _get_limit = NestedViewSet.get_limit
 
     _is_deleted_expired_possible = NestedViewSet._is_deleted_expired_possible
     _is_deleted_exceeded_possible = NestedViewSet._is_deleted_exceeded_possible
