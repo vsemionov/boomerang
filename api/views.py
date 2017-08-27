@@ -186,6 +186,7 @@ class UserNoteViewSet(sort.SortedModelMixin,
     get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
 
     deleted = NestedViewSet.deleted
+    search = NestedViewSet.search
 
     def get_view_name(self):
         name = self.view_name
