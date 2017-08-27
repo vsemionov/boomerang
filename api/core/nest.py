@@ -21,7 +21,9 @@ class NestedModelMixin(ViewSetMixin):
     def get_parent_name(self):
         return self.parent_model._meta.model_name
 
-    def _filter_queryset(self, queryset, filters, is_parent):
+    def _filter_queryset(self, queryset, is_parent):
+        filters = self.parent_filters if is_parent else self.object_filters
+
         filter_kwargs = {expr: self.kwargs[kwarg] for expr, kwarg in filters.items()}
 
         if self.deleted_parent is not None:
@@ -36,7 +38,7 @@ class NestedModelMixin(ViewSetMixin):
     def get_parent_queryset(self, lock):
         queryset = self.parent_model.objects
 
-        queryset = self._filter_queryset(queryset, self.parent_filters, True)
+        queryset = self._filter_queryset(queryset, True)
 
         if lock:
             queryset = queryset.select_for_update()
@@ -53,7 +55,7 @@ class NestedModelMixin(ViewSetMixin):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        queryset = self._filter_queryset(queryset, self.object_filters, False)
+        queryset = self._filter_queryset(queryset, False)
 
         return queryset
 
