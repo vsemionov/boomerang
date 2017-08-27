@@ -67,16 +67,8 @@ class LimitedModelMixin(ViewSetMixin):
         delete_ids = Subquery(self.queryset.filter(**filter_kwargs).order_by('-updated', '-id')[limit:].values('id'))
         self.queryset.filter(id__in=delete_ids).delete()
 
-    def get_parent_queryset(self):
-        queryset = super().get_parent_queryset()
-
-        if self.check_limits:
-            queryset = queryset.select_for_update()
-
-        return queryset
-
-    def get_parent(self):
-        parent = super().get_parent()
+    def get_parent(self, lock):
+        parent = super().get_parent(lock or self.check_limits)
 
         if self.check_limits:
             self._check_active_limits(parent)

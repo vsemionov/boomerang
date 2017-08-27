@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 
 from .mixin import ViewSetMixin
@@ -30,13 +31,15 @@ class NestedModelMixin(ViewSetMixin):
         queryset = queryset.filter(**filter_kwargs)
         return queryset
 
-    def get_parent_queryset(self):
+    def get_parent_queryset(self, lock):
         queryset = self.parent_model.objects
         queryset = self._filter_queryset(queryset, self.parent_filters, True)
+        if lock:
+            queryset = queryset.select_for_update()
         return queryset
 
-    def get_parent(self):
-        queryset = self.get_parent_queryset()
+    def get_parent(self, lock):
+        queryset = self.get_parent_queryset(lock)
         parent = get_object_or_404(queryset)
         return parent
 
@@ -47,7 +50,7 @@ class NestedModelMixin(ViewSetMixin):
 
     def list(self, request, *args, **kwargs):
         if not self.safe_parent:
-            self.get_parent()
+            self.get_parent(False)
         return super().list(request, *args, **kwargs)
 
 
@@ -61,6 +64,7 @@ class ReadWriteNestedModelMixin(NestedModelMixin):
         self.deleted_parent = None
         return super().destroy(request, *args, **kwargs)
 
+    @transaction.atomic(savepoint=False)
     def perform_create(self, serializer):
-        parent = self.get_parent()
+        parent = self.get_parent(True)
         serializer.save(**{self.get_parent_name(): parent})
