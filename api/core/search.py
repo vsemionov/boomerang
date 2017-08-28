@@ -1,7 +1,7 @@
 import itertools
 from collections import OrderedDict
 
-from django.db.models import Value, TextField
+from django.db.models import Value, TextField, FloatField
 from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
 from rest_framework import filters
@@ -19,13 +19,18 @@ class SearchFilter(filters.SearchFilter):
         params = ' '.join(request.query_params.getlist(self.search_param))
         return params.replace(',', ' ').split()
 
+    def filter_queryset(self, request, queryset, view):
+        if view.full_text_search:
+            return queryset
+
+        return super().filter_queryset(request, queryset, view)
+
 
 class SearchableModelMixin(ViewSetMixin):
     SEARCH_PARAM = DEFAULT_SEARCH_PARAM
 
     search_fields = ()
 
-    explicit_search = False
     full_text_search = False
 
     def __init__(self, *args, **kwargs):
@@ -33,14 +38,7 @@ class SearchableModelMixin(ViewSetMixin):
 
         self.terms = None
 
-    def _search_basic(self, queryset):
-        search_filter = SearchFilter()
-
-        search_filter.search_param = self.SEARCH_PARAM
-
-        return search_filter.filter_queryset(self.request, queryset, self)
-
-    def _search_trigram_similarity(self, queryset):
+    def _search_queryset(self, queryset):
         full_text_vector = sum(itertools.zip_longest(self.search_fields, (), fillvalue=Value(' ')), ())
         if len(self.search_fields) > 1:
             full_text_vector = full_text_vector[:-1]
@@ -52,25 +50,15 @@ class SearchableModelMixin(ViewSetMixin):
         queryset = queryset.annotate(rank=similarity)
         queryset = queryset.filter(rank__gt=0)
 
-        queryset = queryset.order_by('-rank')
-
-        return queryset
-
-    def _search_queryset(self, queryset):
-        if self.full_text_search:
-            search_func = self._search_trigram_similarity
-        else:
-            search_func = self._search_basic
-
-        queryset = search_func(queryset)
-
         return queryset
 
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        if self.explicit_search and self.terms:
+        if self.full_text_search and self.terms:
             queryset = self._search_queryset(queryset)
+        else:
+            queryset = queryset.annotate(rank=Value(1.0, output_field=FloatField()))
 
         return queryset
 

@@ -64,15 +64,7 @@ class OrderingFilter(filters.OrderingFilter):
 class SortedModelMixin(ViewSetMixin):
     ordering = ()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.enable_sort = True
-
     def list(self, request, *args, **kwargs):
-        if not self.enable_sort:
-            return super().list(request, *args, **kwargs)
-
         sort = get_sort_order(request, DEFAULT_SORT_PARAM) or self.ordering
 
         data = OrderedDict(sort=','.join(sort))

@@ -45,6 +45,7 @@ class NestedViewSet(sort.SortedModelMixin,
     permission_classes = permissions.nested_permissions
 
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
+    ordering_fields = ('created', 'updated')
     ordering = ('created',)
 
     def _is_deleted_expired_possible(self):
@@ -93,11 +94,9 @@ class NestedViewSet(sort.SortedModelMixin,
 
     @decorators.list_route(suffix='Search')
     def search(self, request, *args, **kwargs):
-        self.filter_backends = tuple(set(self.filter_backends).difference({sort.OrderingFilter}))
+        self.ordering_fields = ('rank',) + self.__class__.ordering_fields
+        self.ordering = ('-rank',) + self.__class__.ordering
 
-        self.enable_sort = False
-
-        self.explicit_search = True
         self.full_text_search = True
 
         return self.list(request, *args, **kwargs)
