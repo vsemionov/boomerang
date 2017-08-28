@@ -16,8 +16,8 @@ class Command(BaseCommand):
         threshold = timezone.now() - datetime.timedelta(days=settings.API_DELETED_EXPIRY_DAYS)
 
         classes = TrackedModel.__subclasses__()
-        deletions = OrderedDict(((cls._meta.label, 0) for cls in classes\
-                                 if cls._meta.abstract is False and cls._meta.proxy is False))
+        deletions = OrderedDict((cls._meta.label, 0) for cls in classes \
+                                if cls._meta.abstract is False and cls._meta.proxy is False)
 
         for cls in classes:
             deleted = cls.objects.filter(deleted=True)
