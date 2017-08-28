@@ -3,7 +3,7 @@ import uuid
 from rest_framework import serializers
 
 
-class DynamicHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
+class NestedHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
     def __init__(self, parent_lookup=None, aux_lookup=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
