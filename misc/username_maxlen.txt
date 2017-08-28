@@ -1,0 +1,11 @@
+Users with usernames more than 30 characters are not able to create any objects.
+
+The problem is that although the username field of auth.User is varchar(150), Django generates a migration with a foreign key varchar(30).
+
+I think the reason for this behavior is the undocumented swappable property of the User model. It is designed to be replaceable by custom models. However, the configured model must have its data in the initial migration of the app that defines the model. The migrations code seems to generate references to the initial migration of swappable models. I am using the default User model, and its initial migration sets the username to 30 chars. Hence my username FKs are 30 chars long. I am able to work around this with a RunSQL migration to alter the FK data type to varchar(15), but I am in doubt if it's the right thing to do.
+
+I am adding the migration here for future reference, or to apply if necessary. However, it is PostgreSQL specific.
+
+More details and the reason can be found at: https://stackoverflow.com/questions/45911440/why-does-django-set-a-shorter-maximum-length-of-foreign-keys-to-auth-user-userna
+
+GitHub issue: https://github.com/vsemionov/boomerang/issues/24

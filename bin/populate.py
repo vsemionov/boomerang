@@ -3,6 +3,7 @@
 import sys
 import os
 import uuid
+import base64
 import threading
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -23,7 +24,7 @@ DEFAULT_TASKS_PER_USER = 10
 
 
 def create_user():
-    user = User(username=uuid.uuid4())
+    user = User(username=base64.b16encode(os.urandom(8)))
     user.save()
     return user
 
