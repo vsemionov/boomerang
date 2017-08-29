@@ -69,4 +69,4 @@ class SortedModelMixin(ViewSetMixin):
 
         data = OrderedDict(sort=','.join(sort))
 
-        return self.decorated_base_list(SortedModelMixin, data, request, *args, **kwargs)
+        return self.decorated_list(SortedModelMixin, data, request, *args, **kwargs)

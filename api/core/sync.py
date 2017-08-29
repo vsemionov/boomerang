@@ -81,7 +81,7 @@ class SyncedModelMixin(DeletableModelMixin):
         data = OrderedDict(((self.SINCE_PARAM, self.since),
                             (self.UNTIL_PARAM, self.until)))
 
-        return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
+        return self.decorated_list(SyncedModelMixin, data, request, *args, **kwargs)
 
     @decorators.list_route(suffix='Archive')
     def deleted(self, request, *args, **kwargs):

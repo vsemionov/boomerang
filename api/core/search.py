@@ -69,7 +69,7 @@ class SearchableModelMixin(ViewSetMixin):
 
         data = OrderedDict(terms=self.terms)
 
-        return self.decorated_base_list(SearchableModelMixin, data, request, *args, **kwargs)
+        return self.decorated_list(SearchableModelMixin, data, request, *args, **kwargs)
 
     @decorators.list_route(suffix='Search')
     def search(self, request, *args, **kwargs):
