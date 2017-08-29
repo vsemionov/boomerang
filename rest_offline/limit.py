@@ -48,7 +48,10 @@ class LimitedModelMixin(NestedModelMixin, SyncedModelMixin):
         results = self.queryset.filter(**filter_kwargs)
         results = results.values(self.parent_key_filter)
         results = results.annotate(ndel=Count('*'), oldest=Min('updated'))
-        results = results.filter(ndel__gte=del_limit, oldest__gte=self.since)
+        results = results.filter(ndel__gte=del_limit)
+
+        if self.since is not None:
+            results = results.filter(oldest__gte=self.since)
 
         return len(results) > 0
 
