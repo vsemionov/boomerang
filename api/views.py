@@ -81,7 +81,7 @@ class NestedViewSet(sort.SortedModelMixin,
         else:
             return self.get_hyperlinked_serializer_class(self.kwargs['user_username'])
 
-    @decorators.list_route(suffix='Deleted List')
+    @decorators.list_route(suffix='Archive')
     def deleted(self, request, *args, **kwargs):
         self.deleted_object = True
 
