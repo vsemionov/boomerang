@@ -1,8 +1,8 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
-from .mixin import ViewSetMixin
 from .models import TrackedModel
+from .mixin import ViewSetMixin
 
 
 class NestedModelMixin(ViewSetMixin):
