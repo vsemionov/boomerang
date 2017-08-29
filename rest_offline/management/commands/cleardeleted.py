@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
 
-from api.core.models import TrackedModel
+from rest_offline.models import TrackedModel
 
 
 class Command(BaseCommand):

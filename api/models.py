@@ -1,8 +1,7 @@
 import uuid
 
 from django.db import models
-
-from .core.models import TrackedModel
+from rest_offline.models import TrackedModel
 
 
 MAX_NAME_SIZE = 128
