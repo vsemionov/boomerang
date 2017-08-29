@@ -51,7 +51,8 @@ The API also supports conflict detection when a write request is made from a cli
 
 #### Local
 * install *python* (3.6)
-* setup services: *postgresql* and *redis*
+* setup *postgresql* (it is possible to use a different database, but fuzzy search will not work)
+* setup *redis* (it is possible to deploy without redis with a different cache configuration in the settings)
 * update *settings.py* to point to the configured services
 * (optional) update *settings.py* with the allowed origins and redirect urls
 * install python packages: `pip install -r requirements.txt` (preferably in a virtualenv)
