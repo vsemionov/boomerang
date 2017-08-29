@@ -29,7 +29,7 @@ class SyncedModelMixin(ViewSetMixin):
         self.since = None
         self.until = None
 
-        self.atomic = False
+        self.isolated = False
 
         self.deleted_object = False
 
@@ -60,7 +60,7 @@ class SyncedModelMixin(ViewSetMixin):
         if self.until:
             queryset = queryset.filter(updated__lt=self.until)
 
-        if self.atomic:
+        if self.isolated:
             queryset = queryset.select_for_update()
 
         if self.deleted_object is not None:
@@ -111,7 +111,7 @@ class SyncedModelMixin(ViewSetMixin):
 
     @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
-        self.atomic = True
+        self.isolated = True
 
         self._init_write_conditions(request)
 
@@ -119,7 +119,7 @@ class SyncedModelMixin(ViewSetMixin):
 
     @transaction.atomic(savepoint=False)
     def destroy(self, request, *args, **kwargs):
-        self.atomic = True
+        self.isolated = True
 
         self._init_write_conditions(request)
 
