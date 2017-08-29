@@ -10,18 +10,20 @@ from rest_framework import exceptions, status, decorators
 from .delete import DeletableModelMixin
 
 
+DEFAULT_AT_PARAM = 'at'
+DEFAULT_SINCE_PARAM = 'since'
+DEFAULT_UNTIL_PARAM = 'until'
+
+
 class ConflictError(exceptions.APIException):
     status_code = status.HTTP_409_CONFLICT
     default_detail = 'conflict'
 
 
 class SyncedModelMixin(DeletableModelMixin):
-    AT_PARAM = 'at'
-    SINCE_PARAM = 'since'
-    UNTIL_PARAM = 'until'
-
-    supported_write_conditions = (AT_PARAM,)
-    exclusive_write_conditions = (AT_PARAM,)
+    at_param = DEFAULT_AT_PARAM
+    since_param = DEFAULT_SINCE_PARAM
+    until_param = DEFAULT_UNTIL_PARAM
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -75,11 +77,11 @@ class SyncedModelMixin(DeletableModelMixin):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        self.since = self.get_timestamp(request, self.SINCE_PARAM)
-        self.until = self.get_timestamp(request, self.UNTIL_PARAM, timezone.now())
+        self.since = self.get_timestamp(request, self.since_param)
+        self.until = self.get_timestamp(request, self.until_param, timezone.now())
 
-        data = OrderedDict(((self.SINCE_PARAM, self.since),
-                            (self.UNTIL_PARAM, self.until)))
+        data = OrderedDict(((self.since_param, self.since),
+                            (self.until_param, self.until)))
 
         return self.decorated_list(SyncedModelMixin, data, request, *args, **kwargs)
 
@@ -108,16 +110,11 @@ class SyncedModelMixin(DeletableModelMixin):
 
     def _init_write_conditions(self, request):
         unsupported_conditions = [param for param in request.query_params
-                                  if param not in self.supported_write_conditions]
+                                  if param != self.at_param]
         if unsupported_conditions:
             raise exceptions.ValidationError({cond: 'unsupported condition' for cond in unsupported_conditions})
 
-        exclusive_conditions = [param for param in request.query_params
-                                if param in self.exclusive_write_conditions]
-        if len(exclusive_conditions) > 1:
-            raise exceptions.ValidationError("unsupported combination: " + ', '.join(exclusive_conditions))
-
-        self.at = self.get_timestamp(request, self.AT_PARAM)
+        self.at = self.get_timestamp(request, self.at_param)
 
     def _check_write_conditions(self, instance):
         if self.at and instance.updated != self.at:
