@@ -8,7 +8,7 @@ An experimental web application
 
 
 ### Features
-* Support for data synchronization with conflict detection
+* Support for offline data synchronization with conflict detection
 * Fuzzy (approximate) full-text search
 * Social login with automatic verified account linking
 * Request rate throttling and resource quotas
@@ -20,7 +20,7 @@ An experimental web application
 https://boomerang-core.herokuapp.com/
 
 
-### Data Synchronization
+### Offline Data Synchronization
 
 The API is designed to support data synchronization by offline clients, such as mobile applications. This is accomplished by the following approach:
 * Aggregate list endpoints per object type are exposed. This allows all objects of a given type to be retrieved in a single request, even if they are nested into different objects. For example, in the hierarchy notebook/note, there is a note list endpoint that returns all notes from all notebooks.
