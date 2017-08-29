@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .fields import NestedHyperlinkedIdentityField
+from .fields import NestedHyperlinkedIdentityField, SecondaryKeyRelatedField
 from .serializers import UserSerializer, NotebookSerializer, NoteSerializer, TaskSerializer
 
 
@@ -51,8 +51,7 @@ def create_hyperlinked_note_serializer_class(user_username, notebooks=None):
 
     class HyperlinkedNoteSerializer(NoteSerializer):
         if notebooks is not None:
-            notebook = serializers.PrimaryKeyRelatedField(queryset=notebooks,
-                                                          pk_field=serializers.UUIDField(format='hex'))
+            notebook = SecondaryKeyRelatedField(queryset=notebooks)
 
         links = NoteLinksSerializer(read_only=True, source='*')
 

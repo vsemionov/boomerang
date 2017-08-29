@@ -1,6 +1,7 @@
 import uuid
 
-from rest_framework import serializers
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import serializers, relations
 
 
 class NestedHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
@@ -25,3 +26,29 @@ class NestedHyperlinkedIdentityField(serializers.HyperlinkedIdentityField):
                 kwargs[key] = value.hex
 
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
+
+
+class SecondaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def __init__(self, *args, **kwargs):
+        kwargs['pk_field'] = serializers.UUIDField(format='hex')
+        super().__init__(*args, **kwargs)
+
+    def to_internal_value(self, data):
+        if self.pk_field is not None:
+            data = self.pk_field.to_internal_value(data)
+        try:
+            return self.get_queryset().get(ext_id=data)
+        except ObjectDoesNotExist:
+            self.fail('does_not_exist', pk_value=data)
+        except (TypeError, ValueError):
+            self.fail('incorrect_type', data_type=type(data).__name__)
+
+    def to_representation(self, value):
+        if isinstance(value, relations.PKOnlyObject):
+            data = value.pk
+        else:
+            data = value.ext_id
+
+        if self.pk_field is not None:
+            return self.pk_field.to_representation(data)
+        return data
