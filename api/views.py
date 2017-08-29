@@ -1,14 +1,9 @@
-import datetime
-
-from django.conf import settings
-from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.models import Count, Min
-from rest_framework import viewsets, mixins, decorators, status
+from rest_framework import viewsets
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links
-from .core import sync, nest, limit, search, sort
+from .core import sort, search, limit
 from . import permissions
 
 
@@ -38,8 +33,6 @@ class UserViewSet(sort.SortedModelMixin,
 class NestedViewSet(sort.SortedModelMixin,
                     search.SearchableModelMixin,
                     limit.LimitedModelMixin,
-                    nest.NestedModelMixin,
-                    sync.SyncedModelMixin,
                     viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     permission_classes = permissions.nested_permissions
@@ -47,30 +40,6 @@ class NestedViewSet(sort.SortedModelMixin,
     filter_backends = (search.SearchFilter, sort.OrderingFilter)
     ordering_fields = ('created', 'updated')
     ordering = ('created',)
-
-    def _is_deleted_expired_possible(self):
-        if settings.API_DELETED_EXPIRY_DAYS is None:
-            return False
-
-        if self.since is None:
-            return True
-
-        return self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS))
-
-    def _is_deleted_exceeded_possible(self):
-        del_limit = self.get_limit(True)
-        if not del_limit:
-            return False
-
-        filter_kwargs = {expr: self.kwargs[kwarg] for expr, kwarg in self.object_filters.items()}
-        filter_kwargs['deleted'] = True
-
-        results = self.queryset.filter(**filter_kwargs)
-        results = results.values(self.parent_key_filter)
-        results = results.annotate(ndel=Count('*'), oldest=Min('updated'))
-        results = results.filter(ndel__gte=del_limit, oldest__gte=self.since)
-
-        return len(results) > 0
 
     def get_hyperlinked_serializer_class(self, username):
         raise NotImplementedError()
@@ -80,26 +49,6 @@ class NestedViewSet(sort.SortedModelMixin,
             return self.serializer_class
         else:
             return self.get_hyperlinked_serializer_class(self.kwargs['user_username'])
-
-    @decorators.list_route(suffix='Archive')
-    def deleted(self, request, *args, **kwargs):
-        self.deleted_object = True
-
-        response = self.list(request, *args, **kwargs)
-
-        if self._is_deleted_expired_possible() or self._is_deleted_exceeded_possible():
-            response.status_code = status.HTTP_206_PARTIAL_CONTENT
-
-        return response
-
-    @decorators.list_route(suffix='Search')
-    def search(self, request, *args, **kwargs):
-        self.ordering_fields = ('rank',) + self.__class__.ordering_fields
-        self.ordering = ('-rank',) + self.__class__.ordering
-
-        self.full_text_search = True
-
-        return self.list(request, *args, **kwargs)
 
 
 class UserChildViewSet(NestedViewSet):

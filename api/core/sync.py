@@ -1,11 +1,13 @@
-from collections import OrderedDict
 import time
+import datetime
+from collections import OrderedDict
 
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone, dateparse
-from rest_framework import exceptions, status
+from rest_framework import exceptions, status, decorators
 
-from .mixin import ViewSetMixin
+from .delete import DeletableModelMixin
 
 
 class ConflictError(exceptions.APIException):
@@ -13,7 +15,7 @@ class ConflictError(exceptions.APIException):
     default_detail = 'conflict'
 
 
-class SyncedModelMixin(ViewSetMixin):
+class SyncedModelMixin(DeletableModelMixin):
     AT_PARAM = 'at'
     SINCE_PARAM = 'since'
     UNTIL_PARAM = 'until'
@@ -30,8 +32,6 @@ class SyncedModelMixin(ViewSetMixin):
         self.until = None
 
         self.isolated = False
-
-        self.deleted_object = False
 
     @staticmethod
     def get_timestamp(request, name, default=None):
@@ -52,6 +52,15 @@ class SyncedModelMixin(ViewSetMixin):
 
         return timestamp
 
+    def _is_expired(self):
+        if settings.API_DELETED_EXPIRY_DAYS is None:
+            return False
+
+        if self.since is None:
+            return True
+
+        return self.since < (timezone.now() - datetime.timedelta(settings.API_DELETED_EXPIRY_DAYS))
+
     def get_queryset(self):
         queryset = super().get_queryset()
 
@@ -63,9 +72,6 @@ class SyncedModelMixin(ViewSetMixin):
         if self.isolated:
             queryset = queryset.select_for_update()
 
-        if self.deleted_object is not None:
-            queryset = queryset.filter(deleted=self.deleted_object)
-
         return queryset
 
     def list(self, request, *args, **kwargs):
@@ -76,6 +82,16 @@ class SyncedModelMixin(ViewSetMixin):
                             (self.UNTIL_PARAM, self.until)))
 
         return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
+
+    @decorators.list_route(suffix='Archive')
+    def deleted(self, request, *args, **kwargs):
+        response = super().deleted(request, *args, **kwargs)
+
+        if response.status_code == status.HTTP_200_OK:
+            if self._is_expired():
+                response.status_code = status.HTTP_206_PARTIAL_CONTENT
+
+        return response
 
     @staticmethod
     def _ensure_updated_past(instance):
@@ -137,5 +153,4 @@ class SyncedModelMixin(ViewSetMixin):
 
         self._ensure_updated_past(instance)
 
-        instance.deleted = True
-        instance.save()
+        super().perform_destroy(instance)

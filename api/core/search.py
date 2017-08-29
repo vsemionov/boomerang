@@ -4,7 +4,7 @@ from collections import OrderedDict
 from django.db.models import Value, TextField, FloatField
 from django.db.models.functions import Concat
 from django.contrib.postgres.search import TrigramSimilarity
-from rest_framework import filters
+from rest_framework import filters, decorators
 
 from .mixin import ViewSetMixin
 
@@ -70,3 +70,12 @@ class SearchableModelMixin(ViewSetMixin):
         data = OrderedDict(terms=self.terms)
 
         return self.decorated_base_list(SearchableModelMixin, data, request, *args, **kwargs)
+
+    @decorators.list_route(suffix='Search')
+    def search(self, request, *args, **kwargs):
+        self.ordering_fields = ('rank',) + self.__class__.ordering_fields
+        self.ordering = ('-rank',) + self.__class__.ordering
+
+        self.full_text_search = True
+
+        return self.list(request, *args, **kwargs)

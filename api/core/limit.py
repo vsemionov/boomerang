@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Subquery
+from django.db.models import Count, Min
 from django.shortcuts import get_object_or_404
-from rest_framework import exceptions, status
+from rest_framework import exceptions, status, decorators
 
-from .mixin import ViewSetMixin
 from .models import TrackedModel
+from .nest import NestedModelMixin
+from .sync import SyncedModelMixin
 
 
 class LimitExceededError(exceptions.APIException):
@@ -13,7 +15,7 @@ class LimitExceededError(exceptions.APIException):
     default_detail = 'limit exceeded'
 
 
-class LimitedModelMixin(ViewSetMixin):
+class LimitedModelMixin(NestedModelMixin, SyncedModelMixin):
     parent_key_filter = None
 
     def get_limit(self, deleted):
@@ -33,6 +35,31 @@ class LimitedModelMixin(ViewSetMixin):
             return None
 
         return limit
+
+    def _is_potentially_evicted(self):
+        del_limit = self.get_limit(True)
+        if not del_limit:
+            return False
+
+        filter_kwargs = {expr: self.kwargs[kwarg] for expr, kwarg in self.object_filters.items()}
+        filter_kwargs['deleted'] = True
+
+        results = self.queryset.filter(**filter_kwargs)
+        results = results.values(self.parent_key_filter)
+        results = results.annotate(ndel=Count('*'), oldest=Min('updated'))
+        results = results.filter(ndel__gte=del_limit, oldest__gte=self.since)
+
+        return len(results) > 0
+
+    @decorators.list_route(suffix='Archive')
+    def deleted(self, request, *args, **kwargs):
+        response = super().deleted(request, *args, **kwargs)
+
+        if response.status_code == status.HTTP_200_OK:
+            if self._is_potentially_evicted():
+                response.status_code = status.HTTP_206_PARTIAL_CONTENT
+
+        return response
 
     def _check_active_limits(self, parent):
         limit = self.get_limit(False)
