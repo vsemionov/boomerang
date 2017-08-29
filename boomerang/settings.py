@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'bootstrapform',
     'corsheaders',
+    'rest_offline',
+    'rest_fuzzy',
     'api',
 ]
 
@@ -275,17 +277,21 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 30
 
 
-API_LIMITS = {
-    'auth.User': {
-        'api.Notebook': (8, 8),
-        'api.Task': (250, 250),
+REST_OFFLINE = {
+    'OBJECT_LIMITS': {
+        'auth.User': {
+            'api.Notebook': (8, 8),
+            'api.Task': (250, 250),
+        },
+        'api.Notebook': {
+            'api.Note': (125, 125),
+        },
     },
-    'api.Notebook': {
-        'api.Note': (125, 125),
-    },
+    'DELETED_EXPIRY_DAYS': 30
 }
+
+
 API_MAX_PAGE_SIZE = 100
-API_DELETED_EXPIRY_DAYS = 30
 
 
 CORS_ALLOW_CREDENTIALS = True

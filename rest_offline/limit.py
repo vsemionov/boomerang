@@ -19,10 +19,11 @@ class LimitedModelMixin(NestedModelMixin, SyncedModelMixin):
     parent_key_filter = None
 
     def get_limit(self, deleted):
-        if settings.API_LIMITS is None:
+        limits = getattr(settings, 'REST_OFFLINE', None) and settings.REST_OFFLINE.get('OBJECT_LIMITS')
+        if not limits:
             return None
 
-        parent_limits = settings.API_LIMITS.get(self.parent_model._meta.label)
+        parent_limits = limits.get(self.parent_model._meta.label)
         if not parent_limits:
             return None
 
