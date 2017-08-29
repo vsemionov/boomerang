@@ -98,7 +98,7 @@ class LimitedModelMixin(ViewSetMixin):
 
             self._check_active_limits(parent)
 
-        return super.perform_update(serializer)
+        return super().perform_update(serializer)
 
     def perform_destroy(self, instance):
         super().perform_destroy(instance)
