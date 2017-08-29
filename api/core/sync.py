@@ -122,8 +122,6 @@ class SyncedModelMixin(DeletableModelMixin):
     def _check_write_conditions(self, instance):
         if self.at and instance.updated != self.at:
                 raise ConflictError()
-        if self.until and instance.updated >= self.until:
-                raise ConflictError()
 
     @transaction.atomic(savepoint=False)
     def update(self, request, *args, **kwargs):
