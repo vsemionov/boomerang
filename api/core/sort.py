@@ -6,13 +6,6 @@ from rest_framework import filters, exceptions
 from .mixin import ViewSetMixin
 
 
-DEFAULT_SORT_PARAM = 'sort'
-SORT_FIELD_MAP = {
-    'id': 'ext_id',
-    '-id': '-ext_id',
-}
-
-
 def get_sort_order(request, param):
     args = request.query_params.getlist(param)
     fields = itertools.chain(*(arg.split(',') for arg in args))
@@ -20,32 +13,33 @@ def get_sort_order(request, param):
     return order
 
 
-def translated_sort(fields):
-    return tuple(SORT_FIELD_MAP.get(field, field) for field in fields)
-
-
-def reverse_translated_sort(fields):
-    sort_field_reverse_map = {value: key for (key, value) in SORT_FIELD_MAP.items()}
-    return tuple(sort_field_reverse_map.get(field, field) for field in fields)
-
-
-def consistent_sort(fields):
-    return fields + type(fields)(('pk',))
-
-
 class OrderingFilter(filters.OrderingFilter):
-    ordering_param = DEFAULT_SORT_PARAM
+
+    @staticmethod
+    def get_translated_sort_order(fields, field_map):
+        return tuple(field_map.get(field, field) for field in fields)
+
+    @staticmethod
+    def get_reverse_translated_sort_order(fields, field_map):
+        sort_field_reverse_map = {value: key for (key, value) in field_map.items()}
+        return tuple(sort_field_reverse_map.get(field, field) for field in fields)
+
+    @staticmethod
+    def get_consistent_sort_order(fields):
+        return fields + type(fields)(('pk',))
 
     def get_ordering(self, request, queryset, view):
         fields = get_sort_order(request, self.ordering_param)
 
         if fields:
-            fields = translated_sort(fields)
+            field_map = getattr(view, 'sort_field_map', {})
+
+            fields = self.get_translated_sort_order(fields, field_map)
             ordering = self.remove_invalid_fields(queryset, fields, view, request)
 
             if len(ordering) != len(fields):
-                ext_fields = reverse_translated_sort(fields)
-                ext_ordering = reverse_translated_sort(ordering)
+                ext_fields = self.get_reverse_translated_sort_order(fields, field_map)
+                ext_ordering = self.get_reverse_translated_sort_order(ordering, field_map)
 
                 errors = {}
 
@@ -55,17 +49,26 @@ class OrderingFilter(filters.OrderingFilter):
 
                 raise exceptions.ValidationError(errors)
 
-            ordering = consistent_sort(ordering)
-            return ordering
+            ordering = self.get_consistent_sort_order(ordering)
 
-        return consistent_sort(self.get_default_ordering(view))
+        else:
+            ordering = self.get_default_ordering(view)
+
+        consistent_sort = getattr(view, 'consistent_sort', True)
+        if consistent_sort:
+            ordering = self.get_consistent_sort_order(ordering)
+
+        return ordering
 
 
 class SortedModelMixin(ViewSetMixin):
     ordering = ()
 
+    sort_field_map = {}
+    consistent_sort = True
+
     def list(self, request, *args, **kwargs):
-        sort = get_sort_order(request, DEFAULT_SORT_PARAM) or self.ordering
+        sort = get_sort_order(request, OrderingFilter.ordering_param) or self.ordering
 
         context = OrderedDict(sort=','.join(sort))
 
