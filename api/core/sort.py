@@ -67,6 +67,6 @@ class SortedModelMixin(ViewSetMixin):
     def list(self, request, *args, **kwargs):
         sort = get_sort_order(request, DEFAULT_SORT_PARAM) or self.ordering
 
-        data = OrderedDict(sort=','.join(sort))
+        context = OrderedDict(sort=','.join(sort))
 
-        return self.decorated_list(SortedModelMixin, data, request, *args, **kwargs)
+        return self.decorated_list(SortedModelMixin, context, request, *args, **kwargs)

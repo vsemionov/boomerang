@@ -80,10 +80,10 @@ class SyncedModelMixin(DeletableModelMixin):
         self.since = self.get_timestamp(request, self.since_param)
         self.until = self.get_timestamp(request, self.until_param, timezone.now())
 
-        data = OrderedDict(((self.since_param, self.since),
-                            (self.until_param, self.until)))
+        context = OrderedDict(((self.since_param, self.since),
+                               (self.until_param, self.until)))
 
-        return self.decorated_list(SyncedModelMixin, data, request, *args, **kwargs)
+        return self.decorated_list(SyncedModelMixin, context, request, *args, **kwargs)
 
     @decorators.list_route(suffix='Archive')
     def deleted(self, request, *args, **kwargs):
