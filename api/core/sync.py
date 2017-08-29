@@ -77,9 +77,6 @@ class SyncedModelMixin(ViewSetMixin):
 
         return self.decorated_base_list(SyncedModelMixin, data, request, *args, **kwargs)
 
-
-class ReadWriteSyncedModelMixin(SyncedModelMixin):
-
     @staticmethod
     def _ensure_updated_past(instance):
         while True:

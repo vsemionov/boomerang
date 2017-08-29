@@ -39,7 +39,7 @@ def create_hyperlinked_notebook_serializer_class(user_username):
     return HyperlinkedNotebookSerializer
 
 
-def create_hyperlinked_note_serializer_class(user_username):
+def create_hyperlinked_note_serializer_class(user_username, notebooks=None):
     class NoteLinksSerializer(serializers.Serializer):
         self = NestedHyperlinkedIdentityField(view_name='note-detail',
                                               lookup_field='ext_id',
@@ -50,6 +50,10 @@ def create_hyperlinked_note_serializer_class(user_username):
                                                   parent_lookup=dict(user_username=user_username))
 
     class HyperlinkedNoteSerializer(NoteSerializer):
+        if notebooks is not None:
+            notebook = serializers.PrimaryKeyRelatedField(queryset=notebooks,
+                                                          pk_field=serializers.UUIDField(format='hex'))
+
         links = NoteLinksSerializer(read_only=True, source='*')
 
         class Meta(NoteSerializer.Meta):

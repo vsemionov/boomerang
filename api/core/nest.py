@@ -8,10 +8,12 @@ from .models import TrackedModel
 class NestedModelMixin(ViewSetMixin):
 
     parent_model = None
-    safe_parent = False
+    parent_path_model = None
+    safe_parent_path = False
 
     object_filters = {}
     parent_filters = {}
+    parent_path_filters = {}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -21,13 +23,15 @@ class NestedModelMixin(ViewSetMixin):
     def get_parent_name(self):
         return self.parent_model._meta.model_name
 
-    def _filter_queryset(self, queryset, is_parent):
-        filters = self.parent_filters if is_parent else self.object_filters
+    def is_aggregate(self):
+        return self.parent_path_model is not self.parent_model
 
+    def _filter_queryset(self, queryset, filters, is_parent):
         filter_kwargs = {expr: self.kwargs[kwarg] for expr, kwarg in filters.items()}
 
         if self.deleted_parent is not None:
-            if issubclass(self.parent_model, TrackedModel):
+            model = queryset.model if is_parent else self.parent_model
+            if issubclass(model, TrackedModel):
                 expr = 'deleted' if is_parent else self.get_parent_name() + '__deleted'
                 filter_kwargs.update({expr: self.deleted_parent})
 
@@ -35,18 +39,25 @@ class NestedModelMixin(ViewSetMixin):
 
         return queryset
 
-    def get_parent_queryset(self, lock):
-        queryset = self.parent_model.objects
+    def get_parent_queryset(self, path, lock):
+        if path:
+            model = self.parent_path_model
+            filters = self.parent_path_filters if self.is_aggregate() else self.parent_filters
+        else:
+            model = self.parent_model
+            filters = self.parent_filters
 
-        queryset = self._filter_queryset(queryset, True)
+        queryset = model.objects
+
+        queryset = self._filter_queryset(queryset, filters, True)
 
         if lock:
             queryset = queryset.select_for_update()
 
         return queryset
 
-    def get_parent(self, lock):
-        queryset = self.get_parent_queryset(lock)
+    def get_parent(self, path, lock):
+        queryset = self.get_parent_queryset(path, lock)
 
         parent = get_object_or_404(queryset)
 
@@ -55,18 +66,15 @@ class NestedModelMixin(ViewSetMixin):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        queryset = self._filter_queryset(queryset, False)
+        queryset = self._filter_queryset(queryset, self.object_filters, False)
 
         return queryset
 
     def list(self, request, *args, **kwargs):
-        if not self.safe_parent:
-            self.get_parent(False)
+        if not self.safe_parent_path:
+            self.get_parent(True, False)
 
         return super().list(request, *args, **kwargs)
-
-
-class ReadWriteNestedModelMixin(NestedModelMixin):
 
     def create(self, request, *args, **kwargs):
         self.deleted_parent = None
@@ -82,5 +90,10 @@ class ReadWriteNestedModelMixin(NestedModelMixin):
 
     @transaction.atomic(savepoint=False)
     def perform_create(self, serializer):
-        parent = self.get_parent(True)
-        serializer.save(**{self.get_parent_name(): parent})
+        save_kwargs = {}
+
+        if not self.is_aggregate():
+            parent = self.get_parent(False, True)
+            save_kwargs = {self.get_parent_name(): parent}
+
+        serializer.save(**save_kwargs)

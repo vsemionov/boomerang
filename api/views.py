@@ -38,8 +38,8 @@ class UserViewSet(sort.SortedModelMixin,
 class NestedViewSet(sort.SortedModelMixin,
                     search.SearchableModelMixin,
                     limit.LimitedModelMixin,
-                    nest.ReadWriteNestedModelMixin,
-                    sync.ReadWriteSyncedModelMixin,
+                    nest.NestedModelMixin,
+                    sync.SyncedModelMixin,
                     viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     permission_classes = permissions.nested_permissions
@@ -66,7 +66,7 @@ class NestedViewSet(sort.SortedModelMixin,
         filter_kwargs['deleted'] = True
 
         results = self.queryset.filter(**filter_kwargs)
-        results = results.values(self.parent_key_filter[0])
+        results = results.values(self.parent_key_filter)
         results = results.annotate(ndel=Count('*'), oldest=Min('updated'))
         results = results.filter(ndel__gte=del_limit, oldest__gte=self.since)
 
@@ -104,10 +104,11 @@ class NestedViewSet(sort.SortedModelMixin,
 
 class UserChildViewSet(NestedViewSet):
     parent_model = User
-    safe_parent = True
+    parent_path_model = User
+    safe_parent_path = True
     object_filters = {'user_id': 'user_username'}
     parent_filters = {'username': 'user_username'}
-    parent_key_filter = ('user_id', 'user_username')
+    parent_key_filter = 'user_id'
 
 
 class NotebookViewSet(UserChildViewSet):
@@ -138,7 +139,8 @@ class NoteViewSet(NestedViewSet):
     ordering_fields = ('created', 'updated', 'title')
 
     parent_model = Notebook
-    safe_parent = False
+    parent_path_model = Notebook
+    safe_parent_path = False
     object_filters = {
         'notebook__user_id': 'user_username',
         'notebook_id': 'notebook_ext_id'
@@ -147,45 +149,20 @@ class NoteViewSet(NestedViewSet):
         'user_id': 'user_username',
         'ext_id': 'notebook_ext_id'
     }
-    parent_key_filter = ('notebook_id', 'notebook_ext_id')
+    parent_key_filter = 'notebook_id'
 
     get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
 
 
-class UserNoteViewSet(sort.SortedModelMixin,
-                      search.SearchableModelMixin,
-                      nest.NestedModelMixin,
-                      sync.SyncedModelMixin,
-                      mixins.ListModelMixin,
-                      viewsets.GenericViewSet):
+class UserNoteViewSet(NoteViewSet):
     view_name = 'Note'
 
-    lookup_field = NoteViewSet.lookup_field
-    queryset = NoteViewSet.queryset
-    serializer_class = NoteViewSet.serializer_class
-    permission_classes = NoteViewSet.permission_classes
-
-    filter_backends = NoteViewSet.filter_backends
-    search_fields = NoteViewSet.search_fields
-    ordering_fields = NoteViewSet.ordering_fields
-    ordering = NoteViewSet.ordering
-
-    parent_model = NoteViewSet.parent_model
-    safe_parent = True
+    parent_model = Notebook
+    parent_path_model = User
+    safe_parent_path = True
     object_filters = {'notebook__user_id': 'user_username'}
-    # parent_filters = {'user_id': 'user_username'}
-    parent_key_filter = ('notebook_id', None)
-
-    _get_limit = NestedViewSet.get_limit
-
-    _is_deleted_expired_possible = NestedViewSet._is_deleted_expired_possible
-    _is_deleted_exceeded_possible = NestedViewSet._is_deleted_exceeded_possible
-
-    get_serializer_class = NestedViewSet.get_serializer_class
-    get_hyperlinked_serializer_class = staticmethod(links.create_hyperlinked_note_serializer_class)
-
-    deleted = NestedViewSet.deleted
-    search = NestedViewSet.search
+    parent_filters = {'user_id': 'user_username'}
+    parent_key_filter = 'notebook_id'
 
     def get_view_name(self):
         name = self.view_name
@@ -194,3 +171,7 @@ class UserNoteViewSet(sort.SortedModelMixin,
             name += ' ' + self.suffix
 
         return name
+
+    def get_hyperlinked_serializer_class(self, username):
+        notebooks = self.get_parent_queryset(False, False)
+        return links.create_hyperlinked_note_serializer_class(username, notebooks)

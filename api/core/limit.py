@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Subquery
+from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, status
 
 from .mixin import ViewSetMixin
@@ -12,14 +13,8 @@ class LimitExceededError(exceptions.APIException):
     default_detail = 'limit exceeded'
 
 
-# this mixin depends on NestedModelMixin
 class LimitedModelMixin(ViewSetMixin):
-    parent_key_filter = ()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.check_limits = False
+    parent_key_filter = None
 
     def get_limit(self, deleted):
         if settings.API_LIMITS is None:
@@ -56,13 +51,13 @@ class LimitedModelMixin(ViewSetMixin):
             raise LimitExceededError('exceeded limit of %d %s per %s' %
                                      (limit, object_type._meta.verbose_name_plural, parent._meta.verbose_name))
 
-    def _check_deleted_limits(self):
+    def _evict_deleted_peers(self, instance):
         limit = self.get_limit(True)
         if not limit:
             return
 
-        field, kwarg = self.parent_key_filter
-        filter_kwargs = {field: self.kwargs[kwarg]}
+        filter_kwargs = {}
+        filter_kwargs[self.parent_key_filter] = getattr(instance, self.parent_key_filter)
         filter_kwargs['deleted'] = True
 
         delete_ids = Subquery(self.queryset.filter(**filter_kwargs).order_by('-updated', '-id')[limit:].values('id'))
@@ -70,22 +65,42 @@ class LimitedModelMixin(ViewSetMixin):
         delete_objs = self.queryset.filter(id__in=delete_ids)
         delete_objs.delete()
 
-    def get_parent(self, lock):
-        parent = super().get_parent(lock or self.check_limits)
+    def locked_parent(self, parent):
+        queryset = self.parent_model.objects.filter(pk=parent.pk)
 
-        if self.check_limits:
-            self._check_active_limits(parent)
+        queryset = queryset.select_for_update()
 
-        return parent
+        locked = get_object_or_404(queryset)
 
-    def destroy(self, request, *args, **kwargs):
-        response = super().destroy(request, *args, **kwargs)
-
-        self._check_deleted_limits()
-
-        return response
+        return locked
 
     @transaction.atomic(savepoint=False)
     def perform_create(self, serializer):
-        self.check_limits = True
-        return super().perform_create(serializer)
+        parent_name = self.get_parent_name()
+
+        save_kwargs = {}
+
+        if self.is_aggregate():
+            parent = self.locked_parent(serializer.validated_data[parent_name])
+        else:
+            parent = self.get_parent(False, True)
+
+            save_kwargs = {parent_name: parent}
+
+        self._check_active_limits(parent)
+
+        serializer.save(**save_kwargs)
+
+    @transaction.atomic(savepoint=False)
+    def perform_update(self, serializer):
+        if self.is_aggregate():
+            parent = self.locked_parent(serializer.validated_data[self.get_parent_name()])
+
+            self._check_active_limits(parent)
+
+        return super.perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        super().perform_destroy(instance)
+
+        self._evict_deleted_peers(instance)
