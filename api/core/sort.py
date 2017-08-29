@@ -30,7 +30,7 @@ def reverse_translated_sort(fields):
 
 
 def consistent_sort(fields):
-    return fields + type(fields)(('id',))
+    return fields + type(fields)(('pk',))
 
 
 class OrderingFilter(filters.OrderingFilter):
