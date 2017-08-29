@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from rest_framework import viewsets, decorators
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links
@@ -49,6 +49,14 @@ class NestedViewSet(sort.SortedModelMixin,
             return self.serializer_class
         else:
             return self.get_hyperlinked_serializer_class(self.kwargs['user_username'])
+
+    @decorators.list_route(suffix='Search')
+    def search(self, request, *args, **kwargs):
+        self.filter_backends = (search.RankedFuzzySearchFilter, sort.OrderingFilter)
+        self.ordering_fields = ('rank',) + self.__class__.ordering_fields
+        self.ordering = ('-rank',) + self.__class__.ordering
+
+        return self.list(request, *args, **kwargs)
 
 
 class UserChildViewSet(NestedViewSet):

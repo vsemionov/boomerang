@@ -242,6 +242,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.Pagination',
     'PAGE_SIZE': 25,
+    'SEARCH_PARAM': 'q',
     'HTML_SELECT_CUTOFF': 50,
     'DEFAULT_THROTTLE_CLASSES': (
         'api.throttle.UserRateThrottle',
