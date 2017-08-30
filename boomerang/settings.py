@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_extensions',
     'rest_framework',
+    'rest_offline',
+    'rest_fuzzy',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -56,8 +58,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'bootstrapform',
     'corsheaders',
-    'rest_offline',
-    'rest_fuzzy',
     'api',
 ]
 
