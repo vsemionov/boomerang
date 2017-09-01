@@ -2,3 +2,7 @@
 /.pydevproject
 
 /.idea
+
+/example/db.sqlite3
+
+*.pyc
