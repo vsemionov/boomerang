@@ -55,7 +55,7 @@ class SyncedModelMixin(DeletableModelMixin):
         return timestamp
 
     def _is_expired(self):
-        expiry_days = getattr(settings, 'REST_OFFLINE', None) and settings.REST_OFFLINE.get('DELETED_EXPIRY_DAYS')
+        expiry_days = getattr(settings, 'REST_OFFLINESYNC', None) and settings.REST_OFFLINESYNC.get('DELETED_EXPIRY_DAYS')
         if not expiry_days:
             return False
 

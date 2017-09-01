@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_offline',
+    'rest_offlinesync',
     'api',
 ]
 
@@ -123,7 +123,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-REST_OFFLINE = {
+REST_OFFLINESYNC = {
     'DELETED_EXPIRY_DAYS': 30,
     'OBJECT_LIMITS': {
         'auth.User': {

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets, decorators
-from rest_offline import limit
-from rest_fuzzy import sort, search
+from rest_offlinesync import limit
+from rest_fuzzysearch import sort, search
 
 from .models import Notebook, Note, Task
 from .rest import serializers, links

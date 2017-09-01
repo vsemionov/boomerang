@@ -5,12 +5,12 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
 
-from rest_offline.models import TrackedModel
+from rest_offlinesync.models import TrackedModel
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        expiry_days = getattr(settings, 'REST_OFFLINE', None) and settings.REST_OFFLINE.get('DELETED_EXPIRY_DAYS')
+        expiry_days = getattr(settings, 'REST_OFFLINESYNC', None) and settings.REST_OFFLINESYNC.get('DELETED_EXPIRY_DAYS')
         if not expiry_days:
             return
 

@@ -1,4 +1,4 @@
 Django
 djangorestframework
 drf-nested-routers
-django-rest-offline
+django-rest-offlinesync

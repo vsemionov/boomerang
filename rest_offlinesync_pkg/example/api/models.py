@@ -1,5 +1,5 @@
 from django.db import models
-from rest_offline.models import TrackedModel
+from rest_offlinesync.models import TrackedModel
 
 
 class Document(TrackedModel):

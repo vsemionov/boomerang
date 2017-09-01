@@ -49,8 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_extensions',
     'rest_framework',
-    'rest_offline',
-    'rest_fuzzy',
+    'rest_offlinesync',
+    'rest_fuzzysearch',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -277,7 +277,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 30
 
 
-REST_OFFLINE = {
+REST_OFFLINESYNC = {
     'DELETED_EXPIRY_DAYS': 30,
     'OBJECT_LIMITS': {
         'auth.User': {

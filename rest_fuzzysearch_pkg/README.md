@@ -1,10 +1,10 @@
-TODO: project name
-==================
+Django REST Fuzzy Search
+========================
 
-TODO: project description
--------------------------
+Fuzzy Search for Django REST Framework
+--------------------------------------
 
-TODO: build status icon
+[![Build Status](https://travis-ci.org/vsemionov/django-rest-fuzzysearch.svg?branch=master)](https://travis-ci.org/vsemionov/django-rest-fuzzysearch)
 
 
 ### Fuzzy Search
@@ -26,7 +26,7 @@ This package requires *PostgreSQL* and uses its trigram extension (*pg_trgm*). I
 
 1. Install the package:
 ```
-pip install django-rest-offline
+pip install django-rest-fuzzysearch
 ```
 
 2. Add a database migration to enable the trigram extension:
@@ -94,7 +94,7 @@ If a search is not being performed (no terms were specified), all results will h
 
 To decorate the results with the used search terms, you can optionally inherit your viewset from *SearchableModelMixin*:
 ```
-from rest_fuzzy import search
+from rest_fuzzysearch import search
 class UserViewSet(search.SearchableModelMixin,
                   ...
                   viewsets.ModelViewSet):
@@ -113,7 +113,7 @@ This package also includes a custom ordering filter and mixin to provide the fol
 Usage:
 1. Add the custom ordering filter to your viewset's filter backends:
 ```
-from rest_fuzzy import sort
+from rest_fuzzysearch import sort
 
 ...
 

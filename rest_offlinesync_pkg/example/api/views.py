@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from rest_offline import limit
+from rest_offlinesync import limit
 
 from .models import Document
 from .serializers import UserSerializer, DocumentSerializer

@@ -1,10 +1,10 @@
-TODO: project name
-==================
+Django REST Offline Sync
+========================
 
-TODO: project description
--------------------------
+Offline Data Synchronization for Django REST Framework
+------------------------------------------------------
 
-TODO: build status icon
+[![Build Status](https://travis-ci.org/vsemionov/django-rest-offlinesync.svg?branch=master)](https://travis-ci.org/vsemionov/django-rest-offlinesync)
 
 
 ### Offline Data Synchronization
@@ -40,29 +40,29 @@ The package also supports conflict detection when a write request is made from a
 
 1. Install the package:
 ```
-pip install django-rest-offline
+pip install django-rest-offlinesync
 ```
 
 2. Add the package to Django's list of installed apps in your project's *settings.py*:
 ```
 INSTALLED_APPS = [
     ...
-    'rest_offline',
+    'rest_offlinesync',
     ...
 ]
 ```
 
-3. Inherit your models from *rest_offline.models.TrackedModel*:
+3. Inherit your models from *rest_offlinesync.models.TrackedModel*:
 ```
-from rest_offline.models import TrackedModel
+from rest_offlinesync.models import TrackedModel
 class Document(TrackedModel):
     ...
 ```
 
-4. Inherit your viewsets from *rest_offline.sync.SyncedModelMixin*:
+4. Inherit your viewsets from *rest_offlinesync.sync.SyncedModelMixin*:
 ```
 from rest_framework import viewsets
-from rest_offline import sync
+from rest_offlinesync import sync
 class DocumentViewSet(sync.SyncedModelMixin,
                       ...
                       viewsets.ModelViewSet):
@@ -77,7 +77,7 @@ NOTE: This is required because the set of viewset mixins in this package overrid
 
 6. Configure the expiry delay of deleted objects in *settings.py* (optional):
 ```
-REST_OFFLINE = {
+REST_OFFLINESYNC = {
     'DELETED_EXPIRY_DAYS': 30,
     ...
 }
@@ -120,7 +120,7 @@ It is also possible to define aggregate viewsets, i.e. ones that operate over mo
 To enable this mixin:
 1. Inherit your viewsets from it:
 ```
-from rest_offline import nest
+from rest_offlinesync import nest
 class DocumentViewSet(nest.NestedSyncedModelMixin,
                       ...
                       viewsets.ModelViewSet):
@@ -152,7 +152,7 @@ NOTE: It is assumed that modification of an object's parent (i.e. moving) will b
 To enable this mixin:
 1. Configure limits in *settings.py*:
 ```
-REST_OFFLINE = {
+REST_OFFLINESYNC = {
     ...
     'OBJECT_LIMITS': {
         'auth.User': {               # one key for every parent model with child limits
@@ -166,7 +166,7 @@ REST_OFFLINE = {
 
 2. Inherit your viewsets from it:
 ```
-from rest_offline import limit
+from rest_offlinesync import limit
 class DocumentViewSet(limit.LimitedNestedSyncedModelMixin,
                       ...
                       viewsets.ModelViewSet):
