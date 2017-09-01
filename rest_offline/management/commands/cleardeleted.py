@@ -27,7 +27,8 @@ class Command(BaseCommand):
             _, subdeletions = expired.delete()
 
             for delcls in subdeletions:
-                deletions[delcls] += subdeletions[delcls]
+                if delcls in deletions:
+                    deletions[delcls] += subdeletions[delcls]
 
         for cls in deletions:
             print('%s: %d' % (cls, deletions[cls]))
