@@ -36,7 +36,7 @@ The package also supports conflict detection when a write request is made from a
 * Django REST Framework (tested with 3.6)
 
 
-### Usage
+### Basic Usage
 
 1. Install the package:
 ```
@@ -75,14 +75,14 @@ class DocumentViewSet(sync.SyncedModelMixin,
 ```
 **NOTE:** This is required because the set of viewset mixins in this package override *get_queryset()* to chain-manipulate the queryset of each mixin, and the "base" queryset is defined with this attribute. If you override *get_queryset()* to perform per-request queryset manipulation, you **must** call the superclass's method and start from its result.
 
-6. Configure the expiry delay of deleted objects in *settings.py*:
+6. Configure the expiry delay of deleted objects in *settings.py* (optional):
 ```
 REST_OFFLINE = {
     'DELETED_EXPIRY_DAYS': 30,
     ...
 }
 ```
-You can use `None` or `0` for unlimited.
+You can use `None` or `0` for no expiry. The default is no expiry.
 
 Your viewsets will now:
 * accept minimum and maximum modification timestamp arguments (*since* and *until*) for their list endpoints
