@@ -96,15 +96,6 @@ class LimitedNestedSyncedModelMixin(NestedModelMixin, SyncedModelMixin):
         delete_objs = self.queryset.filter(id__in=delete_ids)
         delete_objs.delete()
 
-    def locked_parent(self, parent):
-        queryset = self.parent_model.objects.filter(pk=parent.pk)
-
-        queryset = queryset.select_for_update()
-
-        locked = get_object_or_404(queryset)
-
-        return locked
-
     @transaction.atomic(savepoint=False)
     def perform_create(self, serializer):
         parent_name = self.get_parent_name()

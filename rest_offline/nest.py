@@ -76,6 +76,15 @@ class NestedModelMixin(ViewSetMixin):
 
         return super().list(request, *args, **kwargs)
 
+    def locked_parent(self, parent):
+        queryset = self.parent_model.objects.filter(pk=parent.pk)
+
+        queryset = queryset.select_for_update()
+
+        locked = get_object_or_404(queryset)
+
+        return locked
+
     def create(self, request, *args, **kwargs):
         self.deleted_parent = None
         return super().create(request, *args, **kwargs)
@@ -90,11 +99,16 @@ class NestedModelMixin(ViewSetMixin):
 
     @transaction.atomic(savepoint=False)
     def perform_create(self, serializer):
+        parent_name = self.get_parent_name()
+
         save_kwargs = {}
 
-        if not self.is_aggregate():
+        if self.is_aggregate():
+            self.locked_parent(serializer.validated_data[parent_name])
+
+        else:
             parent = self.get_parent(False, True)
 
-            save_kwargs = {self.get_parent_name(): parent}
+            save_kwargs = {parent_name: parent}
 
         serializer.save(**save_kwargs)
