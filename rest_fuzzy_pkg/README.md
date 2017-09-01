@@ -66,6 +66,12 @@ psql -U postgres -c "create extension pg_trgm;" <database>
 ```
 The rank of results varies between 0 and 1.
 
+#### Performance
+
+Fuzzy searching is a relatively expensive operation. If you expect it to be applied to very large sets of records, it would be beneficial to create a functional index, which matches your search fields. See the [PostgreSQL documentation][fts-index-docs] for details.
+
+[fts-index-docs]: https://www.postgresql.org/docs/current/static/textsearch-tables.html#TEXTSEARCH-TABLES-INDEX "Creating Indexes"
+
 
 ### Ordering Results by Similarity
 
