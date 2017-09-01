@@ -106,11 +106,24 @@ python manage.py cleardeleted
 The output is the number of cleared objects per tracked model.
 
 
-### Synchronization and Model Relationships
+### Model Relationships
 
-Relationships between synchronized models are supported by the *NestedModelMixin* viewset mixin.
+Relationships between synchronized models are supported by the *NestedModelMixin* viewset mixin. It ensures the following:
+* read requests fail with http status 404 if the parent object does not exist or is deleted
+* write requests fail with http status 404 if the parent object does not exist
+  - write requests to objects with deleted parents are allowed in order to ease the synchronization of updated data
 
-#### Resource Nesting and Aggregation
+To enable this mixin:
+1. Inherit your viewsets from it:
+2. Configure:
+
+#### Resource Nesting
+
+*NestedModelMixin* also supports nested viewsets, i.e. ones whose subsequent URL path components correspond to subsequent levels in the model relationship hierarchy.
+
+#### Resource Aggregation
+
+*NestedModelMixin* also supports aggregate viewsets, i.e. ones that operate over more than one relationship level (e.g. on all grandchildren of an object, regardless of its direct children).
 
 
 ### Resource Quotas
