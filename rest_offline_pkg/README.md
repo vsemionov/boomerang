@@ -119,11 +119,23 @@ It is also possible to define aggregate viewsets, i.e. ones that operate over mo
 
 To enable this mixin:
 1. Inherit your viewsets from it:
-2. Configure:
+```
+from rest_offline import nest
+class DocumentViewSet(nest.NestedSyncedModelMixin,
+                      ...
+                      viewsets.ModelViewSet):
+```
+2. Configure the mixin by setting the following attributes to the viewset:
+```
+    parent_model = User                                 # the viewset's parent in the model hierarchy
+    parent_path_model = User                            # the viewset's parent in the URL path hierarchy
+    safe_parent_path = False                            # whether the mixin should skip checking the parent URL component; False if it is already confirmed, e.g. by permissions
+    object_filters = {'user_id': 'user_username'}       # filters to apply to the queryset; keys are queryset filter argument names, values are URL argument names
+    parent_filters = {'username': 'user_username'}      # filters to apply to the parent queryset
+    parent_path_filters = {'username': 'user_username'} # filters to apply to the parent queryset
+```
 
 The *NestedModelMixin* mixin is also usable standalone (not combined with the *SyncedModelMixin*) and can be applied to any model (not inheriting *TrackedModel*).
-
-**Limitations:** The *NestedModelMixin* currently ensures http 404 errors for deleted parents only if they are direct parents.
 
 
 ### Resource Quotas
@@ -140,3 +152,8 @@ pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
+
+#### Current Limitations
+
+* The *NestedModelMixin* currently ensures http 404 errors for deleted parents only if they are direct parents.
+* There is no way to retrieve an object, whose parent is deleted. This can be a problem especially if an object is moved to a deleted parent. Then, a syncing client has no way to notice the move. The object would eventually be removed from the server, but will be kept indefinitely on the client.
