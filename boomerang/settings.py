@@ -278,6 +278,7 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 30
 
 
 REST_OFFLINE = {
+    'DELETED_EXPIRY_DAYS': 30,
     'OBJECT_LIMITS': {
         'auth.User': {
             'api.Notebook': (8, 8),
@@ -287,7 +288,6 @@ REST_OFFLINE = {
             'api.Note': (125, 125),
         },
     },
-    'DELETED_EXPIRY_DAYS': 30
 }
 
 
