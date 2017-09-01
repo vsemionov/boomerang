@@ -123,8 +123,8 @@ class UserViewSet(sort.SortedModelMixin,
 
 3. Configure the mixin with the following viewset attributes:
 ```
-    sort_field_map = {'id': 'ext_id'}  # field translation map; keys are external field names, values are internal field names
-    consistent_sort = True             # whether the primary key should be appended to the ordering for consistency
+    sort_field_map = {'id': 'ext_id'}  # field translation map; keys are external field names, values are internal field names; default is no translation
+    consistent_sort = True             # whether the primary key should be appended to the ordering for consistency; default is True
 ```
 
 
