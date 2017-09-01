@@ -125,6 +125,8 @@ class DocumentViewSet(nest.NestedSyncedModelMixin,
                       ...
                       viewsets.ModelViewSet):
 ```
+Note that this mixin does not inherit from *NestedModelMixin*, so it is necessary to explicitly inherit from the latter one.
+
 2. Configure the mixin by setting the following attributes to the viewset:
 ```
     parent_model = User                                 # the viewset's parent in the model hierarchy
@@ -132,7 +134,7 @@ class DocumentViewSet(nest.NestedSyncedModelMixin,
     safe_parent_path = False                            # whether the mixin should skip checking the parent URL component; False if it is already confirmed, e.g. by permissions
     object_filters = {'user_id': 'user_username'}       # filters to apply to the queryset; keys are queryset filter argument names, values are URL argument names
     parent_filters = {'username': 'user_username'}      # filters to apply to the parent queryset
-    parent_path_filters = {'username': 'user_username'} # filters to apply to the parent queryset
+    parent_path_filters = {'username': 'user_username'} # filters to apply to the parent path queryset, if the viewset is aggregate (i.e. if parent_model != parent_path_model)
 ```
 
 The *NestedModelMixin* mixin is also usable standalone (not combined with the *SyncedModelMixin*) and can be applied to any model (not inheriting *TrackedModel*).
@@ -140,8 +142,25 @@ The *NestedModelMixin* mixin is also usable standalone (not combined with the *S
 
 ### Resource Quotas
 
-Quotas (limits) of synchronized models are supported by the *LimitedNestedSynced* viewset mixin.
+Quotas (limits) of synchronized models are supported by the *LimitedNestedSynced* viewset mixin. The limits are two types - ones for active objects and ones for deleted objects. They are given and applied on a per-parent basis. Also, different types of parent models may have different limits on their child models. The *LimitedNestedSynced* mixin performs the following tasks:
+* concurrency-safely enforces limits during creation and moving of active objects; if a limit is exceeded, the requested operation is not performed, and an http status 402 is returned
+* evicts the oldest deleted peer(s) of a deleted object if the limits of deleted objects are exceeded
+* detects if the deleted list endpoint may have returned incomplete results, due to the above eviction, and, if necessary to indicate this condition, modifies the returned http status to 206
 
+To enable this mixin:
+1. Inherit your viewsets from it:
+```
+from rest_offline import limit
+class DocumentViewSet(limit.LimitedNestedSyncedModelMixin,
+                      ...
+                      viewsets.ModelViewSet):
+```
+Note that this mixin inherits from the other ones, so it is not necessary to explicitly inherit from the other ones.
+
+2. Configure the mixin by setting the following attribute to the viewset:
+```
+    parent_key_filter = 'user_id'  # the name of the database column, which references the parent model
+```
 
 ### Example Project
 
