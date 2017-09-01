@@ -45,7 +45,7 @@ class OrderingFilter(filters.OrderingFilter):
 
                 for ext_field in ext_fields:
                     if ext_field not in ext_ordering:
-                        errors[ext_field] = 'unknown or disallowed field'
+                        errors[ext_field] = 'invalid field'
 
                 raise exceptions.ValidationError(errors)
 
