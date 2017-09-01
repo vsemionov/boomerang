@@ -9,7 +9,7 @@ TODO: build status icon
 
 ### Offline Data Synchronization
 
-This package provides support of data synchronization by offline clients, such as mobile applications. This is accomplished by the following approach:
+This package provides REST APIs with support for data synchronization by offline clients, such as mobile applications. This is accomplished by the following approach:
 * Aggregate list endpoints per object type are exposed. This allows all objects of a given type to be retrieved in a single request, even if they are nested into different objects. For example, in the hierarchy notebook/note, there is a note list endpoint that returns all notes from all notebooks.
   - The choice to expose one endpoint per object type, as opposed to a single endpoint for all synchronized types, was made because the latter approach produces a response that is an object (as opposed to a list). This does not allow paginating responses and forces the use of a single request. Avoiding multiple round-trip times is still possible by pipelining requests for different object types.
 * List endpoints allow the client to specify the minimum modification time of the returned objects. The returned data contains the request execution timestamp. To synchronize incrementally, the client must store this timestamp and send it as the minimum modification time during their next synchronization.
@@ -150,7 +150,21 @@ Quotas (limits) of synchronized models are supported by the *LimitedNestedSynced
 NOTE: It is assumed that modification of an object's parent (i.e. moving) will be performed **only** through an aggregate viewset.
 
 To enable this mixin:
-1. Inherit your viewsets from it:
+1. Configure limits in *settings.py*:
+```
+REST_OFFLINE = {
+    ...
+    'OBJECT_LIMITS': {
+        'auth.User': {               # one key for every parent model with child limits
+            'api.Document': (2, 2),  # one key for every limited child model
+                                     # values are a pair of active and deleted object limits
+                                     # use 0 or None for unlimited; default is unlimited
+        },
+    },
+}
+```
+
+2. Inherit your viewsets from it:
 ```
 from rest_offline import limit
 class DocumentViewSet(limit.LimitedNestedSyncedModelMixin,
@@ -159,7 +173,7 @@ class DocumentViewSet(limit.LimitedNestedSyncedModelMixin,
 ```
 Note that this mixin inherits from the other ones, so it is not necessary to explicitly inherit from the other ones.
 
-2. Configure the mixin by setting the following attribute to the viewset:
+3. Configure the mixin by setting the following attribute to the viewset:
 ```
     parent_key_filter = 'user_id'  # the name of the database column, which references the parent model
 ```
