@@ -84,6 +84,18 @@ REST_OFFLINE = {
 ```
 You can use `None` or `0` for unlimited.
 
+Your viewsets will now:
+* accept minimum and maximum modification timestamp arguments (*since* and *until*) for their list endpoints
+  - these endpoints return both timestamps in the response body
+  - if the maximum modification timestamp is not specified, the execution time is returned
+* accept a current modification timestamp argument (*at*) for their write endpoints, and concurrency-safely enforce it
+  - if the specified modification timestamp does not match the current one, the operation is not performed and http status 409 is returned
+  - write operations are guaranteed to increment the object modification timestamp for reliable conflict detection
+* perform soft deletion
+* not show deleted objects in list results
+* return http status 404 for requests to deleted objects
+* expose endpoints that list deleted objects (*./deleted/*)
+  - these endpoints indicate possibly incomplete results by returning http status 206
 
 #### Clearing Expired Deleted Objects
 
@@ -96,8 +108,14 @@ The output is the number of cleared objects per tracked model.
 
 ### Synchronization and Model Relationships
 
+Relationships between synchronized models are supported by the *NestedModelMixin* viewset mixin.
+
+#### Resource Nesting and Aggregation
+
 
 ### Resource Quotas
+
+Quotas (limits) of synchronized models are supported by the *LimitedNestedSynced* viewset mixin.
 
 
 ### Example Project
