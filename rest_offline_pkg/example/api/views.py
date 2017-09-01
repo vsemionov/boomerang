@@ -13,7 +13,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-
 class DocumentViewSet(limit.LimitedNestedSyncedModelMixin,
                       viewsets.ModelViewSet):
     queryset = Document.objects.all()
