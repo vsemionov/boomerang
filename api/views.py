@@ -33,7 +33,7 @@ class UserViewSet(sort.SortedModelMixin,
 
 class NestedViewSet(sort.SortedModelMixin,
                     search.SearchableModelMixin,
-                    limit.LimitedModelMixin,
+                    limit.LimitedNestedSyncedModelMixin,
                     viewsets.ModelViewSet):
     lookup_field = 'ext_id'
     permission_classes = permissions.nested_permissions

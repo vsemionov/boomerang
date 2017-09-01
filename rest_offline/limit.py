@@ -15,7 +15,7 @@ class LimitExceededError(exceptions.APIException):
     default_detail = 'limit exceeded'
 
 
-class LimitedModelMixin(NestedModelMixin, SyncedModelMixin):
+class LimitedNestedSyncedModelMixin(NestedModelMixin, SyncedModelMixin):
     parent_key_filter = None
 
     def get_limit(self, deleted):
