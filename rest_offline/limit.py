@@ -113,6 +113,7 @@ class LimitedNestedSyncedModelMixin(NestedModelMixin, SyncedModelMixin):
 
         if self.is_aggregate():
             parent = self.locked_parent(serializer.validated_data[parent_name])
+
         else:
             parent = self.get_parent(False, True)
 

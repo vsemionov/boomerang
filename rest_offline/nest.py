@@ -94,6 +94,7 @@ class NestedModelMixin(ViewSetMixin):
 
         if not self.is_aggregate():
             parent = self.get_parent(False, True)
+
             save_kwargs = {self.get_parent_name(): parent}
 
         serializer.save(**save_kwargs)
