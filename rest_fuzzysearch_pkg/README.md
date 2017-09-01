@@ -18,7 +18,7 @@ This package requires *PostgreSQL* and uses its trigram extension (*pg_trgm*). I
 
 * Python 3 (tested with 3.6)
 * PostgreSQL (tested with 9.6)
-* Django (tested with 1.11)
+* Django (>=1.11, tested with 1.11)
 * Django REST Framework (tested with 3.6)
 
 
