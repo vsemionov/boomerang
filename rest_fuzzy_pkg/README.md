@@ -11,7 +11,7 @@ TODO: build status icon
 
 This package provides REST APIs with support for fuzzy (approximate) full-text searching. This allows searching for results with unknown exact contents, as well as searches with spelling mistakes. The returned results are ranked and may be ordered by similarity.
 
-This package requires PostgreSQL and uses its trigram extension (pg_trgm). It provides a queryset filter and optional support viewset mixins.
+This package requires *PostgreSQL* and uses its trigram extension (*pg_trgm*). It provides a queryset filter and optional support viewset mixins.
 
 
 ### Requirements
