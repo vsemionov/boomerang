@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_fuzzy',
+    'rest_fuzzysearch',
     'api',
 ]
 
@@ -80,7 +80,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'HOST': 'localhost',
-        'NAME': 'rest_fuzzy',
+        'NAME': 'rest_fuzzysearch',
         'USER': 'postgres',
         'PASSWORD': '',
     }

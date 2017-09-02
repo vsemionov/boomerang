@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import viewsets
-from rest_fuzzy import search, sort
+from rest_fuzzysearch import search, sort
 
 from .serializers import UserSerializer
 
