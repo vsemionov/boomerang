@@ -6,3 +6,7 @@
 /example/db.sqlite3
 
 *.pyc
+
+/build
+/dist
+/*.egg-info
