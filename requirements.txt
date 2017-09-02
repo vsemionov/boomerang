@@ -10,6 +10,8 @@ django-cors-headers==2.1.0
 django-debug-toolbar==1.8
 django-extensions==1.9.0
 django-redis==4.8.0
+django-rest-fuzzysearch==0.5.0
+django-rest-offlinesync==0.5.0
 djangorestframework==3.6.4
 djangorestframework-jwt==1.11.0
 drf-nested-routers==0.90.0
