@@ -302,7 +302,7 @@ ALLOW_ORIGIN = os.getenv('ALLOW_ORIGIN')
 if ALLOW_ORIGIN:
     CORS_ORIGIN_WHITELIST = [ALLOW_ORIGIN]
 if DEBUG:
-    CORS_ORIGIN_WHITELIST.extend(['localhost:3000', '127.0.0.1:3000'])
+    CORS_ORIGIN_WHITELIST.extend(['localhost:8080', '127.0.0.1:8080'])
 
 
 ALLOWED_REDIRECT_URLS = set()
@@ -311,8 +311,8 @@ if FRONTEND_LOGIN_REDIRECT_URL:
     ALLOWED_REDIRECT_URLS = {FRONTEND_LOGIN_REDIRECT_URL}
 if DEBUG:
     ALLOWED_REDIRECT_URLS.update({
-        'http://localhost:3000/login/success',
-        'http://127.0.0.1:3000/login/success',
+        'http://localhost:8080/login/success',
+        'http://127.0.0.1:8080/login/success',
     })
 
 

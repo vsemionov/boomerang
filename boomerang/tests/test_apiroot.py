@@ -37,5 +37,5 @@ class TestApiRoot(TestCase):
         self.assertEqual(response.headers['Location'], reverse('api-root'))
 
     def test_cors_not_allowed(self):
-        response = RequestsClient().options('http://testserver' + self.url, headers={'Origin': 'http://localhost:3000'}, allow_redirects=False)
+        response = RequestsClient().options('http://testserver' + self.url, headers={'Origin': 'http://localhost:8080'}, allow_redirects=False)
         self.assertFalse('Access-Control-Allow-Origin' in response.headers)
