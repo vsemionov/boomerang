@@ -311,8 +311,8 @@ if FRONTEND_LOGIN_REDIRECT_URL:
     ALLOWED_REDIRECT_URLS = {FRONTEND_LOGIN_REDIRECT_URL}
 if DEBUG:
     ALLOWED_REDIRECT_URLS.update({
-        'http://localhost:8080/login/success',
-        'http://127.0.0.1:8080/login/success',
+        'http://localhost:8080/login/callback',
+        'http://127.0.0.1:8080/login/callback',
     })
 
 
