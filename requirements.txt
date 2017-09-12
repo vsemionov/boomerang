@@ -8,7 +8,7 @@ django-allauth==0.33.0
 django-bootstrap-form==3.3
 django-cors-headers==2.1.0
 django-debug-toolbar==1.8
-django-extensions==1.9.0
+django-extensions==1.9.1
 django-redis==4.8.0
 django-rest-fuzzysearch==0.5.1
 django-rest-offlinesync==0.5.2
