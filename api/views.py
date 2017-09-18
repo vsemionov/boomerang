@@ -8,6 +8,10 @@ from .rest import serializers, links
 from . import permissions
 
 
+def get_view_description(cls, html=False):
+    return ''
+
+
 class UserViewSet(sort.SortedModelMixin,
                   search.SearchableModelMixin,
                   viewsets.ReadOnlyModelViewSet):
