@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django_extensions',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_offlinesync',
     'rest_fuzzysearch',
     'allauth',
@@ -238,6 +239,7 @@ CACHES = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',

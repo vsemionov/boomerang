@@ -23,10 +23,6 @@ class JWTViewSet(mixins.ListModelMixin,
                                    if cls is not JSONWebTokenAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
-    @staticmethod
-    def _get_user_url(request):
-        return reverse.reverse('user-detail', request=request, args=[request.user.username])
-
     def get_view_name(self):
         return self.view_name
 

@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework_nested import routers
 
-from . import views, info, jwt
+from . import views, info, token, jwt
 
 
 root_router = routers.DefaultRouter()
@@ -17,6 +17,7 @@ notebook_router = routers.NestedSimpleRouter(user_router, r'notebooks', lookup='
 notebook_router.register(r'notes', views.NoteViewSet)
 
 root_router.register(r'info', info.ApiInfoViewSet, base_name='info')
+root_router.register(r'token', token.TokenViewSet, base_name='token')
 root_router.register(r'jwt', jwt.JWTViewSet, base_name='jwt')
 
 urlpatterns = [
