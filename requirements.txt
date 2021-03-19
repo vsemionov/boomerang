@@ -11,7 +11,7 @@ django-extensions==1.9.1
 django-redis==4.8.0
 django-rest-fuzzysearch==0.5.1
 django-rest-offlinesync==0.5.2
-djangorestframework==3.6.4
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 drf-nested-routers==0.90.0
 gevent==1.2.2
